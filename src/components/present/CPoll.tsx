@@ -1,6 +1,7 @@
 import { Card, CardContent, Stack } from "@mui/material";
 import { formatDistanceToNow } from "date-fns";
 import { FC, useContext } from "react";
+import { Link } from "react-router-dom";
 import { PollContext } from "../../contexts/PollProvider";
 import Poll from "../../logic/Poll";
 import COption from "./COption";
@@ -47,6 +48,7 @@ const CPoll: FC<CPollProps> = ({ poll }) => {
               </p>
             </div>
           ))}
+          <Link to={`/comments/${poll.id}`}>Comments</Link>
         </Stack>
       </CardContent>
     </Card>

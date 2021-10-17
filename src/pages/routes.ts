@@ -1,3 +1,4 @@
+import PComments from "./PComments";
 import PCreatePoll from "./PCreatePoll";
 import PPolls from "./PPolls";
 import SignIn from "./PSignIn";
@@ -19,6 +20,10 @@ const routes = [
   {
     path: "/userpolls",
     Component: PUserPolls,
+  },
+  {
+    path: "/comments/:pollId",
+    Component: PComments,
   },
 ];
 

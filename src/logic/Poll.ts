@@ -14,4 +14,5 @@ export default class Poll {
   id: string = v4();
   title: string;
   options: Option[];
+  comments: Comment[] = [];
 }

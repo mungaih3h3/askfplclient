@@ -31,11 +31,13 @@ export const PollProvider: FC = ({ children }) => {
   const addPoll = (poll: Poll) => {
     setUserPolls(
       produce((draft) => {
+        //@ts-ignore
         draft.push(poll);
       })
     );
     setPolls(
       produce((draft) => {
+        //@ts-ignore
         draft.push(poll);
       })
     );
