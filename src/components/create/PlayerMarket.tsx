@@ -51,6 +51,7 @@ const PlayerMarket: FC<PlayerMarketProps> = ({ onSelect, blacklist }) => {
       <CardContent>
         {players.map((player) => (
           <div
+            key={player.id}
             style={{
               opacity: shouldAccept(player, blacklist) ? 1 : 0.5,
             }}

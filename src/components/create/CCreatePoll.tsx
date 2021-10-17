@@ -32,6 +32,7 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
           />
           {poll.options.map((option, index) => (
             <CCreateOption
+              key={option.id}
               initialOption={option}
               onChange={(newOption) => {
                 setPoll(

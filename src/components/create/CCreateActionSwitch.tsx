@@ -1,7 +1,9 @@
 import { FC } from "react";
 import Action from "../../logic/Action";
+import Chip from "../../logic/Actions/Chip";
 import Transfer from "../../logic/Actions/Transfer";
 import CCreateTransfer from "./CCreateTransfer";
+import CCreateChipSwitch from "./chips/CCreateChipSwitch";
 
 interface CCreateActionSwitchProps {
   action: Action;
@@ -19,6 +21,10 @@ const CCreateActionSwitch: FC<CCreateActionSwitchProps> = ({
           initialTransfer={action as Transfer}
           onChange={onChange}
         />
+      );
+    case "chip":
+      return (
+        <CCreateChipSwitch initialChip={action as Chip} onChange={onChange} />
       );
     default:
       return <p>No renderer for action: {action.type}</p>;

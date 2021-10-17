@@ -23,7 +23,7 @@ const PCreatePoll: FC<PCreatePollProps> = () => {
       >
         <h2>Create Poll</h2>
         <div style={{ display: "flex", gap: 10 }}>
-          <Link to="/">My Polls</Link>
+          <Link to="/userpolls">My Polls</Link>
           <Link to="/">Polls</Link>
         </div>
       </div>

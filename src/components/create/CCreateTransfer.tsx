@@ -37,7 +37,7 @@ const CCreateTransfer: FC<CCreateTransferProps> = ({
               ]
                 .filter((role) => {
                   if (
-                    transfer.playerOut !== undefined &&
+                    transfer.playerOut.valid &&
                     transfer.playerOut.role !== role
                   )
                     return true;
@@ -54,7 +54,7 @@ const CCreateTransfer: FC<CCreateTransferProps> = ({
             player={transfer.playerIn}
             onChange={(newPlayer) => {
               try {
-                if (transfer.playerOut !== undefined) {
+                if (transfer.playerOut.valid) {
                   if (transfer.playerOut.role !== newPlayer.role)
                     throw new Error("Players in a transfer must share a role");
                   if (transfer.playerOut.id === newPlayer.id)
@@ -75,7 +75,7 @@ const CCreateTransfer: FC<CCreateTransferProps> = ({
           <span
             onClick={() => {
               const newTransfer = produce(transfer, (draft) => {
-                draft.playerIn = undefined;
+                draft.playerIn = Player.getNull();
               });
               setTransfer(newTransfer);
               onChange(newTransfer);
@@ -102,7 +102,7 @@ const CCreateTransfer: FC<CCreateTransferProps> = ({
               ]
                 .filter((role) => {
                   if (
-                    transfer.playerIn !== undefined &&
+                    transfer.playerIn.valid &&
                     transfer.playerIn.role !== role
                   )
                     return true;
@@ -119,7 +119,7 @@ const CCreateTransfer: FC<CCreateTransferProps> = ({
             player={transfer.playerOut}
             onChange={(newPlayer) => {
               try {
-                if (transfer.playerIn !== undefined) {
+                if (transfer.playerIn.valid) {
                   if (transfer.playerIn.role !== newPlayer.role)
                     throw new Error("Players in a transfer must share a role");
 
@@ -141,7 +141,7 @@ const CCreateTransfer: FC<CCreateTransferProps> = ({
           <span
             onClick={() => {
               const newTransfer = produce(transfer, (draft) => {
-                draft.playerOut = undefined;
+                draft.playerOut = Player.getNull();
               });
               setTransfer(newTransfer);
               onChange(newTransfer);

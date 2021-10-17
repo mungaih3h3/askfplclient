@@ -4,7 +4,7 @@ import Player from "../../logic/Player";
 import { Blacklist, PlayerMarketDialog } from "./PlayerMarket";
 
 interface CCreatePlayerProps {
-  player: Player | undefined;
+  player: Player;
   onChange: (player: Player) => any;
   blacklist: Blacklist[];
 }
@@ -22,13 +22,15 @@ const CCreatePlayer: FC<CCreatePlayerProps> = ({
         sx={{ p: 1 }}
         onClick={() => setPlayerMarketDialog(true)}
       >
-        {player !== undefined ? (
+        {player.valid ? (
           <Stack spacing={1}>
             <h4>{player.name}</h4>
             <p>{player.role}</p>
           </Stack>
         ) : (
-          <em>No player</em>
+          <div>
+            <em>No player</em>
+          </div>
         )}
       </Paper>
 

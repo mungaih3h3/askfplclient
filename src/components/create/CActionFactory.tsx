@@ -18,7 +18,10 @@ const CActionFactory: FC<CActionFactoryProps> = ({ onCreate }) => {
     <Card>
       <CardContent>
         {["transfer"].map((actionType) => (
-          <Button onClick={() => onCreate(actionFactory(actionType))}>
+          <Button
+            key={actionType}
+            onClick={() => onCreate(actionFactory(actionType))}
+          >
             {actionType}
           </Button>
         ))}
