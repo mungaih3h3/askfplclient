@@ -49,7 +49,7 @@ export const CActionFactoryDialog: FC<CActionFactoryDialogProps> = ({
 function actionFactory(type: string): Action {
   switch (type) {
     case "transfer":
-      return new Transfer("", "");
+      return new Transfer();
     default:
       throw new Error("Type factory cannot make type: " + type);
   }

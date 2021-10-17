@@ -27,10 +27,7 @@ const PCreatePoll: FC<PCreatePollProps> = () => {
           <Link to="/">Polls</Link>
         </div>
       </div>
-      <CCreatePoll
-        initialPoll={new Poll("", [], getAuthenticatedUser().username)}
-        onCreate={addPoll}
-      />
+      <CCreatePoll onCreate={addPoll} />
     </Stack>
   );
 };

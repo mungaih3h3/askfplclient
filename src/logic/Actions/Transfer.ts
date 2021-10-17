@@ -1,11 +1,12 @@
 import Action from "../Action";
+import Player from "../Player";
 
 export default class Transfer extends Action {
-  constructor(playerIn: string, playerOut: string) {
+  constructor(playerIn?: Player, playerOut?: Player) {
     super("transfer");
     this.playerIn = playerIn;
     this.playerOut = playerOut;
   }
-  playerIn: string;
-  playerOut: string;
+  playerIn: Player | undefined;
+  playerOut: Player | undefined;
 }
