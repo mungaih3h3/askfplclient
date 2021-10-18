@@ -63,10 +63,14 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
                 if (poll.options.length < 2)
                   throw new Error("A poll must have atleast 2 options");
                 for (const option of poll.options) {
-                  if (option.actions.length < 1)
-                    throw new Error(
-                      "Every option on the poll must have atleast one action"
-                    );
+                  let noActionsNumber = 0;
+                  if (option.actions.length < 1) {
+                    if (noActionsNumber >= 1) {
+                      throw new Error("Only one option can be empty");
+                    } else {
+                      noActionsNumber++;
+                    }
+                  }
                 }
                 onCreate(poll);
                 setPoll(initialPoll);

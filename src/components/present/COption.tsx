@@ -11,6 +11,7 @@ const COption: FC<COptionProps> = ({ option }) => {
   return (
     <Card>
       <CardContent>
+        {option.actions.length === 0 && <em>No actions. Good to go</em>}
         {option.actions.map((action) => (
           <CActionSwitch action={action} />
         ))}

@@ -1,7 +1,9 @@
 import { FC } from "react";
 import Action from "../../logic/Action";
+import BenchAndPlay from "../../logic/Actions/BenchAndPlay";
 import Chip from "../../logic/Actions/Chip";
 import Transfer from "../../logic/Actions/Transfer";
+import CCreateBenchAndPlay from "./CCreateBenchAndPlay";
 import CCreateTransfer from "./CCreateTransfer";
 import CCreateChipSwitch from "./chips/CCreateChipSwitch";
 
@@ -19,6 +21,13 @@ const CCreateActionSwitch: FC<CCreateActionSwitchProps> = ({
       return (
         <CCreateTransfer
           initialTransfer={action as Transfer}
+          onChange={onChange}
+        />
+      );
+    case "benchandplay":
+      return (
+        <CCreateBenchAndPlay
+          initialBtpt={action as BenchAndPlay}
           onChange={onChange}
         />
       );

@@ -19,6 +19,7 @@ const CCreateOption: FC<CCreateOptionProps> = ({ onChange, initialOption }) => {
     <>
       <Card>
         <CardContent>
+          {option.actions.length === 0 && <em>No actions</em>}
           {option.actions.map((action, index) => (
             <CCreateActionSwitch
               key={action.id}

@@ -20,6 +20,19 @@ const PPolls: FC<PPollsProps> = () => {
         <h2>Polls</h2>
         <Link to="/create">Create</Link>
       </div>
+      {polls.length === 0 && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            alignItems: "center",
+          }}
+        >
+          <em>No polls yet</em>
+          <Link to="/create">Create a poll</Link>
+        </div>
+      )}
       {polls.map((poll) => (
         <CPoll poll={poll} />
       ))}
