@@ -1,7 +1,10 @@
-import { Paper, Stack } from "@mui/material";
+import { Button, Paper, Stack } from "@mui/material";
+import { Box } from "@mui/system";
 import { FC, useState } from "react";
 import Player from "../../logic/Player";
 import { Blacklist, PlayerMarketDialog } from "./PlayerMarket";
+import { CancelPresentation, ArrowForward } from "@mui/icons-material";
+import CPlayer from "../present/CPlayer";
 
 interface CCreatePlayerProps {
   player: Player;
@@ -23,14 +26,20 @@ const CCreatePlayer: FC<CCreatePlayerProps> = ({
         onClick={() => setPlayerMarketDialog(true)}
       >
         {player.valid ? (
-          <Stack spacing={1}>
-            <h4>{player.name}</h4>
-            <p>{player.role}</p>
+          <Stack spacing={1} direction="row">
+            <CPlayer player={player} />
+            <Button
+              startIcon={<CancelPresentation />}
+              onClick={(e) => {
+                e.stopPropagation();
+                onChange(Player.getNull());
+              }}
+            ></Button>
           </Stack>
         ) : (
-          <div>
+          <Box sx={{ p: 1 }}>
             <em>No player</em>
-          </div>
+          </Box>
         )}
       </Paper>
 

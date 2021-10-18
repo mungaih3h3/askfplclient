@@ -1,24 +1,31 @@
-import { Stack } from "@mui/material";
+import { Card, CardContent, Stack, Typography } from "@mui/material";
 import { FC } from "react";
 import BenchAndPlay from "../../logic/Actions/BenchAndPlay";
 import CPlayer from "./CPlayer";
-
+import { ArrowForward } from "@mui/icons-material";
 interface CBenchAndPlayProps {
   btpt: BenchAndPlay;
 }
 
 const CBenchAndPlay: FC<CBenchAndPlayProps> = ({ btpt }) => {
   return (
-    <Stack spacing={1}>
-      <span>
-        Bench
-        <CPlayer player={btpt.playerIn} />
-      </span>
-      <span>
-        Bench
-        <CPlayer player={btpt.playerOut} />
-      </span>
-    </Stack>
+    <Card variant="outlined">
+      <CardContent>
+        <Stack spacing={2}>
+          <Typography sx={{ fontWeight: 700 }}>Bench and play</Typography>
+
+          <Stack
+            spacing={2}
+            direction="row"
+            sx={{ display: "flex", alignItems: "center" }}
+          >
+            <CPlayer player={btpt.playerIn} />
+            <ArrowForward />
+            <CPlayer player={btpt.playerOut} />
+          </Stack>
+        </Stack>
+      </CardContent>
+    </Card>
   );
 };
 

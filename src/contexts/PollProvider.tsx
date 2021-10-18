@@ -1,5 +1,6 @@
 import produce from "immer";
 import { createContext, FC, useState } from "react";
+import { dummypolls } from "../dummydata/dummypolls";
 import Poll from "../logic/Poll";
 
 type TPollContext = {
@@ -22,7 +23,7 @@ export const PollContext = createContext<TPollContext>({
 
 export const PollProvider: FC = ({ children }) => {
   const [userPolls, setUserPolls] = useState([] as Poll[]);
-  const [polls, setPolls] = useState([] as Poll[]);
+  const [polls, setPolls] = useState(dummypolls as Poll[]);
 
   const [userVotes, setUserVotes] = useState(new Map() as Map<string, string>);
   const [voteCount, setVoteCount] = useState(

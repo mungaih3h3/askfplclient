@@ -4,29 +4,32 @@ import {
   CardContent,
   Dialog,
   DialogContent,
+  DialogTitle,
+  Stack,
 } from "@mui/material";
 import { FC } from "react";
 import Action from "../../logic/Action";
 import Transfer from "../../logic/Actions/Transfer";
 import BenchAndPlay from "../../logic/Actions/BenchAndPlay";
+import { Box } from "@mui/system";
 interface CActionFactoryProps {
   onCreate: (action: Action) => any;
 }
 
 const CActionFactory: FC<CActionFactoryProps> = ({ onCreate }) => {
   return (
-    <Card>
-      <CardContent>
-        {["transfer", "bench and play"].map((actionType) => (
+    <Stack spacing={2}>
+      {["transfer", "bench and play"].map((actionType) => (
+        <Box>
           <Button
             key={actionType}
             onClick={() => onCreate(actionFactory(actionType))}
           >
             {actionType}
           </Button>
-        ))}
-      </CardContent>
-    </Card>
+        </Box>
+      ))}
+    </Stack>
   );
 };
 
@@ -42,6 +45,7 @@ export const CActionFactoryDialog: FC<CActionFactoryDialogProps> = ({
 }) => {
   return (
     <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Actions</DialogTitle>
       <DialogContent>
         <CActionFactory {...rest} />
       </DialogContent>

@@ -1,9 +1,9 @@
 import Action from "../Action";
 export enum ChipType {
-  wildcard = "wc",
-  freehit = "fh",
-  benchboost = "bb",
-  triplecaptain = "tc",
+  wildcard = "wildcard",
+  freehit = "freehit",
+  benchboost = "benchboost",
+  triplecaptain = "triplecaptain",
 }
 
 export default abstract class Chip extends Action {

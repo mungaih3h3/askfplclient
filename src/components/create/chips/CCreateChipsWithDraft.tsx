@@ -1,4 +1,5 @@
-import { Stack } from "@mui/material";
+import { Card, CardContent, Stack } from "@mui/material";
+import { Box } from "@mui/system";
 import produce from "immer";
 import { FC, useState } from "react";
 import ChipWithDraft from "../../../logic/Actions/Chips/ChipWithDraft";
@@ -16,19 +17,24 @@ const CCreateChipsWithDraft: FC<CCreateChipsWithDraftProps> = ({
 }) => {
   const [chip, setChip] = useState(initialChip);
   return (
-    <Stack spacing={2}>
-      <h4>{chip.chipType}</h4>
-      <CCreateDraft
-        initialDraft={chip.draft}
-        onChange={(newDraft) => {
-          const newWC = produce(chip, (draft) => {
-            draft.draft = newDraft;
-          });
-          setChip(newWC);
-          onChange(newWC);
-        }}
-      />
-    </Stack>
+    <Card variant="outlined">
+      <CardContent>
+        <Stack spacing={2}>
+          <h4>{chip.chipType.toUpperCase()}</h4>
+
+          <CCreateDraft
+            initialDraft={chip.draft}
+            onChange={(newDraft) => {
+              const newWC = produce(chip, (draft) => {
+                draft.draft = newDraft;
+              });
+              setChip(newWC);
+              onChange(newWC);
+            }}
+          />
+        </Stack>
+      </CardContent>
+    </Card>
   );
 };
 

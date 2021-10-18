@@ -26,11 +26,13 @@ const CCreateComment: FC<CCreateCommentProps> = ({
         }}
       />
       <Button
+        size="small"
+        variant="contained"
         onClick={() => {
           onCreate(comment);
         }}
       >
-        Create
+        Reply
       </Button>
     </Stack>
   );

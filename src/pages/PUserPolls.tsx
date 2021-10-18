@@ -1,14 +1,15 @@
-import { Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { FC, useContext } from "react";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import CPoll from "../components/present/CPoll";
 import { PollContext } from "../contexts/PollProvider";
 import { WithAuthentication } from "../HOC/WithAuthentication";
-
+import { Explore, AddBox } from "@mui/icons-material";
 interface PUserPollsProps {}
 
 const PUserPolls: FC<PUserPollsProps> = () => {
   const { userPolls } = useContext(PollContext);
+  const history = useHistory();
   return (
     <Stack spacing={1}>
       <div
@@ -19,7 +20,15 @@ const PUserPolls: FC<PUserPollsProps> = () => {
         }}
       >
         <h2>User polls</h2>
-        <Link to="/">Explore</Link>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            history.push("/");
+          }}
+          startIcon={<Explore />}
+        >
+          Explore
+        </Button>
       </div>
       {userPolls.length === 0 && (
         <div
@@ -31,7 +40,15 @@ const PUserPolls: FC<PUserPollsProps> = () => {
           }}
         >
           <em>You dont have any polls yet</em>
-          <Link to="/create">Create a poll</Link>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              history.push("/create");
+            }}
+            startIcon={<AddBox />}
+          >
+            Add poll
+          </Button>
         </div>
       )}
       {userPolls.map((poll) => (

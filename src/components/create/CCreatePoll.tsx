@@ -1,4 +1,12 @@
-import { Button, Card, CardContent, Stack, TextField } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardContent,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import produce from "immer";
 import { FC, useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthProvider";
@@ -6,7 +14,9 @@ import Option from "../../logic/Option";
 import Poll from "../../logic/Poll";
 import CCreateOption from "./CCreateOption";
 import toast from "react-hot-toast";
-
+import { Box } from "@mui/system";
+import { grey } from "@mui/material/colors";
+import { AddBox } from "@mui/icons-material";
 interface CCreatePollProps {
   onCreate: (poll: Poll) => any;
 }
@@ -18,7 +28,7 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
   return (
     <Card>
       <CardContent>
-        <Stack spacing={1}>
+        <Stack spacing={3}>
           <TextField
             placeholder="Enter poll title..."
             value={poll.title}
@@ -30,32 +40,61 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
               );
             }}
           />
-          {poll.options.map((option, index) => (
-            <CCreateOption
-              key={option.id}
-              initialOption={option}
-              onChange={(newOption) => {
-                setPoll(
-                  produce((draft) => {
-                    draft.options[index] = newOption;
-                  })
-                );
+          <Paper variant="outlined" sx={{ p: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-            />
-          ))}
-          <Button
-            onClick={() => {
-              setPoll(
-                produce((draft) => {
-                  draft.options.push(new Option());
-                })
-              );
-            }}
-          >
-            Add new Option
-          </Button>
+            >
+              {poll.options.length === 0 && (
+                <Typography
+                  sx={{
+                    height: 100,
+                  }}
+                >
+                  No options
+                </Typography>
+              )}
+            </Box>
+            <Stack spacing={2}>
+              {poll.options.map((option, index) => (
+                <CCreateOption
+                  key={option.id}
+                  initialOption={option}
+                  onChange={(newOption) => {
+                    setPoll(
+                      produce((draft) => {
+                        draft.options[index] = newOption;
+                      })
+                    );
+                  }}
+                />
+              ))}
+              <Button
+                sx={{
+                  backgroundColor: grey[900],
+                  borderRadius: 0,
+                  m: 1,
+                  color: grey[100],
+                }}
+                startIcon={<AddBox />}
+                onClick={() => {
+                  setPoll(
+                    produce((draft) => {
+                      draft.options.push(new Option());
+                    })
+                  );
+                }}
+              >
+                Add Option
+              </Button>
+            </Stack>
+          </Paper>
 
           <Button
+            variant="contained"
             onClick={() => {
               try {
                 if (poll.title.length === 0)

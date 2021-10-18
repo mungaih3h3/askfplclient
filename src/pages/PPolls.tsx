@@ -1,15 +1,17 @@
-import { Stack } from "@mui/material";
+import { Button, IconButton, Paper, Stack } from "@mui/material";
 import { FC, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import CPoll from "../components/present/CPoll";
 import { PollContext } from "../contexts/PollProvider";
+import { AddBox } from "@mui/icons-material";
 
 interface PPollsProps {}
 
 const PPolls: FC<PPollsProps> = () => {
   const { polls } = useContext(PollContext);
+  const history = useHistory();
   return (
-    <Stack spacing={1}>
+    <Stack spacing={1} sx={{ mb: 6 }}>
       <div
         style={{
           display: "flex",
@@ -18,7 +20,14 @@ const PPolls: FC<PPollsProps> = () => {
         }}
       >
         <h2>Polls</h2>
-        <Link to="/create">Create</Link>
+        <Button
+          onClick={() => history.push("/create")}
+          variant="outlined"
+          startIcon={<AddBox />}
+          size="small"
+        >
+          Add
+        </Button>
       </div>
       {polls.length === 0 && (
         <div
@@ -30,12 +39,21 @@ const PPolls: FC<PPollsProps> = () => {
           }}
         >
           <em>No polls yet</em>
-          <Link to="/create">Create a poll</Link>
+          <Button
+            onClick={() => history.push("/create")}
+            variant="outlined"
+            startIcon={<AddBox />}
+            size="small"
+          >
+            Add
+          </Button>
         </div>
       )}
-      {polls.map((poll) => (
-        <CPoll poll={poll} />
-      ))}
+      <Stack spacing={2}>
+        {polls.map((poll) => (
+          <CPoll poll={poll} />
+        ))}
+      </Stack>
     </Stack>
   );
 };

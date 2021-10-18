@@ -4,6 +4,8 @@ import {
   CardHeader,
   Dialog,
   DialogContent,
+  DialogTitle,
+  Stack,
 } from "@mui/material";
 import { FC, useContext } from "react";
 import { PlayersContext } from "../../contexts/PlayersProvider";
@@ -44,34 +46,29 @@ export function shouldAccept(player: Player, shouldReject: Blacklist[]) {
 const PlayerMarket: FC<PlayerMarketProps> = ({ onSelect, blacklist }) => {
   const { players } = useContext(PlayersContext);
   return (
-    <Card>
-      <CardHeader>
-        <h2>Player Market</h2>
-      </CardHeader>
-      <CardContent>
-        {players.map((player) => (
-          <div
-            key={player.id}
-            style={{
-              opacity: shouldAccept(player, blacklist) ? 1 : 0.5,
-            }}
-            onClick={() => {
-              try {
-                if (!shouldAccept(player, blacklist))
-                  throw new Error("Cannot add player");
-                onSelect(player);
-              } catch (error: any) {
-                toast.error(error.message, {
-                  position: "bottom-right",
-                });
-              }
-            }}
-          >
-            <CPlayer player={player} />
-          </div>
-        ))}
-      </CardContent>
-    </Card>
+    <Stack spacing={2}>
+      {players.map((player) => (
+        <div
+          key={player.id}
+          style={{
+            opacity: shouldAccept(player, blacklist) ? 1 : 0.5,
+          }}
+          onClick={() => {
+            try {
+              if (!shouldAccept(player, blacklist))
+                throw new Error("Cannot add player");
+              onSelect(player);
+            } catch (error: any) {
+              toast.error(error.message, {
+                position: "bottom-right",
+              });
+            }
+          }}
+        >
+          <CPlayer player={player} />
+        </div>
+      ))}
+    </Stack>
   );
 };
 
@@ -87,6 +84,7 @@ export const PlayerMarketDialog: FC<PlayerMarketDialogProps> = ({
 }) => {
   return (
     <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Players</DialogTitle>
       <DialogContent>
         <PlayerMarket {...rest} />
       </DialogContent>
