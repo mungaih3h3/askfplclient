@@ -7,7 +7,6 @@ import { PlayersProvider } from "./contexts/PlayersProvider";
 import { PollProvider } from "./contexts/PollProvider";
 import routes from "./pages/routes";
 import { Toaster } from "react-hot-toast";
-import { CommentsProvider } from "./contexts/CommentsProvider";
 import theme from "./theme/theme";
 
 function App() {
@@ -20,18 +19,11 @@ function App() {
             <Toaster />
             <AuthProvider>
               <PollProvider>
-                <CommentsProvider>
-                  <PlayersProvider>
-                    {routes.map(({ path, Component }) => (
-                      <Route
-                        exact
-                        key={path}
-                        path={path}
-                        component={Component}
-                      />
-                    ))}
-                  </PlayersProvider>
-                </CommentsProvider>
+                <PlayersProvider>
+                  {routes.map(({ path, Component }) => (
+                    <Route exact key={path} path={path} component={Component} />
+                  ))}
+                </PlayersProvider>
               </PollProvider>
             </AuthProvider>
           </Container>

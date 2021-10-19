@@ -8,15 +8,16 @@ import Comment from "../../logic/Comment";
 import CCreateComment from "../create/CCreateComment";
 import { Reply, Visibility, VisibilityOff } from "@mui/icons-material";
 import { Box } from "@mui/system";
+import { CommentsContext } from "../../pages/PComments";
 interface CCommentProps {
   comment: Comment;
-  onChange: (comment: Comment) => any;
 }
 
-const CComment: FC<CCommentProps> = ({ comment, onChange }) => {
+const CComment: FC<CCommentProps> = ({ comment }) => {
   const [showReplies, setShowReplies] = useState(false);
   const [showAddReply, setShowAddReply] = useState(false);
   const { getAuthenticatedUser } = useContext(AuthContext);
+  const { getImmediateSubtree, addComment } = useContext(CommentsContext);
   return (
     <Card variant="outlined">
       <CardContent>
@@ -44,7 +45,7 @@ const CComment: FC<CCommentProps> = ({ comment, onChange }) => {
               gap: 10,
             }}
           >
-            {comment.comments.length > 0 && (
+            {getImmediateSubtree(comment.id).length > 0 && (
               <Button
                 size="small"
                 startIcon={showReplies ? <VisibilityOff /> : <Visibility />}
@@ -63,20 +64,23 @@ const CComment: FC<CCommentProps> = ({ comment, onChange }) => {
           </div>
           {showAddReply && (
             <CCreateComment
-              initialComment={new Comment("", getAuthenticatedUser().username)}
+              initialComment={
+                new Comment(
+                  "",
+                  getAuthenticatedUser().username,
+                  comment.ancestors.concat(comment.id)
+                )
+              }
               onCreate={(newComment) => {
-                const n = produce(comment, (draft) => {
-                  draft.comments.push(newComment);
-                });
-                onChange(n);
+                addComment(newComment);
                 setShowAddReply(false);
               }}
             />
           )}
           <Box>
             {showReplies &&
-              comment.comments.map((reply) => (
-                <CComment comment={reply} onChange={onChange} />
+              getImmediateSubtree(comment.id).map((reply) => (
+                <CComment key={reply.id} comment={reply} />
               ))}
           </Box>
         </Stack>

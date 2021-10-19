@@ -52,7 +52,7 @@ const PUserPolls: FC<PUserPollsProps> = () => {
         </div>
       )}
       {userPolls.map((poll) => (
-        <CPoll poll={poll} />
+        <CPoll key={poll.id} poll={poll} />
       ))}
     </Stack>
   );

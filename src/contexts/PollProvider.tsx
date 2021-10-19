@@ -1,8 +1,10 @@
 import produce from "immer";
-import { createContext, FC, useState } from "react";
+import { createContext, FC, useContext, useEffect, useState } from "react";
 import { dummypolls } from "../dummydata/dummypolls";
 import Poll from "../logic/Poll";
-
+import toast from "react-hot-toast";
+import { fetchPolls, fetchUserPolls, savePoll } from "../api/Polls";
+import { AuthContext } from "./AuthProvider";
 type TPollContext = {
   polls: Poll[];
   userPolls: Poll[];
@@ -29,7 +31,12 @@ export const PollProvider: FC = ({ children }) => {
   const [voteCount, setVoteCount] = useState(
     new Map() as Map<string, Map<string, number>>
   );
+  const { getToken } = useContext(AuthContext);
   const addPoll = (poll: Poll) => {
+    savePoll(getToken(), poll).catch((error: any) => {
+      console.log(error.message);
+      toast.error(error.message);
+    });
     setUserPolls(
       produce((draft) => {
         //@ts-ignore
@@ -50,6 +57,22 @@ export const PollProvider: FC = ({ children }) => {
       })
     );
   };
+  useEffect(() => {
+    fetchPolls()
+      .then((polls) => setPolls(polls))
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  }, []);
+  useEffect(() => {
+    fetchUserPolls(getToken())
+      .then((polls) => {
+        setUserPolls(polls);
+      })
+      .catch((error: any) => {
+        toast.error(error.message);
+      });
+  }, []);
   return (
     <PollContext.Provider
       value={{ userPolls, addPoll, polls, userVotes, voteCount, vote }}

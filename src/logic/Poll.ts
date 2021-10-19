@@ -1,7 +1,7 @@
 import { immerable } from "immer";
 import { v4 } from "uuid";
 import Option from "./Option";
-
+import Comment from "../logic/Comment";
 export default class Poll {
   constructor(title: string, options: Option[] = [], username: string) {
     this.title = title;
