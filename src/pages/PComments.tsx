@@ -1,4 +1,4 @@
-import { Button, Stack } from "@mui/material";
+import { Button, IconButton, Stack } from "@mui/material";
 import { createContext, FC, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import CCreateComment from "../components/create/CCreateComment";
@@ -11,6 +11,7 @@ import { Box } from "@mui/system";
 import { useHistory } from "react-router-dom";
 import { fetchComments, saveComment } from "../api/Comments";
 import toast from "react-hot-toast";
+import { CLoadingComment } from "../components/loading/CLoadingComment";
 
 type TCommentsContext = {
   addComment: (comment: Comment) => any;
@@ -30,11 +31,19 @@ const PComments: FC<PCommentsProps> = () => {
   const { getAuthenticatedUser, getToken } = useContext(AuthContext);
   const history = useHistory();
   const { pollId } = useParams<{ pollId: string }>();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   useEffect(() => {
     if (pollId !== undefined)
       fetchComments(pollId)
-        .then(setComments)
-        .catch((error: any) => toast.error(error.message));
+        .then((comments) => {
+          setComments(comments);
+          setLoading(false);
+        })
+        .catch((error: any) => {
+          setLoading(false);
+          setError(true);
+        });
   }, [pollId]);
   if (!pollId) return <em>No comments. The post might have been deleted</em>;
   const addComment = (newComment: Comment) => {
@@ -53,30 +62,37 @@ const PComments: FC<PCommentsProps> = () => {
       }}
     >
       <Stack spacing={2}>
-        <Box
+        <Stack
+          spacing={2}
+          direction="row"
           sx={{
+            pt: 4,
+
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "baseline",
+            alignItems: "center",
           }}
         >
+          <IconButton onClick={() => history.goBack()}>
+            <ArrowBackIos />
+          </IconButton>
           <h2>Discussion</h2>
-          <Button
-            onClick={() => history.goBack()}
-            variant="outlined"
-            startIcon={<ArrowBackIos />}
-          >
-            Back
-          </Button>
-        </Box>
-        <Box>
-          <Button
-            startIcon={<Reply />}
-            onClick={() => setShowAddReply(!showAddReply)}
-          >
-            reply to post
-          </Button>
-        </Box>
+        </Stack>
+        {error && (
+          <Stack spacing={0.5} sx={{ textAlign: "center" }}>
+            <h4>Sorry, and unexpected error occurred</h4>
+            <small>We are working on solving the problem. Be back soon</small>
+          </Stack>
+        )}
+        {!error && (
+          <Box>
+            <Button
+              startIcon={<Reply />}
+              onClick={() => setShowAddReply(!showAddReply)}
+            >
+              reply to post
+            </Button>
+          </Box>
+        )}
         {showAddReply && (
           <CCreateComment
             onCreate={(newComment) => {
@@ -88,13 +104,19 @@ const PComments: FC<PCommentsProps> = () => {
             }
           />
         )}
-        <Stack spacing={2}>
-          {Comment.getImmediateSubtree(pollId, comments).map(
-            (comment, index) => (
-              <CComment key={comment.id} comment={comment} />
-            )
-          )}
-        </Stack>
+        {!error && (
+          <Stack spacing={2}>
+            {loading
+              ? new Array(10)
+                  .fill(null)
+                  .map((_, index) => <CLoadingComment key={index} />)
+              : Comment.getImmediateSubtree(pollId, comments).map(
+                  (comment, index) => (
+                    <CComment key={comment.id} comment={comment} />
+                  )
+                )}
+          </Stack>
+        )}
       </Stack>
     </CommentsContext.Provider>
   );

@@ -1,4 +1,5 @@
 import { Stack } from "@mui/material";
+import { Box } from "@mui/system";
 import produce from "immer";
 import { FC, useState } from "react";
 import TripleCaptain from "../../../logic/Actions/Chips/TripleCaptain";
@@ -12,7 +13,13 @@ interface CCreateTCProps {
 const CCreateTC: FC<CCreateTCProps> = ({ initialTC, onChange }) => {
   const [TC, setTC] = useState(initialTC);
   return (
-    <Stack spacing={1}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
       <h4>TripleCaptain</h4>
 
       <CCreatePlayer
@@ -26,7 +33,7 @@ const CCreateTC: FC<CCreateTCProps> = ({ initialTC, onChange }) => {
         }}
         blacklist={[]}
       />
-    </Stack>
+    </Box>
   );
 };
 

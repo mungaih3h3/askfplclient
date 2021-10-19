@@ -127,7 +127,7 @@ const PlayerMarket: FC<PlayerMarketProps> = ({ onSelect, blacklist }) => {
             width={width}
             height={1080}
             rowCount={searchResults.length}
-            rowHeight={100}
+            rowHeight={80}
             rowRenderer={rowRenderer}
           />
         )}

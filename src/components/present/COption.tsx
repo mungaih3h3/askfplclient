@@ -12,7 +12,7 @@ const COption: FC<COptionProps> = ({ option }) => {
     <Card>
       <CardContent>
         {option.actions.length === 0 && <em>No actions. Good to go 💯</em>}
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           {option.actions.map((action) => (
             <CActionSwitch key={action.id} action={action} />
           ))}

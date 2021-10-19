@@ -10,6 +10,9 @@ type TPollContext = {
   userPolls: Poll[];
   userVotes: Map<string, string>;
   voteCount: Map<string, Map<string, number>>;
+  loading: boolean;
+  error: boolean;
+  errorMessage: string;
   addPoll: (poll: Poll) => any;
   vote: (pollId: string, optionId: string) => any;
 };
@@ -19,6 +22,9 @@ export const PollContext = createContext<TPollContext>({
   userPolls: [],
   userVotes: new Map(),
   voteCount: new Map(),
+  loading: true,
+  error: false,
+  errorMessage: "",
   addPoll: () => {},
   vote: () => {},
 });
@@ -26,12 +32,17 @@ export const PollContext = createContext<TPollContext>({
 export const PollProvider: FC = ({ children }) => {
   const [userPolls, setUserPolls] = useState([] as Poll[]);
   const [polls, setPolls] = useState(dummypolls as Poll[]);
+  const [error, setError] = useState({
+    error: false,
+    errorMessage: "",
+  });
 
   const [userVotes, setUserVotes] = useState(new Map() as Map<string, string>);
   const [voteCount, setVoteCount] = useState(
     new Map() as Map<string, Map<string, number>>
   );
   const { getToken } = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
   const addPoll = (poll: Poll) => {
     savePoll(getToken(), poll).catch((error: any) => {
       console.log(error.message);
@@ -59,8 +70,12 @@ export const PollProvider: FC = ({ children }) => {
   };
   useEffect(() => {
     fetchPolls()
-      .then((polls) => setPolls(polls))
+      .then((polls) => {
+        setLoading(false);
+        setPolls(polls);
+      })
       .catch((error) => {
+        setLoading(false);
         toast.error(error.message);
       });
   }, []);
@@ -70,12 +85,26 @@ export const PollProvider: FC = ({ children }) => {
         setUserPolls(polls);
       })
       .catch((error: any) => {
+        setError({
+          error: true,
+          errorMessage: error.message,
+        });
         toast.error(error.message);
       });
   }, []);
   return (
     <PollContext.Provider
-      value={{ userPolls, addPoll, polls, userVotes, voteCount, vote }}
+      value={{
+        userPolls,
+        addPoll,
+        polls,
+        userVotes,
+        voteCount,
+        vote,
+        loading,
+        error: error.error,
+        errorMessage: error.errorMessage,
+      }}
     >
       {children}
     </PollContext.Provider>

@@ -18,8 +18,9 @@ const CActionFactory: FC<CActionFactoryProps> = ({ onCreate }) => {
   return (
     <Stack spacing={2}>
       {["transfer", "bench and play"].map((actionType) => (
-        <Box>
+        <Box key={actionType}>
           <Button
+            size="small"
             key={actionType}
             onClick={() => onCreate(actionFactory(actionType))}
           >

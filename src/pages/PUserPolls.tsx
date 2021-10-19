@@ -1,4 +1,4 @@
-import { Button, Stack } from "@mui/material";
+import { Button, IconButton, Stack } from "@mui/material";
 import { FC, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import CPoll from "../components/present/CPoll";
@@ -20,15 +20,13 @@ const PUserPolls: FC<PUserPollsProps> = () => {
         }}
       >
         <h2>User polls</h2>
-        <Button
-          variant="outlined"
+        <IconButton
           onClick={() => {
             history.push("/");
           }}
-          startIcon={<Explore />}
         >
-          Explore
-        </Button>
+          <Explore />
+        </IconButton>
       </div>
       {userPolls.length === 0 && (
         <div

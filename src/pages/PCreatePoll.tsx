@@ -1,4 +1,4 @@
-import { Button, Stack } from "@mui/material";
+import { Button, IconButton, Stack } from "@mui/material";
 import { FC, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import CCreatePoll from "../components/create/CCreatePoll";
@@ -6,14 +6,14 @@ import { AuthContext } from "../contexts/AuthProvider";
 import { PollContext } from "../contexts/PollProvider";
 import { WithAuthentication } from "../HOC/WithAuthentication";
 import Poll from "../logic/Poll";
-import { ViewStream } from "@mui/icons-material";
+import { Explore, ViewStream } from "@mui/icons-material";
 import { Box } from "@mui/system";
+import { fontSizes } from "../theme/fontSizes";
 
 interface PCreatePollProps {}
 
 const PCreatePoll: FC<PCreatePollProps> = () => {
   const { addPoll } = useContext(PollContext);
-  const { getAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
   return (
     <Stack spacing={1}>
@@ -24,26 +24,24 @@ const PCreatePoll: FC<PCreatePollProps> = () => {
           alignItems: "center",
         }}
       >
-        <Button
-          variant="outlined"
+        <IconButton
           onClick={() => {
             history.push(`/${"userpolls"}`);
           }}
         >
-          My Polls
-        </Button>
-        <h2>Create Poll</h2>
-        <Button
-          startIcon={<ViewStream />}
-          variant="outlined"
+          <ViewStream />
+        </IconButton>
+        <h2 style={{ fontSize: fontSizes[3] }}>Create Poll</h2>
+        <IconButton
           onClick={() => {
             history.push("/");
           }}
         >
-          Polls
-        </Button>
+          <Explore />
+        </IconButton>
       </Box>
       <CCreatePoll onCreate={addPoll} />
+      <Box sx={{ height: 150 }}></Box>
     </Stack>
   );
 };

@@ -36,18 +36,20 @@ const CCreateOption: FC<CCreateOptionProps> = ({ onChange, initialOption }) => {
             ))}
             <Stack direction="row" spacing={2}>
               <Button
+                size="small"
                 variant="outlined"
                 startIcon={<Add />}
                 onClick={() => setActionFactoryDialog(true)}
               >
-                Add action
+                action
               </Button>
               <Button
+                size="small"
                 variant="outlined"
                 startIcon={<Add />}
                 onClick={() => setChipFactoryDialog(true)}
               >
-                Add chip
+                chip
               </Button>
             </Stack>
           </Stack>
@@ -60,6 +62,7 @@ const CCreateOption: FC<CCreateOptionProps> = ({ onChange, initialOption }) => {
           const newOption = produce(option, (draft) => {
             draft.actions.push(action);
           });
+          setActionFactoryDialog(false);
           setOption(newOption);
           onChange(newOption);
         }}
@@ -71,6 +74,7 @@ const CCreateOption: FC<CCreateOptionProps> = ({ onChange, initialOption }) => {
           const newOption = produce(option, (draft) => {
             draft.actions.push(chip);
           });
+          setChipFactoryDialog(false);
           setOption(newOption);
           onChange(newOption);
         }}

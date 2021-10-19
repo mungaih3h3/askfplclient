@@ -1,4 +1,11 @@
-import { Card, CardContent, Stack, Typography } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Stack,
+  Typography,
+  Box,
+  Paper,
+} from "@mui/material";
 import { FC } from "react";
 import Transfer from "../../logic/Actions/Transfer";
 import CPlayer from "./CPlayer";
@@ -9,30 +16,18 @@ interface CTransferProps {
 
 const CTransfer: FC<CTransferProps> = ({ transfer }) => {
   return (
-    <Card variant="outlined">
-      <CardContent>
-        <Stack spacing={2}>
-          <Typography sx={{ fontWeight: 700 }}>Transfer</Typography>
-          <Stack
-            spacing={2}
-            direction="row"
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            {transfer.playerIn === undefined ? (
-              <em>No player</em>
-            ) : (
-              <CPlayer player={transfer.playerIn} />
-            )}
-            <ArrowForward />
-            {transfer.playerOut === undefined ? (
-              <em>No player</em>
-            ) : (
-              <CPlayer player={transfer.playerOut} />
-            )}
-          </Stack>
-        </Stack>
-      </CardContent>
-    </Card>
+    <Stack spacing={2}>
+      <Typography sx={{ fontWeight: 700 }}>Transfer</Typography>
+      <Stack
+        spacing={1}
+        direction="row"
+        sx={{ display: "flex", alignItems: "center" }}
+      >
+        <CPlayer player={transfer.playerIn} />
+        <ArrowForward />
+        <CPlayer player={transfer.playerOut} />
+      </Stack>
+    </Stack>
   );
 };
 

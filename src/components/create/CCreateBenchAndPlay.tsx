@@ -16,52 +16,45 @@ const CCreateBenchAndPlay: FC<CCreateBenchAndPlayProps> = ({
 }) => {
   const [btpt, setBtpt] = useState(initialBtpt);
   return (
-    <Card variant="outlined">
-      <CardContent>
-        <Stack spacing={1}>
-          <Typography sx={{ fontWeight: 700 }}>Bench and play</Typography>
-          <Stack
-            spacing={2}
-            direction="row"
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            <CCreatePlayer
-              player={btpt.playerIn}
-              onChange={(newPlayer) => {
-                setBtpt(
-                  produce((draft) => {
-                    draft.playerIn = newPlayer;
-                  })
-                );
-              }}
-              blacklist={[
-                {
-                  type: "player",
-                  value: btpt.playerOut,
-                },
-              ]}
-            />
-            <ArrowForward />
-            <CCreatePlayer
-              player={btpt.playerOut}
-              onChange={(newPlayer) => {
-                const newBtpt = produce(btpt, (draft) => {
-                  draft.playerOut = newPlayer;
-                });
-                setBtpt(newBtpt);
-                onChange(newBtpt);
-              }}
-              blacklist={[
-                {
-                  type: "player",
-                  value: btpt.playerIn,
-                },
-              ]}
-            />
-          </Stack>
-        </Stack>
-      </CardContent>
-    </Card>
+    <Stack spacing={1}>
+      <Typography sx={{ fontWeight: 700 }}>Bench and play</Typography>
+      <Stack spacing={2}>
+        <CCreatePlayer
+          extra="(in)"
+          player={btpt.playerIn}
+          onChange={(newPlayer) => {
+            setBtpt(
+              produce((draft) => {
+                draft.playerIn = newPlayer;
+              })
+            );
+          }}
+          blacklist={[
+            {
+              type: "player",
+              value: btpt.playerOut,
+            },
+          ]}
+        />
+        <CCreatePlayer
+          extra={"(out)"}
+          player={btpt.playerOut}
+          onChange={(newPlayer) => {
+            const newBtpt = produce(btpt, (draft) => {
+              draft.playerOut = newPlayer;
+            });
+            setBtpt(newBtpt);
+            onChange(newBtpt);
+          }}
+          blacklist={[
+            {
+              type: "player",
+              value: btpt.playerIn,
+            },
+          ]}
+        />
+      </Stack>
+    </Stack>
   );
 };
 

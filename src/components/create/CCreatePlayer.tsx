@@ -1,44 +1,74 @@
-import { Button, Paper, Stack } from "@mui/material";
+import { Button, IconButton, Paper, Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { FC, useState } from "react";
 import Player from "../../logic/Player";
 import { Blacklist, PlayerMarketDialog } from "./PlayerMarket";
 import { CancelPresentation } from "@mui/icons-material";
-import CPlayer from "../present/CPlayer";
+import CPlayer, { shortRole } from "../present/CPlayer";
+import { fontSizes } from "../../theme/fontSizes";
+import { grey } from "@mui/material/colors";
 
 interface CCreatePlayerProps {
   player: Player;
   onChange: (player: Player) => any;
   blacklist: Blacklist[];
+  extra?: string;
 }
 
 const CCreatePlayer: FC<CCreatePlayerProps> = ({
   player,
   onChange,
   blacklist,
+  extra = "",
 }) => {
   const [playerMarketDialog, setPlayerMarketDialog] = useState(false);
   return (
     <>
       <Paper
         variant="outlined"
-        sx={{ p: 1 }}
+        sx={{ p: 2 }}
         onClick={() => setPlayerMarketDialog(true)}
       >
         {player.valid ? (
-          <Stack spacing={1} direction="row">
-            <CPlayer player={player} />
-            <Button
-              startIcon={<CancelPresentation />}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: fontSizes[2],
+                  fontWeight: 500,
+                }}
+              >
+                {player.name} {extra}
+              </Typography>
+              <Box sx={{ display: "inline-flex", py: 1 }}>
+                <Typography
+                  sx={{
+                    fontSize: fontSizes[0],
+                    color: grey[500],
+                  }}
+                >
+                  {shortRole(player.role).toUpperCase()}
+                </Typography>
+              </Box>
+            </Box>
+            <IconButton
               onClick={(e) => {
                 e.stopPropagation();
                 onChange(Player.getNull());
               }}
-            ></Button>
-          </Stack>
+            >
+              <CancelPresentation />
+            </IconButton>
+          </Box>
         ) : (
           <Box sx={{ p: 1 }}>
-            <em>No player</em>
+            <em>Add Player{extra}</em>
           </Box>
         )}
       </Paper>
@@ -48,6 +78,7 @@ const CCreatePlayer: FC<CCreatePlayerProps> = ({
         onClose={() => setPlayerMarketDialog(false)}
         onSelect={(player) => {
           onChange(player);
+          setPlayerMarketDialog(false);
         }}
         blacklist={blacklist}
       />
