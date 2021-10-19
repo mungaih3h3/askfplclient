@@ -1,7 +1,5 @@
 import {
   Button,
-  Card,
-  CardContent,
   Dialog,
   DialogContent,
   DialogTitle,

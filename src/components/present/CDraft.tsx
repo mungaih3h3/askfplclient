@@ -11,7 +11,7 @@ const CDraft: FC<CDraftProps> = ({ draft }) => {
   return (
     <Card variant="outlined">
       <CardContent>
-        <Stack spacing={2}>
+        <Stack spacing={2} sx={{ display: "flex", alignItems: "center" }}>
           <Stack spacing={2} direction="row">
             {draft.goalkeepers.map((player, index) => (
               <CPlayer player={player} />

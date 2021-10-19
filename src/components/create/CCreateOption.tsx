@@ -1,5 +1,4 @@
-import { Button, Card, CardContent, Paper, Stack } from "@mui/material";
-import { Box } from "@mui/system";
+import { Button, Card, CardContent, Stack } from "@mui/material";
 import produce from "immer";
 import { FC, useState } from "react";
 import Option from "../../logic/Option";

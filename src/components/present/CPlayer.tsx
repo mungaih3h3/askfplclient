@@ -1,6 +1,6 @@
-import { Paper, Stack, Typography } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
 import { indigo } from "@mui/material/colors";
-import { Box, fontSize } from "@mui/system";
+import { Box } from "@mui/system";
 import { FC } from "react";
 import Player from "../../logic/Player";
 import { fontSizes } from "../../theme/fontSizes";

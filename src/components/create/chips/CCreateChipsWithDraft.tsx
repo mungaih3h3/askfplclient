@@ -1,9 +1,7 @@
 import { Card, CardContent, Stack } from "@mui/material";
-import { Box } from "@mui/system";
 import produce from "immer";
 import { FC, useState } from "react";
 import ChipWithDraft from "../../../logic/Actions/Chips/ChipWithDraft";
-import WildCard from "../../../logic/Actions/Chips/WildCard";
 import CCreateDraft from "../CCreateDraft";
 
 interface CCreateChipsWithDraftProps {

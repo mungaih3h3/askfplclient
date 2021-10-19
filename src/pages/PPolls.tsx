@@ -1,6 +1,6 @@
-import { Button, IconButton, Paper, Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { FC, useContext } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import CPoll from "../components/present/CPoll";
 import { PollContext } from "../contexts/PollProvider";
 import { AddBox } from "@mui/icons-material";
@@ -51,7 +51,7 @@ const PPolls: FC<PPollsProps> = () => {
       )}
       <Stack spacing={2}>
         {polls.map((poll) => (
-          <CPoll poll={poll} />
+          <CPoll key={poll.id} poll={poll} />
         ))}
       </Stack>
     </Stack>

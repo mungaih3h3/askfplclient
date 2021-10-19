@@ -3,7 +3,7 @@ import { Box } from "@mui/system";
 import { FC, useState } from "react";
 import Player from "../../logic/Player";
 import { Blacklist, PlayerMarketDialog } from "./PlayerMarket";
-import { CancelPresentation, ArrowForward } from "@mui/icons-material";
+import { CancelPresentation } from "@mui/icons-material";
 import CPlayer from "../present/CPlayer";
 
 interface CCreatePlayerProps {

@@ -7,7 +7,7 @@ interface CChipsWithDraftProps {
   chip: ChipWithDraft;
 }
 
-const CChipsWithDraft: FC<CChipsWithDraftProps> = ({ chip: chip }) => {
+const CChipsWithDraft: FC<CChipsWithDraftProps> = ({ chip }) => {
   return (
     <Stack spacing={2}>
       <h4>{chip.chipType}</h4>

@@ -21,7 +21,7 @@ const PCreatePoll: FC<PCreatePollProps> = () => {
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "baseline",
+          alignItems: "center",
         }}
       >
         <Button

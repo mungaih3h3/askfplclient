@@ -1,4 +1,3 @@
-import Draft from "../../Draft";
 import { ChipType } from "../Chip";
 import ChipWithDraft from "./ChipWithDraft";
 

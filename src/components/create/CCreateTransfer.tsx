@@ -1,12 +1,4 @@
-import {
-  Button,
-  Card,
-  CardContent,
-  Paper,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Card, CardContent, Stack, Typography } from "@mui/material";
 import produce from "immer";
 import { FC, useState } from "react";
 import Transfer from "../../logic/Actions/Transfer";
@@ -14,7 +6,7 @@ import CCreatePlayer from "./CCreatePlayer";
 import toast from "react-hot-toast";
 import Player, { PlayerRole } from "../../logic/Player";
 import { Blacklist } from "./PlayerMarket";
-import { CancelPresentation, ArrowForward } from "@mui/icons-material";
+import { ArrowForward } from "@mui/icons-material";
 interface CCreateTransferProps {
   onChange: (transfer: Transfer) => any;
   initialTransfer: Transfer;

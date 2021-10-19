@@ -1,4 +1,3 @@
-import { useTheme } from "@emotion/react";
 import {
   Button,
   Card,
@@ -55,11 +54,12 @@ const CPoll: FC<CPollProps> = ({ poll }) => {
 
           {poll.options.map((option) => (
             <Paper
+              key={option.id}
               variant="outlined"
               sx={{
                 padding: 2,
                 backgroundColor:
-                  (userVotes.get(poll.id) || "") == option.id
+                  (userVotes.get(poll.id) || "") === option.id
                     ? indigo[700]
                     : "rgba(0,0,0,0)",
                 display: "flex",
