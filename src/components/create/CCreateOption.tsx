@@ -17,44 +17,40 @@ const CCreateOption: FC<CCreateOptionProps> = ({ onChange, initialOption }) => {
   const [chipFactoryDialog, setChipFactoryDialog] = useState(false);
   return (
     <>
-      <Card>
-        <CardContent>
-          <Stack spacing={2}>
-            {option.actions.length === 0 && <em>No actions</em>}
-            {option.actions.map((action, index) => (
-              <CCreateActionSwitch
-                key={action.id}
-                action={action}
-                onChange={(action) => {
-                  const newOption = produce(option, (draft) => {
-                    draft.actions[index] = action;
-                  });
-                  setOption(newOption);
-                  onChange(newOption);
-                }}
-              />
-            ))}
-            <Stack direction="row" spacing={2}>
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<Add />}
-                onClick={() => setActionFactoryDialog(true)}
-              >
-                action
-              </Button>
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<Add />}
-                onClick={() => setChipFactoryDialog(true)}
-              >
-                chip
-              </Button>
-            </Stack>
-          </Stack>
-        </CardContent>
-      </Card>
+      <Stack spacing={2}>
+        {option.actions.length === 0 && <em>No actions</em>}
+        {option.actions.map((action, index) => (
+          <CCreateActionSwitch
+            key={action.id}
+            action={action}
+            onChange={(action) => {
+              const newOption = produce(option, (draft) => {
+                draft.actions[index] = action;
+              });
+              setOption(newOption);
+              onChange(newOption);
+            }}
+          />
+        ))}
+        <Stack direction="row" spacing={2}>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<Add />}
+            onClick={() => setActionFactoryDialog(true)}
+          >
+            action
+          </Button>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<Add />}
+            onClick={() => setChipFactoryDialog(true)}
+          >
+            chip
+          </Button>
+        </Stack>
+      </Stack>
       <CActionFactoryDialog
         open={actionFactoryDialog}
         onClose={() => setActionFactoryDialog(false)}

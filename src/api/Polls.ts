@@ -1,6 +1,7 @@
 import Poll from "../logic/Poll";
 import { apiInstance } from "./ApiInstance";
 import hydratePoll from "./hydratePoll";
+import { hydrateVoteCount } from "./hydrateVoteCount";
 export type pollServer = {
   title: string;
   id: string;
@@ -9,19 +10,34 @@ export type pollServer = {
   topLevelCommentIds: string[];
 };
 
-export async function fetchPolls(): Promise<Poll[]> {
+export async function fetchPolls(
+  startDate: Date = new Date(),
+  limit: number = 20
+): Promise<{
+  polls: Poll[];
+  hasMore: boolean;
+  voteCounts: Map<string, Map<string, number>>[];
+}> {
   try {
     const {
-      data: { polls, success, message },
-    } = await apiInstance.get<any, any, any>("/polls");
+      data: { polls, success, message, hasMore },
+    } = await apiInstance.get<any, any, any>(`/polls/${startDate}/${limit}`);
 
     if (!success) throw new Error(message);
-    return polls.map((poll: any) => hydratePoll(poll));
+
+    return {
+      polls: polls.map((poll: any) => hydratePoll(poll)),
+      hasMore,
+      voteCounts: polls.map((poll: any) =>
+        hydrateVoteCount(poll.id, poll.voteCount || {})
+      ),
+    };
   } catch (error: any) {
     console.log(error);
     throw error;
   }
 }
+
 export async function fetchUserPolls(token: string): Promise<Poll[]> {
   try {
     const {

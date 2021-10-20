@@ -14,12 +14,12 @@ import toast from "react-hot-toast";
 import { CLoadingComment } from "../components/loading/CLoadingComment";
 
 type TCommentsContext = {
-  addComment: (comment: Comment) => any;
+  addComment: (comment: Comment) => Promise<any>;
   getImmediateSubtree: (commentId: string) => Comment[];
 };
 
 export const CommentsContext = createContext<TCommentsContext>({
-  addComment: () => {},
+  addComment: async () => {},
   getImmediateSubtree: () => [],
 });
 
@@ -46,11 +46,13 @@ const PComments: FC<PCommentsProps> = () => {
         });
   }, [pollId]);
   if (!pollId) return <em>No comments. The post might have been deleted</em>;
-  const addComment = (newComment: Comment) => {
-    setComments(comments.concat(newComment));
-    saveComment(newComment, getToken()).catch((error: any) =>
-      toast.error(error.message)
-    );
+  const addComment = async (newComment: Comment) => {
+    try {
+      setComments(comments.concat(newComment));
+      await saveComment(newComment, await getToken());
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -61,7 +63,7 @@ const PComments: FC<PCommentsProps> = () => {
           Comment.getImmediateSubtree(commentId, comments),
       }}
     >
-      <Stack spacing={2}>
+      <Stack spacing={2} sx={{ my: 1 }}>
         <Stack
           spacing={2}
           direction="row"

@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import produce from "immer";
 import { FC, useState } from "react";
@@ -20,7 +20,7 @@ const CCreateTC: FC<CCreateTCProps> = ({ initialTC, onChange }) => {
         justifyContent: "space-between",
       }}
     >
-      <h4>TripleCaptain</h4>
+      <Typography>TripleCaptain</Typography>
 
       <CCreatePlayer
         player={TC.player}

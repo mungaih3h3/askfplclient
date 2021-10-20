@@ -10,6 +10,7 @@ import {
 import { Box } from "@mui/system";
 import produce from "immer";
 import { FC, useContext, useState } from "react";
+import toast from "react-hot-toast";
 import { AuthContext } from "../contexts/AuthProvider";
 import { fontSizes } from "../theme/fontSizes";
 
@@ -20,7 +21,7 @@ const SignIn: FC<SignInProps> = () => {
     username: "",
     password: "",
   });
-  const { signIn } = useContext(AuthContext);
+  const { signIn, isAuthenticated } = useContext(AuthContext);
   return (
     <Box
       sx={{
@@ -64,7 +65,16 @@ const SignIn: FC<SignInProps> = () => {
                 );
               }}
             />
-            <Button variant="contained" onClick={() => signIn(user.username)}>
+            <Button
+              variant="contained"
+              onClick={async () => {
+                try {
+                  await signIn(user.username, user.password);
+                } catch (error: any) {
+                  toast.error(error.message);
+                }
+              }}
+            >
               Sign In
             </Button>
           </Stack>

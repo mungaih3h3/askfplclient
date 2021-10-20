@@ -10,7 +10,7 @@ interface CTCProps {
 const CTC: FC<CTCProps> = ({ tc }) => {
   return (
     <Stack spacing={0}>
-      <Typography sx={{ fontWeight: 700, pb: 1 }}>Triple Captain</Typography>
+      <Typography sx={{ pb: 1 }}>Triple Captain</Typography>
       <CPlayer player={tc.player} />
     </Stack>
   );

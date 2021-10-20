@@ -1,17 +1,75 @@
-import { Button, IconButton, Stack } from "@mui/material";
-import { FC, useContext } from "react";
+import { Button, IconButton, Stack, Typography } from "@mui/material";
+import { FC, useCallback, useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import CPoll from "../components/present/CPoll";
-import { PollContext } from "../contexts/PollProvider";
+import { VotesContext } from "../contexts/VotesProvider";
 import { AddBox } from "@mui/icons-material";
 import { CLoadingPoll } from "../components/loading/CLoadingPoll";
+import Poll from "../logic/Poll";
+import { fetchPolls } from "../api/Polls";
+import { fontSizes } from "../theme/fontSizes";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Box } from "@mui/system";
+import { getUserPollVotes } from "../api/Votes";
+import { AuthContext } from "../contexts/AuthProvider";
+import toast from "react-hot-toast";
 
 interface PPollsProps {}
 
 const PPolls: FC<PPollsProps> = () => {
-  const { polls, loading, error, errorMessage } = useContext(PollContext);
   const history = useHistory();
+  const [polls, setPolls] = useState([] as Poll[]);
+  const [error, setError] = useState({
+    error: false,
+    errorMessage: "",
+  });
+  const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const { addVoteCount, addUserVotes } = useContext(VotesContext);
+  const { isAuthenticated, getToken } = useContext(AuthContext);
+  const getPaginatedPolls = async (startDate: Date, limit: number) => {
+    try {
+      const {
+        polls: newPolls,
+        hasMore,
+        voteCounts,
+      } = await fetchPolls(startDate, limit);
+      console.log(voteCounts);
+      voteCounts.map((v) => addVoteCount(v));
+      console.log(newPolls);
+      setLoading(false);
 
+      setPolls((prevPolls) => prevPolls.concat(newPolls));
+      setHasMore(hasMore);
+    } catch (error: any) {
+      console.log(error);
+      setLoading(false);
+      setError({
+        error: true,
+        errorMessage: error.message,
+      });
+    }
+  };
+  useEffect(() => {
+    const fetchUserVotes = async () => {
+      try {
+        const userPollVotes = await getUserPollVotes(
+          await getToken(),
+          polls.map((p) => p.id)
+        );
+        addUserVotes(userPollVotes);
+      } catch (error: any) {
+        toast.error(error.message);
+      }
+    };
+    if (isAuthenticated()) {
+      fetchUserVotes();
+    }
+  }, [polls]);
+  useEffect(() => {
+    setPolls([]);
+    getPaginatedPolls(new Date(), 10);
+  }, []);
   return (
     <Stack spacing={1} sx={{ mb: 6 }}>
       <div
@@ -21,12 +79,12 @@ const PPolls: FC<PPollsProps> = () => {
           alignItems: "baseline",
         }}
       >
-        <h2>Polls</h2>
+        <h4 style={{ fontSize: fontSizes[3] }}>Polls</h4>
         <IconButton onClick={() => history.push("/create")}>
           <AddBox />
         </IconButton>
       </div>
-      {polls.length === 0 && (
+      {!loading && !error.error && polls.length === 0 && (
         <div
           style={{
             display: "flex",
@@ -46,20 +104,53 @@ const PPolls: FC<PPollsProps> = () => {
           </Button>
         </div>
       )}
-      {error ? (
+      {!loading && error.error && (
         <Stack spacing={0.5} sx={{ pt: 100, textAlign: "center" }}>
           <h4>Sorry, unexpected error</h4>
           <small>We are working on solving the problem. Be back soon</small>
         </Stack>
-      ) : (
-        <Stack spacing={2}>
-          {loading
-            ? new Array(4)
-                .fill(null)
-                .map((_, index) => <CLoadingPoll key={index} />)
-            : polls.map((poll) => <CPoll key={poll.id} poll={poll} />)}
-        </Stack>
       )}
+      <InfiniteScroll
+        dataLength={polls.length}
+        next={async () => {
+          await getPaginatedPolls(
+            new Date(polls[polls.length - 1].createdAt),
+            10
+          );
+        }}
+        hasMore={hasMore}
+        loader={<h4>Loading...</h4>}
+        endMessage={
+          polls.length !== 0 && (
+            <Stack spacing={1} sx={{ textAlign: "center", py: 3 }}>
+              <Typography>Yay! That's all for now</Typography>
+              <Typography>Refresh for newer posts</Typography>
+              <Button
+                onClick={async () => {
+                  setPolls([]);
+                  setLoading(true);
+                  await getPaginatedPolls(new Date(), 10);
+                }}
+              >
+                Refresh
+              </Button>
+            </Stack>
+          )
+        }
+      >
+        <Stack spacing={5}>
+          {!error.error &&
+            loading &&
+            new Array(4)
+              .fill(null)
+              .map((_, index) => <CLoadingPoll key={index} />)}
+          {!error.error &&
+            !loading &&
+            polls.map((poll, index) => (
+              <CPoll key={poll.id + index} poll={poll} />
+            ))}
+        </Stack>
+      </InfiniteScroll>
     </Stack>
   );
 };

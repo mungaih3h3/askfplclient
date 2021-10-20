@@ -1,25 +1,62 @@
 import { Button, IconButton, Stack } from "@mui/material";
-import { FC, useContext } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import CPoll from "../components/present/CPoll";
-import { PollContext } from "../contexts/PollProvider";
 import { WithAuthentication } from "../HOC/WithAuthentication";
-import { Explore, AddBox } from "@mui/icons-material";
+import { Explore, AddBox, Logout } from "@mui/icons-material";
+import Poll from "../logic/Poll";
+import { fetchUserPolls } from "../api/Polls";
+import { AuthContext } from "../contexts/AuthProvider";
+import toast from "react-hot-toast";
+import { CLoadingPoll } from "../components/loading/CLoadingPoll";
+import { fontSizes } from "../theme/fontSizes";
 interface PUserPollsProps {}
 
 const PUserPolls: FC<PUserPollsProps> = () => {
-  const { userPolls } = useContext(PollContext);
   const history = useHistory();
+  const [userPolls, setUserPolls] = useState([] as Poll[]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState({
+    error: false,
+    errorMessage: "",
+  });
+  const { getToken, logOut } = useContext(AuthContext);
+  useEffect(() => {
+    const getPolls = async () => {
+      try {
+        const polls = await fetchUserPolls(await getToken());
+        setUserPolls(polls);
+        setLoading(false);
+      } catch (error: any) {
+        setLoading(false);
+        console.log(error);
+
+        setError({
+          error: true,
+          errorMessage: error.message,
+        });
+        toast.error(error.message);
+      }
+    };
+    getPolls();
+  }, []);
   return (
     <Stack spacing={1}>
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "baseline",
+          alignItems: "center",
         }}
       >
-        <h2>User polls</h2>
+        <IconButton
+          onClick={async () => {
+            await logOut();
+          }}
+        >
+          <Logout />
+        </IconButton>
+        <h2 style={{ fontSize: fontSizes[3] }}>User polls</h2>
         <IconButton
           onClick={() => {
             history.push("/");
@@ -28,7 +65,13 @@ const PUserPolls: FC<PUserPollsProps> = () => {
           <Explore />
         </IconButton>
       </div>
-      {userPolls.length === 0 && (
+      {error.error && (
+        <Stack spacing={0.5} sx={{ pt: 100, textAlign: "center" }}>
+          <h4>Sorry, unexpected error</h4>
+          <small>We are working on solving the problem. Be back soon</small>
+        </Stack>
+      )}
+      {!error.error && !loading && userPolls.length === 0 && (
         <div
           style={{
             display: "flex",
@@ -49,9 +92,16 @@ const PUserPolls: FC<PUserPollsProps> = () => {
           </Button>
         </div>
       )}
-      {userPolls.map((poll) => (
-        <CPoll key={poll.id} poll={poll} />
-      ))}
+      <Stack spacing={5}>
+        {!error.error &&
+          loading &&
+          new Array(5)
+            .fill(null)
+            .map((_, index) => <CLoadingPoll key={index} />)}
+        {!error.error &&
+          !loading &&
+          userPolls.map((poll) => <CPoll key={poll.id} poll={poll} />)}
+      </Stack>
     </Stack>
   );
 };

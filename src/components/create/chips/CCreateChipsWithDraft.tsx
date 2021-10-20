@@ -25,9 +25,7 @@ const CCreateChipsWithDraft: FC<CCreateChipsWithDraftProps> = ({
           justifyContent: "space-between",
         }}
       >
-        <Typography sx={{ fontWeight: 700 }}>
-          {chip.chipType.toUpperCase()}
-        </Typography>
+        <Typography sx={{}}>{chip.chipType.toUpperCase()}</Typography>
 
         <Button onClick={() => setCreateDraftDialog(true)}>Draft</Button>
       </Box>

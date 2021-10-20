@@ -17,7 +17,7 @@ interface CTransferProps {
 const CTransfer: FC<CTransferProps> = ({ transfer }) => {
   return (
     <Stack spacing={2}>
-      <Typography sx={{ fontWeight: 700 }}>Transfer</Typography>
+      <Typography sx={{}}>Transfer</Typography>
       <Stack
         spacing={1}
         direction="row"

@@ -17,7 +17,7 @@ const CCreateBenchAndPlay: FC<CCreateBenchAndPlayProps> = ({
   const [btpt, setBtpt] = useState(initialBtpt);
   return (
     <Stack spacing={1}>
-      <Typography sx={{ fontWeight: 700 }}>Bench and play</Typography>
+      <Typography sx={{}}>Bench and play</Typography>
       <Stack spacing={2}>
         <CCreatePlayer
           extra="(in)"

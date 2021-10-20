@@ -20,7 +20,7 @@ const CChipsWithDraft: FC<CChipsWithDraftProps> = ({ chip }) => {
           justifyContent: "space-between",
         }}
       >
-        <Typography sx={{ fontWeight: 700, pb: 1 }}>{chip.chipType}</Typography>
+        <Typography sx={{ pb: 1 }}>{chip.chipType}</Typography>
         <Button
           onClick={(e) => {
             e.stopPropagation();

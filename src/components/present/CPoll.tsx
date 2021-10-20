@@ -11,19 +11,23 @@ import { Box } from "@mui/system";
 import { formatDistanceToNow } from "date-fns";
 import { FC, useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { PollContext } from "../../contexts/PollProvider";
+import { VotesContext } from "../../contexts/VotesProvider";
 import Poll from "../../logic/Poll";
 import { fontSizes } from "../../theme/fontSizes";
 import COption from "./COption";
 import { Comment } from "@mui/icons-material";
+import { AuthContext } from "../../contexts/AuthProvider";
+import toast from "react-hot-toast";
 
 interface CPollProps {
   poll: Poll;
 }
 
 const CPoll: FC<CPollProps> = ({ poll }) => {
-  const { userVotes, vote, voteCount } = useContext(PollContext);
+  const { userVotes, vote, voteCount } = useContext(VotesContext);
+  const { isAuthenticated } = useContext(AuthContext);
   const history = useHistory();
+
   return (
     <Card variant="outlined">
       <CardContent>
@@ -47,7 +51,7 @@ const CPoll: FC<CPollProps> = ({ poll }) => {
                 })}
               </span>
             </Stack>
-            <Typography sx={{ fontWeight: 700, fontSize: fontSizes[5] }}>
+            <Typography sx={{ fontSize: fontSizes[4] }}>
               {poll.title}
             </Typography>
           </Stack>
@@ -66,7 +70,13 @@ const CPoll: FC<CPollProps> = ({ poll }) => {
                 justifyContent: "space-between",
                 alignItems: "flex-start",
               }}
-              onClick={() => vote(poll.id, option.id)}
+              onClick={async () => {
+                if (!isAuthenticated()) {
+                  toast.error("Please sign in to vote");
+                } else {
+                  vote(poll.id, option.id);
+                }
+              }}
             >
               <Box sx={{ flexGrow: 1 }}>
                 <COption option={option} />
@@ -74,8 +84,7 @@ const CPoll: FC<CPollProps> = ({ poll }) => {
               <Typography
                 sx={{ fontSize: fontSizes[5], p: 3, fontWeight: 700 }}
               >
-                {(voteCount.get(poll.id)?.get(option.id) || 0) +
-                  Number(userVotes.get(poll.id) === option.id)}
+                {voteCount.get(poll.id)?.get(option.id) || 0}
               </Typography>
             </Paper>
           ))}

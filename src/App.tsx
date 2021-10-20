@@ -1,10 +1,10 @@
+import React from "react";
 import { Container, CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
-import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthProvider";
 import { PlayersProvider } from "./contexts/PlayersProvider";
-import { PollProvider } from "./contexts/PollProvider";
+import { VotesProvider } from "./contexts/VotesProvider";
 import routes from "./pages/routes";
 import { Toaster } from "react-hot-toast";
 import theme from "./theme/theme";
@@ -18,13 +18,13 @@ function App() {
           <Container maxWidth={"sm"}>
             <Toaster />
             <AuthProvider>
-              <PollProvider>
+              <VotesProvider>
                 <PlayersProvider>
                   {routes.map(({ path, Component }) => (
                     <Route exact key={path} path={path} component={Component} />
                   ))}
                 </PlayersProvider>
-              </PollProvider>
+              </VotesProvider>
             </AuthProvider>
           </Container>
         </Switch>

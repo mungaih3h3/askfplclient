@@ -5,7 +5,9 @@ import {
   Paper,
   Stack,
   TextField,
+  CardHeader,
   Typography,
+  IconButton,
 } from "@mui/material";
 import produce from "immer";
 import { FC, useContext, useState } from "react";
@@ -16,7 +18,7 @@ import CCreateOption from "./CCreateOption";
 import toast from "react-hot-toast";
 import { Box } from "@mui/system";
 import { grey } from "@mui/material/colors";
-import { AddBox } from "@mui/icons-material";
+import { AddBox, Delete } from "@mui/icons-material";
 interface CCreatePollProps {
   onCreate: (poll: Poll) => any;
 }
@@ -60,21 +62,42 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
             </Box>
             <Stack spacing={2}>
               {poll.options.map((option, index) => (
-                <CCreateOption
-                  key={option.id}
-                  initialOption={option}
-                  onChange={(newOption) => {
-                    setPoll(
-                      produce((draft) => {
-                        draft.options[index] = newOption;
-                      })
-                    );
-                  }}
-                />
+                <Card>
+                  <CardHeader
+                    title={`Option #${index + 1}`}
+                    sx={{ pb: 0 }}
+                    action={
+                      <IconButton
+                        onClick={() => {
+                          setPoll(
+                            produce((draft) => {
+                              draft.options.splice(index, 1);
+                            })
+                          );
+                        }}
+                      >
+                        <Delete />
+                      </IconButton>
+                    }
+                  />
+                  <CardContent>
+                    <CCreateOption
+                      key={option.id}
+                      initialOption={option}
+                      onChange={(newOption) => {
+                        setPoll(
+                          produce((draft) => {
+                            draft.options[index] = newOption;
+                          })
+                        );
+                      }}
+                    />
+                  </CardContent>
+                </Card>
               ))}
               <Button
                 sx={{
-                  backgroundColor: grey[900],
+                  backgroundColor: "rgba(0,0,0,0)",
                   borderRadius: 0,
                   m: 1,
                   color: grey[100],
@@ -88,7 +111,7 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
                   );
                 }}
               >
-                Add Option
+                option
               </Button>
             </Stack>
           </Paper>

@@ -19,7 +19,7 @@ const CCreateTransfer: FC<CCreateTransferProps> = ({
   const [transfer, setTransfer] = useState(initialTransfer);
   return (
     <Stack spacing={1}>
-      <Typography sx={{ fontWeight: 700 }}>Transfer</Typography>
+      <Typography sx={{}}>Transfer</Typography>
       <Stack spacing={2}>
         <CCreatePlayer
           extra="(out)"

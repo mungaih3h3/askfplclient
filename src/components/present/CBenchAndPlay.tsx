@@ -11,7 +11,7 @@ interface CBenchAndPlayProps {
 const CBenchAndPlay: FC<CBenchAndPlayProps> = ({ btpt }) => {
   return (
     <Stack spacing={2}>
-      <Typography sx={{ fontWeight: 700 }}>Bench and play</Typography>
+      <Typography sx={{}}>Bench and play</Typography>
       <Stack
         spacing={1}
         direction="row"
