@@ -15,3 +15,28 @@ export async function authenticate(
     throw error;
   }
 }
+
+export async function register(
+  username: string,
+  password: string,
+  email: string
+): Promise<string> {
+  try {
+    const {
+      data: { success, message, token },
+    } = await apiInstance.post<{
+      success: boolean;
+      message: string;
+      token: string;
+    }>("/signup", {
+      username,
+      password,
+      email,
+    });
+    if (!success) throw new Error(message);
+    return token;
+  } catch (error: any) {
+    console.log(error);
+    throw error;
+  }
+}

@@ -1,7 +1,7 @@
 import { decode } from "jsonwebtoken";
 import { createContext, FC, useEffect, useLayoutEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { authenticate } from "../api/Auth";
+import { authenticate, register } from "../api/Auth";
 import User from "../logic/User";
 
 type TAuthContext = {
@@ -10,6 +10,7 @@ type TAuthContext = {
   signIn: (username: string, password: string) => Promise<any>;
   logOut: () => Promise<any>;
   getToken: () => Promise<string>;
+  signUp: (name: string, email: string, password: string) => Promise<any>;
 };
 
 export const AuthContext = createContext<TAuthContext>({
@@ -22,6 +23,7 @@ export const AuthContext = createContext<TAuthContext>({
     throw new Error("Unautheticated");
   },
   logOut: async () => {},
+  signUp: async () => {},
 });
 
 export const AuthProvider: FC = ({ children }) => {
@@ -35,8 +37,15 @@ export const AuthProvider: FC = ({ children }) => {
   };
   const isAuthenticated = () => Boolean(user);
   const signIn = async (name: string, password: string) => {
+    const token = await authenticate(name, password);
+    await localStorage.setItem("token", token);
+    const { username } = decode(token) as any;
+    setUser(new User(username));
+    setToken(token);
+  };
+  const signUp = async (name: string, email: string, password: string) => {
     try {
-      const token = await authenticate(name, password);
+      const token = await register(name, email, password);
       await localStorage.setItem("token", token);
       const { username } = decode(token) as any;
       setUser(new User(username));
@@ -85,6 +94,7 @@ export const AuthProvider: FC = ({ children }) => {
         signIn,
         getToken,
         logOut,
+        signUp,
       }}
     >
       {children}

@@ -13,6 +13,7 @@ import { Box } from "@mui/system";
 import { getUserPollVotes } from "../api/Votes";
 import { AuthContext } from "../contexts/AuthProvider";
 import toast from "react-hot-toast";
+import { CAuthDialog } from "../components/auth/CAuth";
 
 interface PPollsProps {}
 
@@ -25,8 +26,9 @@ const PPolls: FC<PPollsProps> = () => {
   });
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
-  const { addVoteCount, addUserVotes } = useContext(VotesContext);
+  const { addVoteCounts, addUserVotes } = useContext(VotesContext);
   const { isAuthenticated, getToken } = useContext(AuthContext);
+  const [authDialog, setAuthDialog] = useState(false);
   const getPaginatedPolls = async (startDate: Date, limit: number) => {
     try {
       const {
@@ -35,7 +37,7 @@ const PPolls: FC<PPollsProps> = () => {
         voteCounts,
       } = await fetchPolls(startDate, limit);
       console.log(voteCounts);
-      voteCounts.map((v) => addVoteCount(v));
+      addVoteCounts(voteCounts);
       console.log(newPolls);
       setLoading(false);
 
@@ -80,9 +82,19 @@ const PPolls: FC<PPollsProps> = () => {
         }}
       >
         <h4 style={{ fontSize: fontSizes[3] }}>Polls</h4>
-        <IconButton onClick={() => history.push("/create")}>
-          <AddBox />
-        </IconButton>
+        {isAuthenticated() ? (
+          <IconButton onClick={() => history.push("/create")}>
+            <AddBox />
+          </IconButton>
+        ) : (
+          <Button
+            size="small"
+            variant="contained"
+            onClick={() => setAuthDialog(true)}
+          >
+            Login
+          </Button>
+        )}
       </div>
       {!loading && !error.error && polls.length === 0 && (
         <div
@@ -151,6 +163,11 @@ const PPolls: FC<PPollsProps> = () => {
             ))}
         </Stack>
       </InfiniteScroll>
+      <CAuthDialog
+        open={authDialog}
+        onClose={() => setAuthDialog(false)}
+        onAuth={() => setAuthDialog(false)}
+      />
     </Stack>
   );
 };

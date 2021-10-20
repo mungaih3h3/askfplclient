@@ -10,6 +10,8 @@ import { AuthContext } from "../contexts/AuthProvider";
 import toast from "react-hot-toast";
 import { CLoadingPoll } from "../components/loading/CLoadingPoll";
 import { fontSizes } from "../theme/fontSizes";
+import { getUserPollVotes } from "../api/Votes";
+import { VotesContext } from "../contexts/VotesProvider";
 interface PUserPollsProps {}
 
 const PUserPolls: FC<PUserPollsProps> = () => {
@@ -20,7 +22,8 @@ const PUserPolls: FC<PUserPollsProps> = () => {
     error: false,
     errorMessage: "",
   });
-  const { getToken, logOut } = useContext(AuthContext);
+  const { getToken, logOut, isAuthenticated } = useContext(AuthContext);
+  const { addVoteCounts, addUserVotes } = useContext(VotesContext);
   useEffect(() => {
     const getPolls = async () => {
       try {
@@ -40,6 +43,22 @@ const PUserPolls: FC<PUserPollsProps> = () => {
     };
     getPolls();
   }, []);
+  useEffect(() => {
+    const fetchUserVotes = async () => {
+      try {
+        const userPollVotes = await getUserPollVotes(
+          await getToken(),
+          userPolls.map((p) => p.id)
+        );
+        addUserVotes(userPollVotes);
+      } catch (error: any) {
+        toast.error(error.message);
+      }
+    };
+    if (isAuthenticated()) {
+      fetchUserVotes();
+    }
+  }, [userPolls]);
   return (
     <Stack spacing={1}>
       <div

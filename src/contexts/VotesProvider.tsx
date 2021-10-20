@@ -11,7 +11,7 @@ type TVotesContext = {
   error: boolean;
   errorMessage: string;
   vote: (pollId: string, optionId: string) => any;
-  addVoteCount: (voteCount: Map<string, Map<string, number>>) => any;
+  addVoteCounts: (voteCount: Map<string, Map<string, number>>[]) => any;
   addUserVotes: (v: Map<string, string>) => any;
 };
 
@@ -22,7 +22,7 @@ export const VotesContext = createContext<TVotesContext>({
   error: false,
   errorMessage: "",
   vote: () => {},
-  addVoteCount: () => {},
+  addVoteCounts: () => {},
   addUserVotes: () => {},
 });
 
@@ -39,6 +39,11 @@ export const VotesProvider: FC = ({ children }) => {
   const { getToken } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const vote = (pollId: string, optionId: string) => {
+    setUserVotes(
+      produce((draft) => {
+        draft.set(pollId, optionId);
+      })
+    );
     setVoteCount(
       produce((draft) => {
         //decrement past vote
@@ -53,11 +58,6 @@ export const VotesProvider: FC = ({ children }) => {
           ?.set(optionId, (draft.get(pollId)?.get(optionId) || 0) + 1);
       })
     );
-    setUserVotes(
-      produce((draft) => {
-        draft.set(pollId, optionId);
-      })
-    );
     getToken()
       .then((token) => {
         castVote(token, pollId, optionId).catch((error: any) =>
@@ -66,8 +66,9 @@ export const VotesProvider: FC = ({ children }) => {
       })
       .catch((error: any) => toast.error(error.message));
   };
-  const addVoteCount = (v: Map<string, Map<string, number>>) => {
-    const newMap = new Map([...v].concat([...voteCount]));
+  const addVoteCounts = (v: Map<string, Map<string, number>>[]) => {
+    const g = v.flatMap((m) => [...m]);
+    const newMap = new Map(g.concat([...voteCount]));
     setVoteCount(newMap);
   };
   const addUserVotes = (v: Map<string, string>) => {
@@ -83,7 +84,7 @@ export const VotesProvider: FC = ({ children }) => {
         loading,
         error: error.error,
         errorMessage: error.errorMessage,
-        addVoteCount,
+        addVoteCounts,
         addUserVotes,
       }}
     >
