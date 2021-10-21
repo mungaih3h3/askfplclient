@@ -2,6 +2,7 @@ import { decode } from "jsonwebtoken";
 import { createContext, FC, useEffect, useLayoutEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { authenticate, register } from "../api/Auth";
+import Publisher from "../logic/Publisher";
 import User from "../logic/User";
 
 type TAuthContext = {
@@ -66,7 +67,9 @@ export const AuthProvider: FC = ({ children }) => {
   const logOut = async () => {
     try {
       await localStorage.removeItem("token");
+      Publisher.publish("logout", undefined);
     } catch (error) {}
+
     setUser(undefined);
     setToken("");
   };
