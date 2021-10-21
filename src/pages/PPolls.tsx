@@ -10,7 +10,14 @@ import {
   ListItemText,
   Paper,
 } from "@mui/material";
-import { FC, useContext, useEffect, useRef, useState } from "react";
+import {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useHistory } from "react-router-dom";
 import CPoll from "../components/present/CPoll";
 import { VotesContext } from "../contexts/VotesProvider";
@@ -52,31 +59,31 @@ const PPolls: FC<PPollsProps> = () => {
   const [authDialog, setAuthDialog] = useState(false);
   const [topMenu, setTopMenu] = useState(false);
   const topMenuAnchor = useRef(null);
-  const getPaginatedPolls = async (
-    startDate: Date,
-    limit: number
-  ): Promise<Poll[]> => {
-    try {
-      const {
-        polls: newPolls,
-        hasMore,
-        voteCounts,
-      } = await fetchPolls(startDate, limit);
-      addVoteCounts(voteCounts);
-      setLoading(false);
-      setPolls((prevPolls) => prevPolls.concat(newPolls));
-      setHasMore(hasMore);
-      return newPolls;
-    } catch (error: any) {
-      console.log(error);
-      setLoading(false);
-      setError({
-        error: true,
-        errorMessage: error.message,
-      });
-      return [];
-    }
-  };
+  const getPaginatedPolls = useCallback(
+    async (startDate: Date, limit: number): Promise<Poll[]> => {
+      try {
+        const {
+          polls: newPolls,
+          hasMore,
+          voteCounts,
+        } = await fetchPolls(startDate, limit);
+        addVoteCounts(voteCounts);
+        setLoading(false);
+        setPolls((prevPolls) => prevPolls.concat(newPolls));
+        setHasMore(hasMore);
+        return newPolls;
+      } catch (error: any) {
+        console.log(error);
+        setLoading(false);
+        setError({
+          error: true,
+          errorMessage: error.message,
+        });
+        return [];
+      }
+    },
+    []
+  );
   const fetchUserVotes = async () => {
     try {
       const userPollVotes = await getUserPollVotes(
@@ -97,16 +104,19 @@ const PPolls: FC<PPollsProps> = () => {
     setPolls([]);
     getPaginatedPolls(new Date(), 10);
   }, []);
+
   useEffect(() => {
     const fnId = Publisher.subscribeTo("login", () => {
       fetchUserVotes()
-        .then(() => console.log("fetched"))
+        .then(() => {
+          console.log("fetched");
+        })
         .catch(console.log);
     });
     return () => {
       Publisher.unsubscribeTo("login", fnId);
     };
-  }, []);
+  }, [polls]);
   return (
     <Stack spacing={1} sx={{ mb: 6 }}>
       <Box
