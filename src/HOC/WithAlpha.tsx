@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { green, lime } from "@mui/material/colors";
-import { FC, useContext, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { ApiMap } from "../api/ApiMap";
 import { ApiContext } from "../contexts/ApiProvider";
@@ -19,11 +19,20 @@ import { AuthContext } from "../contexts/AuthProvider";
 
 export const WithAlpha = (Component: FC) => {
   const Child = ({ ...props }) => {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const [openFeedback, setOpenFeedback] = useState(false);
     const [feedback, setFeedback] = useState("");
     const { isAuthenticated } = useContext(AuthContext);
     const { getInstance } = useContext(ApiContext);
+    useEffect(() => {
+      try {
+        const t = localStorage.getItem("hasSeenAlphaMessage");
+        if (!t) setOpen(true);
+        localStorage.setItem("hasSeenAlphaMessage", "true");
+      } catch (error) {
+        setOpen(true);
+      }
+    }, []);
     return (
       <>
         <Component {...props} />

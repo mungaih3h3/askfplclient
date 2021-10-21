@@ -16,6 +16,7 @@ import { ApiMap } from "../api/ApiMap";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Box } from "@mui/system";
 import { grey } from "@mui/material/colors";
+import Publisher from "../logic/Publisher";
 
 interface PUserPollsProps {}
 
@@ -57,22 +58,27 @@ const PUserPolls: FC<PUserPollsProps> = () => {
     setUserPolls([]);
     getPaginatedPolls(new Date(), 10);
   }, []);
-  useEffect(() => {
-    const fetchUserVotes = async () => {
-      try {
-        const userPollVotes = await getUserPollVotes(
-          await getToken(),
-          userPolls.map((p) => p.id)
-        );
-        addUserVotes(userPollVotes);
-      } catch (error: any) {
-        toast.error(error.message);
-      }
-    };
-    if (isAuthenticated()) {
-      fetchUserVotes();
+  const fetchUserVotes = async () => {
+    try {
+      const userPollVotes = await getUserPollVotes(
+        await getToken(),
+        userPolls.map((p) => p.id)
+      );
+      addUserVotes(userPollVotes);
+    } catch (error: any) {
+      toast.error(error.message);
     }
+  };
+  useEffect(() => {
+    fetchUserVotes();
   }, [userPolls]);
+  useEffect(() => {
+    Publisher.subscribeTo("login", () => {
+      fetchUserVotes()
+        .then(() => console.log("fetched user votes"))
+        .catch(console.log);
+    });
+  }, []);
   return (
     <Stack spacing={2}>
       <Box

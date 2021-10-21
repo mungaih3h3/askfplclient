@@ -99,7 +99,9 @@ const PPolls: FC<PPollsProps> = () => {
   }, []);
   useEffect(() => {
     const fnId = Publisher.subscribeTo("login", () => {
-      fetchUserVotes();
+      fetchUserVotes()
+        .then(() => console.log("fetched"))
+        .catch(console.log);
     });
     return () => {
       Publisher.unsubscribeTo("login", fnId);
@@ -169,7 +171,12 @@ const PPolls: FC<PPollsProps> = () => {
                 <ListItemText>My Polls</ListItemText>
               </MenuItem>
               <Divider />
-              <MenuItem onClick={() => logOut()}>
+              <MenuItem
+                onClick={() => {
+                  setTopMenu(false);
+                  logOut();
+                }}
+              >
                 <ListItemIcon>
                   <Logout fontSize="small" />
                 </ListItemIcon>
