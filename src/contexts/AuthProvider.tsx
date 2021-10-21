@@ -41,6 +41,7 @@ export const AuthProvider: FC = ({ children }) => {
     const token = await authenticate(name, password);
     await localStorage.setItem("token", token);
     const { username } = decode(token) as any;
+    Publisher.publish("login", undefined);
     setUser(new User(username));
     setToken(token);
   };

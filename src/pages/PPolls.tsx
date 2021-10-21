@@ -34,6 +34,7 @@ import { CAuthDialog } from "../components/auth/CAuth";
 import { Box } from "@mui/system";
 import { grey, lime } from "@mui/material/colors";
 import { WithAlpha } from "../HOC/WithAlpha";
+import Publisher from "../logic/Publisher";
 
 interface PPollsProps {}
 
@@ -95,6 +96,14 @@ const PPolls: FC<PPollsProps> = () => {
   useEffect(() => {
     setPolls([]);
     getPaginatedPolls(new Date(), 10);
+  }, []);
+  useEffect(() => {
+    const fnId = Publisher.subscribeTo("login", () => {
+      fetchUserVotes();
+    });
+    return () => {
+      Publisher.unsubscribeTo("login", fnId);
+    };
   }, []);
   return (
     <Stack spacing={1} sx={{ mb: 6 }}>

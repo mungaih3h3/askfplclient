@@ -1,12 +1,9 @@
 import produce from "immer";
 import { createContext, FC, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { apiInstance } from "../api/ApiInstance";
 import { ApiMap } from "../api/ApiMap";
-import { castVote } from "../api/Votes";
 import Publisher from "../logic/Publisher";
 import { ApiContext } from "./ApiProvider";
-import { AuthContext } from "./AuthProvider";
 type TVotesContext = {
   userVotes: Map<string, string>;
   voteCount: Map<string, Map<string, number>>;
@@ -38,7 +35,6 @@ export const VotesProvider: FC = ({ children }) => {
   const [voteCount, setVoteCount] = useState(
     new Map<string, Map<string, number>>()
   );
-  const { getToken } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const { getInstance } = useContext(ApiContext);
   useEffect(() => {
