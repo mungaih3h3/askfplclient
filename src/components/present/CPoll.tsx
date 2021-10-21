@@ -72,7 +72,7 @@ const CPoll: FC<CPollProps> = ({ poll }) => {
               }}
               onClick={async () => {
                 if (!isAuthenticated()) {
-                  toast.error("Please sign in to vote");
+                  toast.error("Please log in to vote");
                 } else {
                   vote(poll.id, option.id);
                 }

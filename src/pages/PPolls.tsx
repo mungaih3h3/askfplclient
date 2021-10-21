@@ -8,6 +8,7 @@ import {
   Divider,
   ListItemIcon,
   ListItemText,
+  Paper,
 } from "@mui/material";
 import { FC, useContext, useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -31,7 +32,8 @@ import { AuthContext } from "../contexts/AuthProvider";
 import toast from "react-hot-toast";
 import { CAuthDialog } from "../components/auth/CAuth";
 import { Box } from "@mui/system";
-import { grey } from "@mui/material/colors";
+import { grey, lime } from "@mui/material/colors";
+import { WithAlpha } from "../HOC/WithAlpha";
 
 interface PPollsProps {}
 
@@ -104,16 +106,33 @@ const PPolls: FC<PPollsProps> = () => {
           py: 2,
         }}
       >
-        <Typography
-          sx={{
-            fontSize: fontSizes[4],
-            px: 2,
-            fontWeight: 600,
-            color: grey[500],
-          }}
+        <Stack
+          spacing={2}
+          direction="row"
+          sx={{ display: "flex", alignItems: "center" }}
         >
-          Polls
-        </Typography>
+          <Typography
+            sx={{
+              fontSize: fontSizes[4],
+              px: 2,
+              fontWeight: 600,
+              color: grey[500],
+            }}
+          >
+            Polls
+          </Typography>
+          <Paper variant="outlined" sx={{ bgcolor: lime[300], py: 0, px: 1 }}>
+            <Typography
+              sx={{
+                color: lime[900],
+                fontSize: fontSizes[0],
+              }}
+            >
+              Alpha
+            </Typography>
+          </Paper>
+        </Stack>
+
         {isAuthenticated() ? (
           <div>
             <IconButton ref={topMenuAnchor} onClick={() => setTopMenu(true)}>
@@ -235,4 +254,4 @@ const PPolls: FC<PPollsProps> = () => {
   );
 };
 
-export default PPolls;
+export default WithAlpha(PPolls);
