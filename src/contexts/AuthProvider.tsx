@@ -44,15 +44,11 @@ export const AuthProvider: FC = ({ children }) => {
     setToken(token);
   };
   const signUp = async (name: string, email: string, password: string) => {
-    try {
-      const token = await register(name, email, password);
-      await localStorage.setItem("token", token);
-      const { username } = decode(token) as any;
-      setUser(new User(username));
-      setToken(token);
-    } catch (error: any) {
-      toast.error(error.message);
-    }
+    const token = await register(name, password, email);
+    await localStorage.setItem("token", token);
+    const { username } = decode(token) as any;
+    setUser(new User(username));
+    setToken(token);
   };
   const getToken = () => {
     const token = localStorage.getItem("token");
@@ -68,7 +64,9 @@ export const AuthProvider: FC = ({ children }) => {
     }
   };
   const logOut = async () => {
-    await localStorage.removeItem("token");
+    try {
+      await localStorage.removeItem("token");
+    } catch (error) {}
     setUser(undefined);
     setToken("");
   };

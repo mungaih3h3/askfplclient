@@ -55,6 +55,8 @@ const CSignIn: FC<CSignInProps> = ({ onAuth = () => {} }) => {
         disabled={loading}
         onClick={async () => {
           try {
+            if (user.username.length < 2) throw new Error("Invalid username");
+            if (user.password.length < 2) throw new Error("Invalid password");
             setLoading(true);
             await signIn(user.username, user.password);
             setLoading(false);
