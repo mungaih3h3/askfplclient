@@ -1,3 +1,4 @@
+import { AxiosInstance } from "axios";
 import { apiInstance } from "./ApiInstance";
 
 type VoteFS = {
@@ -34,18 +35,17 @@ export async function getUserPollVotes(
 }
 
 export async function castVote(
-  token: string,
+  apiInstance: AxiosInstance,
   pollId: string,
   optionId: string
 ) {
   try {
     const {
       data: { success, message },
-    } = await apiInstance.post<{ success: boolean; message: string }>(
-      "/vote",
-      { pollId, optionId },
-      { headers: { authorization: token } }
-    );
+    } = await apiInstance.post<{ success: boolean; message: string }>("/vote", {
+      pollId,
+      optionId,
+    });
 
     if (!success) throw new Error(message);
   } catch (error: any) {

@@ -9,7 +9,7 @@ type TAuthContext = {
   isAuthenticated: () => boolean;
   signIn: (username: string, password: string) => Promise<any>;
   logOut: () => Promise<any>;
-  getToken: () => Promise<string>;
+  getToken: () => string;
   signUp: (name: string, email: string, password: string) => Promise<any>;
 };
 
@@ -19,7 +19,7 @@ export const AuthContext = createContext<TAuthContext>({
   },
   isAuthenticated: () => false,
   signIn: async () => {},
-  getToken: async () => {
+  getToken: () => {
     throw new Error("Unautheticated");
   },
   logOut: async () => {},
@@ -54,8 +54,8 @@ export const AuthProvider: FC = ({ children }) => {
       toast.error(error.message);
     }
   };
-  const getToken = async () => {
-    const token = await localStorage.getItem("token");
+  const getToken = () => {
+    const token = localStorage.getItem("token");
     if (!token) {
       setUser(undefined);
       setToken("");

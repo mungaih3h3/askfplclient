@@ -1,3 +1,4 @@
+import { AxiosInstance } from "axios";
 import Poll from "../logic/Poll";
 import { apiInstance } from "./ApiInstance";
 import hydratePoll from "./hydratePoll";
@@ -38,22 +39,32 @@ export async function fetchPolls(
   }
 }
 
-export async function fetchUserPolls(token: string): Promise<Poll[]> {
+export async function fetchUserPolls(
+  apiInstance: AxiosInstance,
+  startDate: Date,
+  limit: number
+): Promise<{
+  polls: Poll[];
+  hasMore: boolean;
+  voteCounts: Map<string, Map<string, number>>[];
+}> {
   try {
     const {
-      data: { polls, success, message },
-    } = (await apiInstance.get("/user/polls", {
-      headers: {
-        authorization: token,
-      },
-    })) as any;
+      data: { polls, success, message, hasMore },
+    } = (await apiInstance.get(`/user/polls/${startDate}/${limit}`)) as any;
     if (!success) {
       throw new Error(message);
     } else {
       console.log(polls);
-      return polls.map((poll: pollServer & { owner: string }) =>
-        hydratePoll(poll)
-      );
+      return {
+        polls: polls.map((poll: pollServer & { owner: string }) =>
+          hydratePoll(poll)
+        ),
+        hasMore,
+        voteCounts: polls.map((poll: any) =>
+          hydrateVoteCount(poll.id, poll.voteCount || {})
+        ),
+      };
     }
   } catch (error) {
     console.log(error);
@@ -61,29 +72,21 @@ export async function fetchUserPolls(token: string): Promise<Poll[]> {
   }
 }
 
-export async function savePoll(token: string, poll: Poll) {
+export async function savePoll(apiInstance: AxiosInstance, poll: Poll) {
   try {
     const { id, options, title, createdAt } = poll;
     const topLevelCommentIds = poll.comments.map((c) => c.id);
     const {
       data: { success, message },
-    } = await apiInstance.post<any, any, { poll: pollServer }>(
-      "/save/poll",
-      {
-        poll: {
-          id,
-          options,
-          title,
-          createdAt,
-          topLevelCommentIds,
-        },
+    } = await apiInstance.post<any, any, { poll: pollServer }>("/save/poll", {
+      poll: {
+        id,
+        options,
+        title,
+        createdAt,
+        topLevelCommentIds,
       },
-      {
-        headers: {
-          authorization: token,
-        },
-      }
-    );
+    });
     if (!success) throw new Error(message);
   } catch (error: any) {
     console.log(error);

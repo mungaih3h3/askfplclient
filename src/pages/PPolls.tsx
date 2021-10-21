@@ -1,19 +1,37 @@
-import { Button, IconButton, Stack, Typography } from "@mui/material";
-import { FC, useCallback, useContext, useEffect, useState } from "react";
+import {
+  Button,
+  IconButton,
+  Stack,
+  Typography,
+  Menu,
+  MenuItem,
+  Divider,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
+import { FC, useContext, useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import CPoll from "../components/present/CPoll";
 import { VotesContext } from "../contexts/VotesProvider";
-import { AddBox } from "@mui/icons-material";
+import {
+  Menu as MenuIcon,
+  AddBox,
+  Logout,
+  Add as AddIcon,
+  ViewStream,
+} from "@mui/icons-material";
+
 import { CLoadingPoll } from "../components/loading/CLoadingPoll";
 import Poll from "../logic/Poll";
 import { fetchPolls } from "../api/Polls";
 import { fontSizes } from "../theme/fontSizes";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Box } from "@mui/system";
 import { getUserPollVotes } from "../api/Votes";
 import { AuthContext } from "../contexts/AuthProvider";
 import toast from "react-hot-toast";
 import { CAuthDialog } from "../components/auth/CAuth";
+import { Box } from "@mui/system";
+import { grey } from "@mui/material/colors";
 
 interface PPollsProps {}
 
@@ -27,22 +45,25 @@ const PPolls: FC<PPollsProps> = () => {
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const { addVoteCounts, addUserVotes } = useContext(VotesContext);
-  const { isAuthenticated, getToken } = useContext(AuthContext);
+  const { isAuthenticated, getToken, logOut } = useContext(AuthContext);
   const [authDialog, setAuthDialog] = useState(false);
-  const getPaginatedPolls = async (startDate: Date, limit: number) => {
+  const [topMenu, setTopMenu] = useState(false);
+  const topMenuAnchor = useRef(null);
+  const getPaginatedPolls = async (
+    startDate: Date,
+    limit: number
+  ): Promise<Poll[]> => {
     try {
       const {
         polls: newPolls,
         hasMore,
         voteCounts,
       } = await fetchPolls(startDate, limit);
-      console.log(voteCounts);
       addVoteCounts(voteCounts);
-      console.log(newPolls);
       setLoading(false);
-
       setPolls((prevPolls) => prevPolls.concat(newPolls));
       setHasMore(hasMore);
+      return newPolls;
     } catch (error: any) {
       console.log(error);
       setLoading(false);
@@ -50,20 +71,21 @@ const PPolls: FC<PPollsProps> = () => {
         error: true,
         errorMessage: error.message,
       });
+      return [];
+    }
+  };
+  const fetchUserVotes = async () => {
+    try {
+      const userPollVotes = await getUserPollVotes(
+        await getToken(),
+        polls.map((p) => p.id)
+      );
+      addUserVotes(userPollVotes);
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
   useEffect(() => {
-    const fetchUserVotes = async () => {
-      try {
-        const userPollVotes = await getUserPollVotes(
-          await getToken(),
-          polls.map((p) => p.id)
-        );
-        addUserVotes(userPollVotes);
-      } catch (error: any) {
-        toast.error(error.message);
-      }
-    };
     if (isAuthenticated()) {
       fetchUserVotes();
     }
@@ -74,18 +96,59 @@ const PPolls: FC<PPollsProps> = () => {
   }, []);
   return (
     <Stack spacing={1} sx={{ mb: 6 }}>
-      <div
-        style={{
+      <Box
+        sx={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "baseline",
+          alignItems: "center",
+          py: 2,
         }}
       >
-        <h4 style={{ fontSize: fontSizes[3] }}>Polls</h4>
+        <Typography
+          sx={{
+            fontSize: fontSizes[4],
+            px: 2,
+            fontWeight: 600,
+            color: grey[500],
+          }}
+        >
+          Polls
+        </Typography>
         {isAuthenticated() ? (
-          <IconButton onClick={() => history.push("/create")}>
-            <AddBox />
-          </IconButton>
+          <div>
+            <IconButton ref={topMenuAnchor} onClick={() => setTopMenu(true)}>
+              <MenuIcon
+                sx={{
+                  color: grey[500],
+                }}
+              />
+            </IconButton>
+            <Menu
+              open={topMenu}
+              anchorEl={topMenuAnchor.current}
+              onClose={() => setTopMenu(false)}
+            >
+              <MenuItem onClick={() => history.push("/create")}>
+                <ListItemIcon>
+                  <AddIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Add Poll</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={() => history.push("/userpolls")}>
+                <ListItemIcon>
+                  <ViewStream fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>My Polls</ListItemText>
+              </MenuItem>
+              <Divider />
+              <MenuItem onClick={() => logOut()}>
+                <ListItemIcon>
+                  <Logout fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Log Out</ListItemText>
+              </MenuItem>
+            </Menu>
+          </div>
         ) : (
           <Button
             size="small"
@@ -95,7 +158,7 @@ const PPolls: FC<PPollsProps> = () => {
             Login
           </Button>
         )}
-      </div>
+      </Box>
       {!loading && !error.error && polls.length === 0 && (
         <div
           style={{

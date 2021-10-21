@@ -1,7 +1,8 @@
-import PComments from "./PComments";
-import PCreatePoll from "./PCreatePoll";
-import PPolls from "./PPolls";
-import PUserPolls from "./PUserPolls";
+import { lazy } from "react";
+const PComments = lazy(() => import("./PComments"));
+const PCreatePoll = lazy(() => import("./PCreatePoll"));
+const PPolls = lazy(() => import("./PPolls"));
+const PUserPolls = lazy(() => import("./PUserPolls"));
 
 const routes = [
   {

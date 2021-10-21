@@ -1,4 +1,4 @@
-import { Card, CardContent, Stack } from "@mui/material";
+import { Card, CardContent, Stack, Typography } from "@mui/material";
 import { FC } from "react";
 import Option from "../../logic/Option";
 import CActionSwitch from "./CActionSwitch";
@@ -11,7 +11,9 @@ const COption: FC<COptionProps> = ({ option }) => {
   return (
     <Card>
       <CardContent>
-        {option.actions.length === 0 && <em>No actions. Good to go 💯</em>}
+        {option.actions.length === 0 && (
+          <Typography>No actions. Good to go 💯</Typography>
+        )}
         <Stack spacing={1}>
           {option.actions.map((action) => (
             <CActionSwitch key={action.id} action={action} />

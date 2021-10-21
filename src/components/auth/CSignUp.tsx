@@ -26,6 +26,7 @@ const CSignUp: FC<CSignUpProps> = ({ onAuth = () => {} }) => {
     password: "",
   });
   const { signUp, isAuthenticated } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
   return (
     <Stack spacing={1}>
       <Typography
@@ -72,11 +73,15 @@ const CSignUp: FC<CSignUpProps> = ({ onAuth = () => {} }) => {
       />
       <Button
         variant="contained"
+        disabled={loading}
         onClick={async () => {
           try {
+            setLoading(true);
             await signUp(user.username, user.email, user.password);
+            setLoading(false);
             onAuth();
           } catch (error: any) {
+            setLoading(false);
             toast.error(error.message);
           }
         }}

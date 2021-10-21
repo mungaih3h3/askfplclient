@@ -1,22 +1,28 @@
-import { Button, IconButton, Stack } from "@mui/material";
+import { Button, IconButton, Stack, Typography } from "@mui/material";
 import { FC, useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import CPoll from "../components/present/CPoll";
 import { WithAuthentication } from "../HOC/WithAuthentication";
 import { Explore, AddBox, Logout } from "@mui/icons-material";
 import Poll from "../logic/Poll";
-import { fetchUserPolls } from "../api/Polls";
 import { AuthContext } from "../contexts/AuthProvider";
 import toast from "react-hot-toast";
 import { CLoadingPoll } from "../components/loading/CLoadingPoll";
 import { fontSizes } from "../theme/fontSizes";
 import { getUserPollVotes } from "../api/Votes";
 import { VotesContext } from "../contexts/VotesProvider";
+import { ApiContext } from "../contexts/ApiProvider";
+import { ApiMap } from "../api/ApiMap";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Box } from "@mui/system";
+import { grey } from "@mui/material/colors";
+
 interface PUserPollsProps {}
 
 const PUserPolls: FC<PUserPollsProps> = () => {
   const history = useHistory();
   const [userPolls, setUserPolls] = useState([] as Poll[]);
+  const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState({
     error: false,
@@ -24,24 +30,32 @@ const PUserPolls: FC<PUserPollsProps> = () => {
   });
   const { getToken, logOut, isAuthenticated } = useContext(AuthContext);
   const { addVoteCounts, addUserVotes } = useContext(VotesContext);
-  useEffect(() => {
-    const getPolls = async () => {
-      try {
-        const polls = await fetchUserPolls(await getToken());
-        setUserPolls(polls);
-        setLoading(false);
-      } catch (error: any) {
-        setLoading(false);
-        console.log(error);
+  const { getInstance } = useContext(ApiContext);
 
-        setError({
-          error: true,
-          errorMessage: error.message,
-        });
-        toast.error(error.message);
-      }
-    };
-    getPolls();
+  const getPaginatedPolls = async (startDate: Date, limit: number) => {
+    try {
+      const { polls, hasMore, voteCounts } = await ApiMap.userPolls(
+        getInstance(),
+        startDate,
+        limit
+      );
+      addVoteCounts(voteCounts);
+      setHasMore(hasMore);
+      setUserPolls(polls);
+      setLoading(false);
+    } catch (error: any) {
+      setLoading(false);
+      console.log(error);
+      setError({
+        error: true,
+        errorMessage: error.message,
+      });
+      toast.error(error.message);
+    }
+  };
+  useEffect(() => {
+    setUserPolls([]);
+    getPaginatedPolls(new Date(), 10);
   }, []);
   useEffect(() => {
     const fetchUserVotes = async () => {
@@ -60,30 +74,38 @@ const PUserPolls: FC<PUserPollsProps> = () => {
     }
   }, [userPolls]);
   return (
-    <Stack spacing={1}>
-      <div
-        style={{
+    <Stack spacing={2}>
+      <Box
+        sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          py: 2,
         }}
       >
-        <IconButton
-          onClick={async () => {
-            await logOut();
+        <Typography
+          sx={{
+            fontSize: fontSizes[4],
+            px: 2,
+            fontWeight: 600,
+            color: grey[500],
           }}
+          variant="h1"
         >
-          <Logout />
-        </IconButton>
-        <h2 style={{ fontSize: fontSizes[3] }}>User polls</h2>
+          User polls
+        </Typography>
         <IconButton
           onClick={() => {
             history.push("/");
           }}
         >
-          <Explore />
+          <Explore
+            sx={{
+              color: grey[500],
+            }}
+          />
         </IconButton>
-      </div>
+      </Box>
       {error.error && (
         <Stack spacing={0.5} sx={{ pt: 100, textAlign: "center" }}>
           <h4>Sorry, unexpected error</h4>
@@ -111,16 +133,28 @@ const PUserPolls: FC<PUserPollsProps> = () => {
           </Button>
         </div>
       )}
-      <Stack spacing={5}>
-        {!error.error &&
-          loading &&
-          new Array(5)
-            .fill(null)
-            .map((_, index) => <CLoadingPoll key={index} />)}
-        {!error.error &&
-          !loading &&
-          userPolls.map((poll) => <CPoll key={poll.id} poll={poll} />)}
-      </Stack>
+      <InfiniteScroll
+        dataLength={userPolls.length}
+        next={async () => {
+          await getPaginatedPolls(
+            new Date(userPolls[userPolls.length - 1].createdAt),
+            10
+          );
+        }}
+        hasMore={hasMore}
+        loader={<h4>Loading...</h4>}
+      >
+        <Stack spacing={5}>
+          {!error.error &&
+            loading &&
+            new Array(5)
+              .fill(null)
+              .map((_, index) => <CLoadingPoll key={index} />)}
+          {!error.error &&
+            !loading &&
+            userPolls.map((poll) => <CPoll key={poll.id} poll={poll} />)}
+        </Stack>
+      </InfiniteScroll>
     </Stack>
   );
 };

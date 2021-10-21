@@ -1,4 +1,4 @@
-import { Button, IconButton, Stack } from "@mui/material";
+import { Button, IconButton, Stack, Typography } from "@mui/material";
 import { createContext, FC, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import CCreateComment from "../components/create/CCreateComment";
@@ -12,6 +12,10 @@ import { useHistory } from "react-router-dom";
 import { fetchComments, saveComment } from "../api/Comments";
 import toast from "react-hot-toast";
 import { CLoadingComment } from "../components/loading/CLoadingComment";
+import { ApiContext } from "../contexts/ApiProvider";
+import { ApiMap } from "../api/ApiMap";
+import { grey } from "@mui/material/colors";
+import { fontSizes } from "../theme/fontSizes";
 
 type TCommentsContext = {
   addComment: (comment: Comment) => Promise<any>;
@@ -28,28 +32,29 @@ interface PCommentsProps {}
 const PComments: FC<PCommentsProps> = () => {
   const [comments, setComments] = useState([] as Comment[]);
   const [showAddReply, setShowAddReply] = useState(false);
-  const { getAuthenticatedUser, getToken } = useContext(AuthContext);
+  const { getAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
   const { pollId } = useParams<{ pollId: string }>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const { getInstance } = useContext(ApiContext);
   useEffect(() => {
-    if (pollId !== undefined)
-      fetchComments(pollId)
-        .then((comments) => {
-          setComments(comments);
-          setLoading(false);
-        })
-        .catch((error: any) => {
-          setLoading(false);
-          setError(true);
-        });
+    (async () => {
+      try {
+        if (!pollId) throw new Error("Invalid poll id from url params");
+        const comments = await ApiMap.comments(getInstance(), pollId);
+        setComments(comments);
+      } catch (error: any) {
+        setError(true);
+      }
+      setLoading(false);
+    })();
   }, [pollId]);
   if (!pollId) return <em>No comments. The post might have been deleted</em>;
   const addComment = async (newComment: Comment) => {
     try {
       setComments(comments.concat(newComment));
-      await saveComment(newComment, await getToken());
+      await ApiMap.saveComment(getInstance(), newComment);
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -68,16 +73,30 @@ const PComments: FC<PCommentsProps> = () => {
           spacing={2}
           direction="row"
           sx={{
-            pt: 4,
-
+            py: 2,
             display: "flex",
             alignItems: "center",
           }}
         >
           <IconButton onClick={() => history.goBack()}>
-            <ArrowBackIos />
+            <ArrowBackIos
+              fontSize="small"
+              sx={{
+                color: grey[500],
+              }}
+            />
           </IconButton>
-          <h2>Discussion</h2>
+          <Typography
+            sx={{
+              fontSize: fontSizes[4],
+              px: 2,
+              fontWeight: 600,
+              color: grey[500],
+            }}
+            variant="h1"
+          >
+            Discussion
+          </Typography>
         </Stack>
         {error && (
           <Stack spacing={0.5} sx={{ textAlign: "center" }}>

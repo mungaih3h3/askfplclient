@@ -1,9 +1,7 @@
-import { Button, IconButton, Stack } from "@mui/material";
+import { IconButton, Stack, Typography } from "@mui/material";
 import { FC, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import CCreatePoll from "../components/create/CCreatePoll";
-import { AuthContext } from "../contexts/AuthProvider";
-import { VotesContext } from "../contexts/VotesProvider";
 import { WithAuthentication } from "../HOC/WithAuthentication";
 import Poll from "../logic/Poll";
 import { Explore, ViewStream } from "@mui/icons-material";
@@ -11,16 +9,18 @@ import { Box } from "@mui/system";
 import { fontSizes } from "../theme/fontSizes";
 import { savePoll } from "../api/Polls";
 import toast from "react-hot-toast";
+import { ApiContext } from "../contexts/ApiProvider";
+import { grey } from "@mui/material/colors";
 
 interface PCreatePollProps {}
 
 const PCreatePoll: FC<PCreatePollProps> = () => {
-  const { getToken } = useContext(AuthContext);
+  const { getInstance } = useContext(ApiContext);
   const history = useHistory();
   const addPoll = async (poll: Poll) => {
     try {
-      await savePoll(await getToken(), poll);
-      history.push("/userpolls");
+      await savePoll(getInstance(), poll);
+      toast.success("Post created successfully");
     } catch (error: any) {
       console.log(error);
       toast.error(error.message);
@@ -33,22 +33,29 @@ const PCreatePoll: FC<PCreatePollProps> = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          py: 2,
         }}
       >
-        <IconButton
-          onClick={() => {
-            history.push(`/${"userpolls"}`);
+        <Typography
+          sx={{
+            fontSize: fontSizes[4],
+            px: 2,
+            fontWeight: 600,
+            color: grey[500],
           }}
         >
-          <ViewStream />
-        </IconButton>
-        <h2 style={{ fontSize: fontSizes[3] }}>Create Poll</h2>
+          Create Poll
+        </Typography>
         <IconButton
           onClick={() => {
             history.push("/");
           }}
         >
-          <Explore />
+          <Explore
+            sx={{
+              color: grey[500],
+            }}
+          />
         </IconButton>
       </Box>
       <CCreatePoll

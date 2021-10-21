@@ -1,17 +1,7 @@
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { Box } from "@mui/system";
+import { Button, Stack, TextField, Typography } from "@mui/material";
 import produce from "immer";
 import { FC, useContext, useState } from "react";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthProvider";
 import { fontSizes } from "../../theme/fontSizes";
 import { useParams, useLocation, useHistory } from "react-router-dom";
@@ -26,9 +16,7 @@ const CSignIn: FC<CSignInProps> = ({ onAuth = () => {} }) => {
     password: "",
   });
   const { signIn, isAuthenticated } = useContext(AuthContext);
-  const { redirect } = useParams<{ redirect?: string }>();
-  const location = useLocation();
-  const history = useHistory();
+  const [loading, setLoading] = useState(false);
   return (
     <Stack spacing={1}>
       <Typography
@@ -64,11 +52,15 @@ const CSignIn: FC<CSignInProps> = ({ onAuth = () => {} }) => {
       />
       <Button
         variant="contained"
+        disabled={loading}
         onClick={async () => {
           try {
+            setLoading(true);
             await signIn(user.username, user.password);
+            setLoading(false);
             onAuth();
           } catch (error: any) {
+            setLoading(false);
             toast.error(error.message);
           }
         }}

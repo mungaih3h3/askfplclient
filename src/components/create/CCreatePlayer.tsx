@@ -1,10 +1,10 @@
-import { Button, IconButton, Paper, Stack, Typography } from "@mui/material";
+import { IconButton, Paper, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { FC, useState } from "react";
 import Player from "../../logic/Player";
 import { Blacklist, PlayerMarketDialog } from "./PlayerMarket";
 import { CancelPresentation } from "@mui/icons-material";
-import CPlayer, { shortRole } from "../present/CPlayer";
+import { shortRole } from "../present/CPlayer";
 import { fontSizes } from "../../theme/fontSizes";
 import { grey } from "@mui/material/colors";
 

@@ -1,8 +1,11 @@
-import { apiInstance } from "./ApiInstance";
 import { hydrateComment } from "./hydrateComment";
 import Comment from "../logic/Comment";
+import { AxiosInstance } from "axios";
 
-export async function fetchComments(pollId: string) {
+export async function fetchComments(
+  apiInstance: AxiosInstance,
+  pollId: string
+): Promise<Comment[]> {
   try {
     const {
       data: { comments, success, message },
@@ -16,21 +19,16 @@ export async function fetchComments(pollId: string) {
   }
 }
 
-export async function saveComment(comment: Comment, token: string) {
+export async function saveComment(
+  apiInstance: AxiosInstance,
+  comment: Comment
+): Promise<void> {
   try {
     const {
       data: { success, message },
-    } = await apiInstance.post<any, any>(
-      "/add/comment",
-      {
-        comment,
-      },
-      {
-        headers: {
-          authorization: token,
-        },
-      }
-    );
+    } = await apiInstance.post<any, any>("/add/comment", {
+      comment,
+    });
     if (!success) throw new Error(message);
   } catch (error: any) {
     console.log(error);

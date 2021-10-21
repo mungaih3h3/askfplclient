@@ -2,7 +2,9 @@ import produce from "immer";
 import { createContext, FC, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { apiInstance } from "../api/ApiInstance";
+import { ApiMap } from "../api/ApiMap";
 import { castVote } from "../api/Votes";
+import { ApiContext } from "./ApiProvider";
 import { AuthContext } from "./AuthProvider";
 type TVotesContext = {
   userVotes: Map<string, string>;
@@ -38,6 +40,7 @@ export const VotesProvider: FC = ({ children }) => {
   );
   const { getToken } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
+  const { getInstance } = useContext(ApiContext);
   const vote = (pollId: string, optionId: string) => {
     setUserVotes(
       produce((draft) => {
@@ -58,13 +61,13 @@ export const VotesProvider: FC = ({ children }) => {
           ?.set(optionId, (draft.get(pollId)?.get(optionId) || 0) + 1);
       })
     );
-    getToken()
-      .then((token) => {
-        castVote(token, pollId, optionId).catch((error: any) =>
-          toast.error(error.message)
-        );
-      })
-      .catch((error: any) => toast.error(error.message));
+    (async () => {
+      try {
+        await ApiMap.castVote(getInstance(), pollId, optionId);
+      } catch (error: any) {
+        toast.error(error.message);
+      }
+    })();
   };
   const addVoteCounts = (v: Map<string, Map<string, number>>[]) => {
     const g = v.flatMap((m) => [...m]);
