@@ -81,7 +81,7 @@ export const WithAlpha = (Component: FC) => {
           <IconButton
             onClick={() => setOpenFeedback(true)}
             sx={{
-              position: "absolute",
+              position: "fixed",
               bottom: 10,
               right: 10,
             }}
