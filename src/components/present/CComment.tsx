@@ -1,7 +1,6 @@
 import { Button, Card, CardContent, Stack } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { formatDistanceToNow } from "date-fns";
-import produce from "immer";
 import { FC, useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthProvider";
 import Comment from "../../logic/Comment";
@@ -16,7 +15,8 @@ interface CCommentProps {
 const CComment: FC<CCommentProps> = ({ comment }) => {
   const [showReplies, setShowReplies] = useState(false);
   const [showAddReply, setShowAddReply] = useState(false);
-  const { getAuthenticatedUser } = useContext(AuthContext);
+  const { getAuthenticatedUser, isAuthenticated, openAuthDialog } =
+    useContext(AuthContext);
   const { getImmediateSubtree, addComment } = useContext(CommentsContext);
   return (
     <Card variant="outlined">
@@ -57,7 +57,13 @@ const CComment: FC<CCommentProps> = ({ comment }) => {
             <Button
               size="small"
               startIcon={<Reply />}
-              onClick={() => setShowAddReply(!showAddReply)}
+              onClick={() => {
+                if (isAuthenticated()) {
+                  setShowAddReply(!showAddReply);
+                } else {
+                  openAuthDialog();
+                }
+              }}
             >
               reply
             </Button>

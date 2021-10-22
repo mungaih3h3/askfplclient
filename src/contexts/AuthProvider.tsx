@@ -2,6 +2,7 @@ import { decode } from "jsonwebtoken";
 import { createContext, FC, useEffect, useLayoutEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { authenticate, register } from "../api/Auth";
+import { CAuthDialog } from "../components/auth/CAuth";
 import Publisher from "../logic/Publisher";
 import User from "../logic/User";
 
@@ -12,6 +13,7 @@ type TAuthContext = {
   logOut: () => Promise<any>;
   getToken: () => string;
   signUp: (name: string, email: string, password: string) => Promise<any>;
+  openAuthDialog: () => any;
 };
 
 export const AuthContext = createContext<TAuthContext>({
@@ -25,6 +27,7 @@ export const AuthContext = createContext<TAuthContext>({
   },
   logOut: async () => {},
   signUp: async () => {},
+  openAuthDialog: () => {},
 });
 
 export const AuthProvider: FC = ({ children }) => {
@@ -36,6 +39,7 @@ export const AuthProvider: FC = ({ children }) => {
       throw new Error("Unauthenticated");
     }
   };
+  const [authDialog, setAuthDialog] = useState(false);
   const isAuthenticated = () => Boolean(user);
   const signIn = async (name: string, password: string) => {
     const token = await authenticate(name, password);
@@ -74,20 +78,18 @@ export const AuthProvider: FC = ({ children }) => {
     setUser(undefined);
     setToken("");
   };
-  useLayoutEffect(() => {
-    const hydrateAuth = async () => {
-      const token = await localStorage.getItem("token");
-      if (!token) {
-        setUser(undefined);
-        setToken("");
-      } else {
-        const { username } = decode(token) as any;
-        setUser(new User(username));
-        setToken(token);
-      }
-    };
-    hydrateAuth();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setUser(undefined);
+      setToken("");
+    } else {
+      const { username } = decode(token) as any;
+      setUser(new User(username));
+      setToken(token);
+    }
   }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -97,9 +99,15 @@ export const AuthProvider: FC = ({ children }) => {
         getToken,
         logOut,
         signUp,
+        openAuthDialog: () => setAuthDialog(true),
       }}
     >
       {children}
+      <CAuthDialog
+        open={authDialog}
+        onClose={() => setAuthDialog(false)}
+        onAuth={() => setAuthDialog(false)}
+      />
     </AuthContext.Provider>
   );
 };

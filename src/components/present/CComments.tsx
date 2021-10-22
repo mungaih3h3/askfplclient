@@ -48,7 +48,8 @@ interface CCommentsProps {
 const CComments: FC<CCommentsProps> = ({ pollId }) => {
   const [comments, setComments] = useState([] as Comment[]);
   const [showAddReply, setShowAddReply] = useState(false);
-  const { getAuthenticatedUser } = useContext(AuthContext);
+  const { getAuthenticatedUser, isAuthenticated, openAuthDialog } =
+    useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const { getInstance } = useContext(ApiContext);
@@ -92,7 +93,13 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
           <Box>
             <Button
               startIcon={<Reply />}
-              onClick={() => setShowAddReply(!showAddReply)}
+              onClick={() => {
+                if (isAuthenticated()) {
+                  setShowAddReply(!showAddReply);
+                } else {
+                  openAuthDialog();
+                }
+              }}
             >
               reply to poll
             </Button>
@@ -108,7 +115,16 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
             }}
           >
             <Typography>Be the first one to comment on this poll</Typography>
-            <Button variant="outlined" onClick={() => setShowAddReply(true)}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                if (isAuthenticated()) {
+                  setShowAddReply(!showAddReply);
+                } else {
+                  openAuthDialog();
+                }
+              }}
+            >
               Add comment
             </Button>
           </Stack>
