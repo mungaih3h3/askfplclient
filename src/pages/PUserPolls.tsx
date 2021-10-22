@@ -17,10 +17,13 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { Box } from "@mui/system";
 import { grey } from "@mui/material/colors";
 import Publisher from "../logic/Publisher";
+import { WithDiscussion } from "../HOC/WithDiscussion";
 
-interface PUserPollsProps {}
+interface PUserPollsProps {
+  openDiscussion: (pollId: string) => any;
+}
 
-const PUserPolls: FC<PUserPollsProps> = () => {
+const PUserPolls: FC<PUserPollsProps> = ({ openDiscussion }) => {
   const history = useHistory();
   const [userPolls, setUserPolls] = useState([] as Poll[]);
   const [hasMore, setHasMore] = useState(false);
@@ -80,97 +83,99 @@ const PUserPolls: FC<PUserPollsProps> = () => {
     });
   }, []);
   return (
-    <Stack spacing={2}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          py: 2,
-        }}
-      >
-        <Typography
+    <>
+      <Stack spacing={2}>
+        <Box
           sx={{
-            fontSize: fontSizes[4],
-            px: 2,
-            fontWeight: 600,
-            color: grey[500],
-          }}
-          variant="h1"
-        >
-          User polls
-        </Typography>
-        <IconButton
-          onClick={() => {
-            history.push("/");
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            py: 2,
           }}
         >
-          <Explore
+          <Typography
             sx={{
+              fontSize: fontSizes[4],
+              px: 2,
+              fontWeight: 600,
               color: grey[500],
             }}
-          />
-        </IconButton>
-      </Box>
-      {error.error && (
-        <Stack spacing={0.5} sx={{ pt: 100, textAlign: "center" }}>
-          <h4>Sorry, unexpected error</h4>
-          <small>We are working on solving the problem. Be back soon</small>
-        </Stack>
-      )}
-      {!error.error && !loading && userPolls.length === 0 && (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            alignItems: "center",
-          }}
-        >
-          <em>You dont have any polls yet</em>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              history.push("/create");
-            }}
-            startIcon={<AddBox />}
+            variant="h1"
           >
-            Add poll
-          </Button>
-        </div>
-      )}
-      <InfiniteScroll
-        dataLength={userPolls.length}
-        next={async () => {
-          await getPaginatedPolls(
-            new Date(userPolls[userPolls.length - 1].createdAt),
-            10
-          );
-        }}
-        hasMore={hasMore}
-        loader={<h4>Loading...</h4>}
-      >
-        <Stack spacing={5}>
-          {!error.error &&
-            loading &&
-            new Array(5)
-              .fill(null)
-              .map((_, index) => <CLoadingPoll key={index} />)}
-          {!error.error &&
-            !loading &&
-            userPolls.map((poll) => (
-              <CPoll
-                key={poll.id}
-                poll={poll}
-                onWantDiscussion={() => {
-                  console.log("Show user poll discussions");
-                }}
-              />
-            ))}
-        </Stack>
-      </InfiniteScroll>
-    </Stack>
+            User polls
+          </Typography>
+          <IconButton
+            onClick={() => {
+              history.push("/");
+            }}
+          >
+            <Explore
+              sx={{
+                color: grey[500],
+              }}
+            />
+          </IconButton>
+        </Box>
+        {error.error && (
+          <Stack spacing={0.5} sx={{ pt: 100, textAlign: "center" }}>
+            <h4>Sorry, unexpected error</h4>
+            <small>We are working on solving the problem. Be back soon</small>
+          </Stack>
+        )}
+        {!error.error && !loading && userPolls.length === 0 && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              alignItems: "center",
+            }}
+          >
+            <em>You dont have any polls yet</em>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                history.push("/create");
+              }}
+              startIcon={<AddBox />}
+            >
+              Add poll
+            </Button>
+          </div>
+        )}
+        <InfiniteScroll
+          dataLength={userPolls.length}
+          next={async () => {
+            await getPaginatedPolls(
+              new Date(userPolls[userPolls.length - 1].createdAt),
+              10
+            );
+          }}
+          hasMore={hasMore}
+          loader={<h4>Loading...</h4>}
+        >
+          <Stack spacing={5}>
+            {!error.error &&
+              loading &&
+              new Array(5)
+                .fill(null)
+                .map((_, index) => <CLoadingPoll key={index} />)}
+            {!error.error &&
+              !loading &&
+              userPolls.map((poll) => (
+                <CPoll
+                  key={poll.id}
+                  poll={poll}
+                  onWantDiscussion={() => {
+                    openDiscussion(poll.id);
+                  }}
+                />
+              ))}
+          </Stack>
+        </InfiniteScroll>
+      </Stack>
+    </>
   );
 };
 
-export default WithAuthentication(PUserPolls);
+export default WithAuthentication(WithDiscussion(PUserPolls));

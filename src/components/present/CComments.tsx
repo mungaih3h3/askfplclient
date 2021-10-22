@@ -88,15 +88,30 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
             <small>We are working on solving the problem. Be back soon</small>
           </Stack>
         )}
-        {!error && (
+        {!error && !showAddReply && comments.length !== 0 && (
           <Box>
             <Button
               startIcon={<Reply />}
               onClick={() => setShowAddReply(!showAddReply)}
             >
-              reply to post
+              reply to poll
             </Button>
           </Box>
+        )}
+        {!loading && comments.length === 0 && !showAddReply && (
+          <Stack
+            spacing={1}
+            sx={{
+              textAlign: "center",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Typography>Be the first one to comment on this poll</Typography>
+            <Button variant="outlined" onClick={() => setShowAddReply(true)}>
+              Add comment
+            </Button>
+          </Stack>
         )}
         {showAddReply && (
           <CCreateComment

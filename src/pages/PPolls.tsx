@@ -44,10 +44,13 @@ import { WithAlpha } from "../HOC/WithAlpha";
 import Publisher from "../logic/Publisher";
 import { CCommentsDialog } from "../components/present/CComments";
 import produce from "immer";
+import { WithDiscussion } from "../HOC/WithDiscussion";
 
-interface PPollsProps {}
+interface PPollsProps {
+  openDiscussion: (pollId: string) => any;
+}
 
-const PPolls: FC<PPollsProps> = () => {
+const PPolls: FC<PPollsProps> = ({ openDiscussion }) => {
   const history = useHistory();
   const [polls, setPolls] = useState([] as Poll[]);
   const [error, setError] = useState({
@@ -61,10 +64,6 @@ const PPolls: FC<PPollsProps> = () => {
   const [authDialog, setAuthDialog] = useState(false);
   const [topMenu, setTopMenu] = useState(false);
   const topMenuAnchor = useRef(null);
-  const [commentsDialog, setCommentsDialog] = useState({
-    open: false,
-    pollId: "",
-  });
   const getPaginatedPolls = useCallback(
     async (startDate: Date, limit: number): Promise<Poll[]> => {
       try {
@@ -278,12 +277,7 @@ const PPolls: FC<PPollsProps> = () => {
                   key={poll.id + index}
                   poll={poll}
                   onWantDiscussion={(pollId) => {
-                    setCommentsDialog(
-                      produce((draft) => {
-                        draft.open = true;
-                        draft.pollId = pollId;
-                      })
-                    );
+                    openDiscussion(poll.id);
                   }}
                 />
               ))}
@@ -295,19 +289,8 @@ const PPolls: FC<PPollsProps> = () => {
           onAuth={() => setAuthDialog(false)}
         />
       </Stack>
-      <CCommentsDialog
-        open={commentsDialog.open}
-        onClose={() => {
-          setCommentsDialog(
-            produce((draft) => {
-              draft.open = false;
-            })
-          );
-        }}
-        pollId={commentsDialog.pollId}
-      />
     </>
   );
 };
 
-export default WithAlpha(PPolls);
+export default WithAlpha(WithDiscussion(PPolls));
