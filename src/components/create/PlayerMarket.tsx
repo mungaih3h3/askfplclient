@@ -53,7 +53,7 @@ const PlayerMarket: FC<PlayerMarketProps> = ({ onSelect, blacklist }) => {
       {
         keys: ["name", "role"],
       },
-      Fuse.createIndex(["name", "role"], players)
+      Fuse.createIndex(["name", "role", "team.name"], players)
     )
   );
   useEffect(() => {

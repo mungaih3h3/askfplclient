@@ -1,6 +1,6 @@
 import { fetchComments, saveComment } from "./Comments";
 import { feedback } from "./Feedback";
-import { fetchUserPolls } from "./Polls";
+import { fetchUserPolls, fetchPoll } from "./Polls";
 import { castVote } from "./Votes";
 
 export const ApiMap = {
@@ -9,4 +9,5 @@ export const ApiMap = {
   userPolls: fetchUserPolls,
   castVote: castVote,
   sendFeedback: feedback,
+  getPoll: fetchPoll,
 };

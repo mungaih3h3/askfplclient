@@ -1,18 +1,25 @@
-import { Chat } from "@mui/icons-material";
+import { Add, Chat, Reply } from "@mui/icons-material";
 import {
+  Backdrop,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
+  Paper,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { green, lime } from "@mui/material/colors";
+import { green, indigo, lime } from "@mui/material/colors";
+import { Box } from "@mui/system";
 import { FC, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useHistory } from "react-router-dom";
 import { ApiMap } from "../api/ApiMap";
 import { ApiContext } from "../contexts/ApiProvider";
 import { AuthContext } from "../contexts/AuthProvider";
@@ -22,8 +29,10 @@ export const WithAlpha = (Component: FC) => {
     const [open, setOpen] = useState(false);
     const [openFeedback, setOpenFeedback] = useState(false);
     const [feedback, setFeedback] = useState("");
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, openAuthDialog } = useContext(AuthContext);
     const { getInstance } = useContext(ApiContext);
+    const history = useHistory();
+    const [openDial, setOpenDial] = useState(false);
     useEffect(() => {
       try {
         const t = localStorage.getItem("hasSeenAlphaMessage");
@@ -86,18 +95,38 @@ export const WithAlpha = (Component: FC) => {
             </Button>
           </DialogActions>
         </Dialog>
-        {isAuthenticated() && (
-          <IconButton
-            onClick={() => setOpenFeedback(true)}
-            sx={{
-              position: "fixed",
-              bottom: 10,
-              right: 10,
-            }}
+        <Box>
+          <Backdrop open={openDial} />
+          <SpeedDial
+            ariaLabel="mini menu"
+            icon={<SpeedDialIcon />}
+            sx={{ position: "fixed", bottom: 16, right: 16 }}
+            open={openDial}
+            onClose={() => setOpenDial(false)}
+            onOpen={() => setOpenDial(true)}
           >
-            <Chat />
-          </IconButton>
-        )}
+            <SpeedDialAction
+              icon={<Reply />}
+              tooltipTitle="Feedback"
+              tooltipOpen
+              onClick={() => {
+                if (isAuthenticated()) {
+                  setOpenFeedback(true);
+                } else {
+                  openAuthDialog();
+                }
+              }}
+            />
+            <SpeedDialAction
+              icon={<Add />}
+              tooltipTitle="AddPoll"
+              tooltipOpen
+              onClick={() => {
+                history.push("/create");
+              }}
+            />
+          </SpeedDial>
+        </Box>
       </>
     );
   };

@@ -15,7 +15,7 @@ export const WithAuthentication = (Component: FC) => {
       return (
         <Stack
           spacing={2}
-          sx={{ p: 2, pt: 12, display: "flex", alignItems: "center" }}
+          sx={{ p: 2, pt: 11, display: "flex", alignItems: "center" }}
         >
           <Card>
             <CardContent>

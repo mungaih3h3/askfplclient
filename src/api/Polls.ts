@@ -11,6 +11,19 @@ export type pollServer = {
   topLevelCommentIds: string[];
 };
 
+export async function fetchPoll(apiInstance: AxiosInstance, pollId: string) {
+  try {
+    const {
+      data: { poll, message, success },
+    } = await apiInstance.get<any, any>("/poll/" + pollId);
+    if (!success) throw new Error(message);
+    return hydratePoll(poll);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 export async function fetchPolls(
   startDate: Date = new Date(),
   limit: number = 20

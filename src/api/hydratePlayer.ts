@@ -1,4 +1,5 @@
 import Player, { PlayerRole } from "../logic/Player";
+import { hydrateTeam } from "./hydrateTeam";
 
 function hydrateRole(role: string) {
   switch (role) {
@@ -24,5 +25,9 @@ function hydrateRole(role: string) {
 }
 
 export function hydratePlayer(player: any) {
-  return new Player(player.name, hydrateRole(player.role));
+  return new Player(
+    player.name,
+    hydrateRole(player.role),
+    hydrateTeam(player.team || { name: "null", shortName: "null" })
+  );
 }

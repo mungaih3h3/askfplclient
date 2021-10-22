@@ -28,7 +28,7 @@ const CCreateTransfer: FC<CCreateTransferProps> = ({
               type: "player",
               value:
                 transfer.playerOut === undefined
-                  ? new Player("", PlayerRole.defender)
+                  ? Player.getNull(PlayerRole.defender)
                   : transfer.playerOut,
             },
             ...([
@@ -81,7 +81,7 @@ const CCreateTransfer: FC<CCreateTransferProps> = ({
               type: "player",
               value:
                 transfer.playerIn === undefined
-                  ? new Player("", PlayerRole.defender)
+                  ? Player.getNull(PlayerRole.defender)
                   : transfer.playerIn,
             },
             ...([

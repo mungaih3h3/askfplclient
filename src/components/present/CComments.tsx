@@ -8,22 +8,13 @@ import {
 } from "@mui/material";
 import Slide from "@mui/material/Slide";
 import * as React from "react";
-import {
-  createContext,
-  FC,
-  forwardRef,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, FC, useContext, useEffect, useState } from "react";
 import CCreateComment from "../create/CCreateComment";
 import CComment from "./CComment";
 import { AuthContext } from "../../contexts/AuthProvider";
 import Comment from "../../logic/Comment";
 import { Reply, ArrowBackIos } from "@mui/icons-material";
 import { Box } from "@mui/system";
-import { useHistory } from "react-router-dom";
-import { fetchComments, saveComment } from "../../api/Comments";
 import toast from "react-hot-toast";
 import { CLoadingComment } from "../loading/CLoadingComment";
 import { ApiContext } from "../../contexts/ApiProvider";

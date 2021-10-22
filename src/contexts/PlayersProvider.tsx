@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { createContext } from "react";
 import { apiInstance } from "../api/ApiInstance";
-import dummyplayers from "../dummydata/dummyplayers";
 import Player from "../logic/Player";
 import toast from "react-hot-toast";
 import { hydratePlayer } from "../api/hydratePlayer";

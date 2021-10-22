@@ -1,4 +1,5 @@
 import {
+  Badge,
   Button,
   Card,
   CardContent,
@@ -10,12 +11,12 @@ import { grey, indigo } from "@mui/material/colors";
 import { Box } from "@mui/system";
 import { formatDistanceToNow } from "date-fns";
 import { FC, useContext } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { VotesContext } from "../../contexts/VotesProvider";
 import Poll from "../../logic/Poll";
 import { fontSizes } from "../../theme/fontSizes";
 import COption from "./COption";
-import { Comment } from "@mui/icons-material";
+import { Comment, Share } from "@mui/icons-material";
 import { AuthContext } from "../../contexts/AuthProvider";
 import toast from "react-hot-toast";
 
@@ -28,7 +29,7 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
   const { userVotes, vote, voteCount } = useContext(VotesContext);
   const { isAuthenticated } = useContext(AuthContext);
   const history = useHistory();
-
+  const location = useLocation();
   return (
     <Card variant="outlined">
       <CardContent>
@@ -68,8 +69,8 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
                     ? indigo[700]
                     : "rgba(0,0,0,0)",
                 display: "flex",
+                flexDirection: "column",
                 justifyContent: "space-between",
-                alignItems: "flex-start",
               }}
               onClick={async () => {
                 if (!isAuthenticated()) {
@@ -82,14 +83,27 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
               <Box sx={{ flexGrow: 1 }}>
                 <COption option={option} />
               </Box>
-              <Typography
-                sx={{ fontSize: fontSizes[5], p: 3, fontWeight: 700 }}
-              >
-                {voteCount.get(poll.id)?.get(option.id) || 0}
-              </Typography>
+              {userVotes.get(poll.id) !== undefined && (
+                <Typography
+                  sx={{ fontSize: fontSizes[5], p: 3, fontWeight: 700 }}
+                >
+                  {voteCount.get(poll.id)?.get(option.id) || 0} votes
+                </Typography>
+              )}
             </Paper>
           ))}
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+            <Button
+              startIcon={<Share />}
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  window.location.href + "poll/" + poll.id
+                );
+                toast.success("Link copied to clipboard");
+              }}
+            >
+              Share
+            </Button>
             <Button
               variant="outlined"
               startIcon={<Comment />}

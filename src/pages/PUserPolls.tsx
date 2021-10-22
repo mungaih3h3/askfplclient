@@ -117,7 +117,7 @@ const PUserPolls: FC<PUserPollsProps> = ({ openDiscussion }) => {
           </IconButton>
         </Box>
         {error.error && (
-          <Stack spacing={0.5} sx={{ pt: 100, textAlign: "center" }}>
+          <Stack spacing={1} sx={{ pt: 12, textAlign: "center" }}>
             <h4>Sorry, unexpected error</h4>
             <small>We are working on solving the problem. Be back soon</small>
           </Stack>

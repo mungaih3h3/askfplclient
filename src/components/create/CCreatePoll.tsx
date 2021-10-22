@@ -62,7 +62,7 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
             </Box>
             <Stack spacing={2}>
               {poll.options.map((option, index) => (
-                <Card>
+                <Card key={option.id}>
                   <CardHeader
                     title={`Option #${index + 1}`}
                     sx={{ pb: 0 }}

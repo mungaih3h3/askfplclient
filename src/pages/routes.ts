@@ -1,4 +1,5 @@
 import { lazy } from "react";
+import PPoll from "./PPoll";
 const PCreatePoll = lazy(() => import("./PCreatePoll"));
 const PPolls = lazy(() => import("./PPolls"));
 const PUserPolls = lazy(() => import("./PUserPolls"));
@@ -20,6 +21,10 @@ const routes = [
   {
     path: "/userpolls",
     Component: PUserPolls,
+  },
+  {
+    path: "/poll/:pollId",
+    Component: PPoll,
   },
 ];
 
