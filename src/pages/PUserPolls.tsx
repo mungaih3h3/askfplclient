@@ -158,7 +158,15 @@ const PUserPolls: FC<PUserPollsProps> = () => {
               .map((_, index) => <CLoadingPoll key={index} />)}
           {!error.error &&
             !loading &&
-            userPolls.map((poll) => <CPoll key={poll.id} poll={poll} />)}
+            userPolls.map((poll) => (
+              <CPoll
+                key={poll.id}
+                poll={poll}
+                onWantDiscussion={() => {
+                  console.log("Show user poll discussions");
+                }}
+              />
+            ))}
         </Stack>
       </InfiniteScroll>
     </Stack>

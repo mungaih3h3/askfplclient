@@ -8,7 +8,7 @@ import Comment from "../../logic/Comment";
 import CCreateComment from "../create/CCreateComment";
 import { Reply, Visibility, VisibilityOff } from "@mui/icons-material";
 import { Box } from "@mui/system";
-import { CommentsContext } from "../../pages/PComments";
+import { CommentsContext } from "./CComments";
 interface CCommentProps {
   comment: Comment;
 }

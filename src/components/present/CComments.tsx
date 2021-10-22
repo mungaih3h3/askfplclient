@@ -1,47 +1,61 @@
-import { Button, IconButton, Stack, Typography } from "@mui/material";
-import { createContext, FC, useContext, useEffect, useState } from "react";
-import { useParams } from "react-router";
-import CCreateComment from "../components/create/CCreateComment";
-import CComment from "../components/present/CComment";
-import { AuthContext } from "../contexts/AuthProvider";
-import { WithAuthentication } from "../HOC/WithAuthentication";
-import Comment from "../logic/Comment";
+import {
+  Button,
+  Container,
+  Dialog,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
+import Slide from "@mui/material/Slide";
+import * as React from "react";
+import {
+  createContext,
+  FC,
+  forwardRef,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import CCreateComment from "../create/CCreateComment";
+import CComment from "./CComment";
+import { AuthContext } from "../../contexts/AuthProvider";
+import Comment from "../../logic/Comment";
 import { Reply, ArrowBackIos } from "@mui/icons-material";
 import { Box } from "@mui/system";
 import { useHistory } from "react-router-dom";
-import { fetchComments, saveComment } from "../api/Comments";
+import { fetchComments, saveComment } from "../../api/Comments";
 import toast from "react-hot-toast";
-import { CLoadingComment } from "../components/loading/CLoadingComment";
-import { ApiContext } from "../contexts/ApiProvider";
-import { ApiMap } from "../api/ApiMap";
+import { CLoadingComment } from "../loading/CLoadingComment";
+import { ApiContext } from "../../contexts/ApiProvider";
+import { ApiMap } from "../../api/ApiMap";
 import { grey } from "@mui/material/colors";
-import { fontSizes } from "../theme/fontSizes";
+import { fontSizes } from "../../theme/fontSizes";
 
-type TCommentsContext = {
+type TCCommentsContext = {
   addComment: (comment: Comment) => Promise<any>;
   getImmediateSubtree: (commentId: string) => Comment[];
 };
 
-export const CommentsContext = createContext<TCommentsContext>({
+export const CommentsContext = createContext<TCCommentsContext>({
   addComment: async () => {},
   getImmediateSubtree: () => [],
 });
 
-interface PCommentsProps {}
+interface CCommentsProps {
+  pollId: string;
+}
 
-const PComments: FC<PCommentsProps> = () => {
+const CComments: FC<CCommentsProps> = ({ pollId }) => {
   const [comments, setComments] = useState([] as Comment[]);
   const [showAddReply, setShowAddReply] = useState(false);
   const { getAuthenticatedUser } = useContext(AuthContext);
-  const history = useHistory();
-  const { pollId } = useParams<{ pollId: string }>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const { getInstance } = useContext(ApiContext);
   useEffect(() => {
     (async () => {
       try {
-        if (!pollId) throw new Error("Invalid poll id from url params");
+        if (pollId === "") throw new Error("Invalid poll id from url params");
         const comments = await ApiMap.comments(getInstance(), pollId);
         setComments(comments);
       } catch (error: any) {
@@ -50,7 +64,6 @@ const PComments: FC<PCommentsProps> = () => {
       setLoading(false);
     })();
   }, [pollId]);
-  if (!pollId) return <em>No comments. The post might have been deleted</em>;
   const addComment = async (newComment: Comment) => {
     try {
       setComments(comments.concat(newComment));
@@ -69,35 +82,6 @@ const PComments: FC<PCommentsProps> = () => {
       }}
     >
       <Stack spacing={2} sx={{ my: 1 }}>
-        <Stack
-          spacing={2}
-          direction="row"
-          sx={{
-            py: 2,
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <IconButton onClick={() => history.goBack()}>
-            <ArrowBackIos
-              fontSize="small"
-              sx={{
-                color: grey[500],
-              }}
-            />
-          </IconButton>
-          <Typography
-            sx={{
-              fontSize: fontSizes[4],
-              px: 2,
-              fontWeight: 600,
-              color: grey[500],
-            }}
-            variant="h1"
-          >
-            Discussion
-          </Typography>
-        </Stack>
         {error && (
           <Stack spacing={0.5} sx={{ textAlign: "center" }}>
             <h4>Sorry, and unexpected error occurred</h4>
@@ -143,4 +127,67 @@ const PComments: FC<PCommentsProps> = () => {
   );
 };
 
-export default WithAuthentication(PComments);
+interface CCommentsDialogProps extends CCommentsProps {
+  open: boolean;
+  onClose: () => any;
+}
+
+const Transition = React.forwardRef<FC>((props, ref) => {
+  //@ts-ignore
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export const CCommentsDialog: FC<CCommentsDialogProps> = ({
+  open,
+  onClose,
+  ...rest
+}) => {
+  return (
+    <Dialog
+      fullScreen
+      open={open}
+      onClose={onClose}
+      //@ts-ignore
+      TransitionComponent={Transition}
+    >
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Container maxWidth="sm">
+          <Stack spacing={2}>
+            <Stack
+              spacing={2}
+              direction="row"
+              sx={{
+                py: 2,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <IconButton onClick={() => onClose()}>
+                <ArrowBackIos
+                  fontSize="small"
+                  sx={{
+                    color: grey[500],
+                  }}
+                />
+              </IconButton>
+              <Typography
+                sx={{
+                  fontSize: fontSizes[4],
+                  px: 2,
+                  fontWeight: 600,
+                  color: grey[500],
+                }}
+                variant="h1"
+              >
+                Discussion
+              </Typography>
+            </Stack>
+            <CComments {...rest} />
+          </Stack>
+        </Container>
+      </Box>
+    </Dialog>
+  );
+};
+
+export default CComments;

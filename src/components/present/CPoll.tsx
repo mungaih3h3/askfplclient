@@ -21,9 +21,10 @@ import toast from "react-hot-toast";
 
 interface CPollProps {
   poll: Poll;
+  onWantDiscussion: (pollId: string) => any;
 }
 
-const CPoll: FC<CPollProps> = ({ poll }) => {
+const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
   const { userVotes, vote, voteCount } = useContext(VotesContext);
   const { isAuthenticated } = useContext(AuthContext);
   const history = useHistory();
@@ -92,7 +93,7 @@ const CPoll: FC<CPollProps> = ({ poll }) => {
             <Button
               variant="outlined"
               startIcon={<Comment />}
-              onClick={() => history.push(`/comments/${poll.id}`)}
+              onClick={() => onWantDiscussion(poll.id)}
             >
               Discussion
             </Button>
