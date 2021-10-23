@@ -3,7 +3,7 @@ import { Box } from "@mui/system";
 import { FC, useState } from "react";
 import Player from "../../logic/Player";
 import { Blacklist, PlayerMarketDialog } from "./PlayerMarket";
-import { CancelPresentation } from "@mui/icons-material";
+import { CancelPresentation, Clear } from "@mui/icons-material";
 import { shortRole } from "../present/CPlayer";
 import { fontSizes } from "../../theme/fontSizes";
 import { grey } from "@mui/material/colors";
@@ -27,10 +27,15 @@ const CCreatePlayer: FC<CCreatePlayerProps> = ({
     <>
       <Paper
         variant="outlined"
-        sx={{ p: 2 }}
+        sx={{
+          p: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          width: "100%",
+        }}
         onClick={() => setPlayerMarketDialog(true)}
       >
-        <Stack spacing={2} direction="row">
+        <Stack spacing={2} direction="row" sx={{ alignItems: "center" }}>
           <CTeam team={player.team} />
           {player.valid ? (
             <Box
@@ -43,8 +48,8 @@ const CCreatePlayer: FC<CCreatePlayerProps> = ({
               <Box>
                 <Typography
                   sx={{
-                    fontSize: fontSizes[2],
-                    fontWeight: 500,
+                    fontSize: fontSizes[1],
+                    fontWeight: 400,
                   }}
                 >
                   {player.name} {extra}
@@ -72,21 +77,24 @@ const CCreatePlayer: FC<CCreatePlayerProps> = ({
                   </Box>
                 </Stack>
               </Box>
-              <IconButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onChange(Player.getNull());
-                }}
-              >
-                <CancelPresentation />
-              </IconButton>
             </Box>
           ) : (
             <Box sx={{ p: 1 }}>
-              <em>Add Player{extra}</em>
+              <Typography>Add</Typography>
             </Box>
           )}
         </Stack>
+        {player.valid && (
+          <IconButton
+            sx={{ p: 0, m: 0 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onChange(Player.getNull());
+            }}
+          >
+            <Clear sx={{ color: grey[500], fontSize: fontSizes[3] }} />
+          </IconButton>
+        )}
       </Paper>
 
       <PlayerMarketDialog

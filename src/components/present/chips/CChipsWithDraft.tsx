@@ -18,9 +18,12 @@ const CChipsWithDraft: FC<CChipsWithDraftProps> = ({ chip }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          width: "100%",
         }}
       >
-        <Typography sx={{ pb: 1 }}>{chip.chipType}</Typography>
+        <Typography sx={{ pb: 1, textTransform: "capitalize" }}>
+          {chip.chipType}
+        </Typography>
         <Button
           onClick={(e) => {
             e.stopPropagation();

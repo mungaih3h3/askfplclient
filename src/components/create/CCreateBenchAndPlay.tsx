@@ -1,9 +1,11 @@
-import { Card, CardContent, Stack, Typography } from "@mui/material";
+import { Card, Box, Badge, Stack, Typography } from "@mui/material";
 import produce from "immer";
 import { FC, useState } from "react";
 import BenchAndPlay from "../../logic/Actions/BenchAndPlay";
 import CCreatePlayer from "./CCreatePlayer";
-import { ArrowForward } from "@mui/icons-material";
+import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
+import { green, red } from "@mui/material/colors";
+import { fontSizes } from "../../theme/fontSizes";
 
 interface CCreateBenchAndPlayProps {
   initialBtpt: BenchAndPlay;
@@ -16,11 +18,36 @@ const CCreateBenchAndPlay: FC<CCreateBenchAndPlayProps> = ({
 }) => {
   const [btpt, setBtpt] = useState(initialBtpt);
   return (
-    <Stack spacing={1}>
-      <Typography sx={{}}>Bench and play</Typography>
-      <Stack spacing={2}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        gap: 1,
+      }}
+    >
+      <Badge
+        sx={{ flex: 1 }}
+        badgeContent={
+          <Box
+            sx={{
+              position: "absolute",
+              right: 24,
+              px: 2,
+              backgroundColor: red[100],
+              color: red[900],
+              borderRadius: 3,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <ArrowUpward sx={{ fontSize: fontSizes[0], fontWeight: 600 }} />
+            <Typography sx={{ fontSize: fontSizes[0], fontWeight: 600 }}>
+              BENCH
+            </Typography>
+          </Box>
+        }
+      >
         <CCreatePlayer
-          extra="(in)"
           player={btpt.playerIn}
           onChange={(newPlayer) => {
             setBtpt(
@@ -36,8 +63,30 @@ const CCreateBenchAndPlay: FC<CCreateBenchAndPlayProps> = ({
             },
           ]}
         />
+      </Badge>
+      <Badge
+        sx={{ flex: 1 }}
+        badgeContent={
+          <Box
+            sx={{
+              position: "absolute",
+              right: 24,
+              px: 2,
+              backgroundColor: green[100],
+              color: green[900],
+              borderRadius: 3,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <ArrowDownward sx={{ fontSize: fontSizes[0], fontWeight: 600 }} />
+            <Typography sx={{ fontSize: fontSizes[0], fontWeight: 600 }}>
+              PLAY
+            </Typography>
+          </Box>
+        }
+      >
         <CCreatePlayer
-          extra={"(out)"}
           player={btpt.playerOut}
           onChange={(newPlayer) => {
             const newBtpt = produce(btpt, (draft) => {
@@ -53,8 +102,8 @@ const CCreateBenchAndPlay: FC<CCreateBenchAndPlayProps> = ({
             },
           ]}
         />
-      </Stack>
-    </Stack>
+      </Badge>
+    </Box>
   );
 };
 

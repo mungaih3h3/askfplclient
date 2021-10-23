@@ -4,10 +4,10 @@ import {
   CardContent,
   Paper,
   Stack,
-  TextField,
-  CardHeader,
   Typography,
   IconButton,
+  Divider,
+  InputBase,
 } from "@mui/material";
 import produce from "immer";
 import { FC, useContext, useState } from "react";
@@ -17,8 +17,10 @@ import Poll from "../../logic/Poll";
 import CCreateOption from "./CCreateOption";
 import toast from "react-hot-toast";
 import { Box } from "@mui/system";
-import { grey } from "@mui/material/colors";
-import { AddBox, Delete } from "@mui/icons-material";
+import { grey, indigo } from "@mui/material/colors";
+import { Add, AddCircleOutline, Clear } from "@mui/icons-material";
+import { fontSizes } from "../../theme/fontSizes";
+import { CActionFactoryDialog } from "./CActionFactory";
 interface CCreatePollProps {
   onCreate: (poll: Poll) => any;
 }
@@ -27,46 +29,56 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
   const { getAuthenticatedUser } = useContext(AuthContext);
   const initialPoll = new Poll("", [], getAuthenticatedUser().username);
   const [poll, setPoll] = useState(initialPoll);
+  const [actionDialog, setActionDialog] = useState({
+    open: false,
+    index: -1,
+  });
   return (
-    <Card>
-      <CardContent>
-        <Stack spacing={3}>
-          <TextField
-            placeholder="Enter poll title..."
-            value={poll.title}
-            onChange={({ target: { value } }) => {
-              setPoll(
-                produce((draft) => {
-                  draft.title = value;
-                })
-              );
-            }}
-          />
-          <Paper variant="outlined" sx={{ p: 2 }}>
-            <Box
+    <>
+      <Card variant="outlined" sx={{ borderRadius: 2 }}>
+        <CardContent>
+          <Stack spacing={3}>
+            <InputBase
               sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                fontSize: fontSizes[4],
               }}
-            >
-              {poll.options.length === 0 && (
-                <Typography
-                  sx={{
-                    height: 100,
-                  }}
-                >
-                  No options
-                </Typography>
-              )}
-            </Box>
+              placeholder="Enter poll title"
+              value={poll.title}
+              onChange={({ target: { value } }) => {
+                setPoll(
+                  produce((draft) => {
+                    draft.title = value;
+                  })
+                );
+              }}
+            />
+
             <Stack spacing={2}>
               {poll.options.map((option, index) => (
-                <Card key={option.id}>
-                  <CardHeader
-                    title={`Option #${index + 1}`}
-                    sx={{ pb: 0 }}
-                    action={
+                <Card
+                  key={option.id}
+                  sx={{
+                    width: "100%",
+                  }}
+                >
+                  <CardContent>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Button
+                        startIcon={<Add />}
+                        size="small"
+                        variant="contained"
+                        onClick={() => {
+                          setActionDialog({ open: true, index });
+                        }}
+                      >
+                        Action
+                      </Button>
                       <IconButton
                         onClick={() => {
                           setPoll(
@@ -76,11 +88,15 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
                           );
                         }}
                       >
-                        <Delete />
+                        <Clear
+                          sx={{
+                            fontSize: fontSizes[4],
+                            color: grey[300],
+                          }}
+                        />
                       </IconButton>
-                    }
-                  />
-                  <CardContent>
+                    </Box>
+                    <Divider sx={{ my: 2 }} />
                     <CCreateOption
                       key={option.id}
                       initialOption={option}
@@ -95,14 +111,16 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
                   </CardContent>
                 </Card>
               ))}
-              <Button
+              <Paper
+                variant="outlined"
                 sx={{
-                  backgroundColor: "rgba(0,0,0,0)",
-                  borderRadius: 0,
-                  m: 1,
-                  color: grey[100],
+                  my: 2,
+                  p: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderStyle: "dashed",
                 }}
-                startIcon={<AddBox />}
                 onClick={() => {
                   setPoll(
                     produce((draft) => {
@@ -111,41 +129,71 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
                   );
                 }}
               >
-                option
-              </Button>
+                <Stack
+                  spacing={1}
+                  direction="row"
+                  sx={{
+                    color: grey[400],
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <AddCircleOutline sx={{ fontSize: fontSizes[4] }} />
+                  <Typography sx={{ fontSize: fontSizes[3] }}>
+                    option
+                  </Typography>
+                </Stack>
+              </Paper>
             </Stack>
-          </Paper>
-
-          <Button
-            variant="contained"
-            onClick={() => {
-              try {
-                if (poll.title.length === 0)
-                  throw new Error("A poll must have a title");
-                if (poll.options.length < 2)
-                  throw new Error("A poll must have atleast 2 options");
-                for (const option of poll.options) {
-                  let noActionsNumber = 0;
-                  if (option.actions.length < 1) {
-                    if (noActionsNumber >= 1) {
-                      throw new Error("Only one option can be empty");
-                    } else {
-                      noActionsNumber++;
-                    }
+          </Stack>
+        </CardContent>
+        <Box
+          sx={{
+            textAlign: "center",
+            backgroundColor: indigo[600],
+            color: indigo[50],
+            py: 2,
+            m: "0",
+            width: "100%",
+          }}
+          onClick={() => {
+            try {
+              if (poll.title.length === 0)
+                throw new Error("A poll must have a title");
+              if (poll.options.length < 2)
+                throw new Error("A poll must have atleast 2 options");
+              for (const option of poll.options) {
+                let noActionsNumber = 0;
+                if (option.actions.length < 1) {
+                  if (noActionsNumber >= 1) {
+                    throw new Error("Only one option can be empty");
+                  } else {
+                    noActionsNumber++;
                   }
                 }
-                onCreate(poll);
-                setPoll(initialPoll);
-              } catch (error: any) {
-                toast.error(error.message, { position: "bottom-right" });
               }
-            }}
-          >
-            Create
-          </Button>
-        </Stack>
-      </CardContent>
-    </Card>
+              onCreate(poll);
+              setPoll(initialPoll);
+            } catch (error: any) {
+              toast.error(error.message, { position: "bottom-right" });
+            }
+          }}
+        >
+          Create
+        </Box>
+      </Card>
+      <CActionFactoryDialog
+        open={actionDialog.open}
+        onClose={() => setActionDialog({ open: false, index: -1 })}
+        onCreate={(newAction) => {
+          const newPoll = produce(poll, (draft) => {
+            draft.options[actionDialog.index].actions.push(newAction);
+          });
+          setPoll(newPoll);
+          setActionDialog({ open: false, index: -1 });
+        }}
+      />
+    </>
   );
 };
 

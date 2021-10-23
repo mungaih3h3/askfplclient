@@ -1,4 +1,4 @@
-import { Card, CardContent, Stack, Typography } from "@mui/material";
+import { Badge, Typography, Box } from "@mui/material";
 import produce from "immer";
 import { FC, useState } from "react";
 import Transfer from "../../logic/Actions/Transfer";
@@ -6,7 +6,9 @@ import CCreatePlayer from "./CCreatePlayer";
 import toast from "react-hot-toast";
 import Player, { PlayerRole } from "../../logic/Player";
 import { Blacklist } from "./PlayerMarket";
-import { ArrowDownward, ArrowForward } from "@mui/icons-material";
+import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
+import { green, red } from "@mui/material/colors";
+import { fontSizes } from "../../theme/fontSizes";
 interface CCreateTransferProps {
   onChange: (transfer: Transfer) => any;
   initialTransfer: Transfer;
@@ -18,11 +20,36 @@ const CCreateTransfer: FC<CCreateTransferProps> = ({
 }) => {
   const [transfer, setTransfer] = useState(initialTransfer);
   return (
-    <Stack spacing={1}>
-      <Typography sx={{}}>Transfer</Typography>
-      <Stack spacing={2}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "flex-start",
+        gap: 1,
+      }}
+    >
+      <Badge
+        sx={{ flex: 1 }}
+        badgeContent={
+          <Box
+            sx={{
+              position: "absolute",
+              right: 24,
+              px: 2,
+              backgroundColor: red[100],
+              color: red[900],
+              borderRadius: 3,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <ArrowUpward sx={{ fontSize: fontSizes[0], fontWeight: 600 }} />
+            <Typography sx={{ fontSize: fontSizes[0], fontWeight: 600 }}>
+              OUT
+            </Typography>
+          </Box>
+        }
+      >
         <CCreatePlayer
-          extra="(out)"
           blacklist={[
             {
               type: "player",
@@ -74,8 +101,30 @@ const CCreateTransfer: FC<CCreateTransferProps> = ({
             }
           }}
         />
+      </Badge>
+      <Badge
+        sx={{ flex: 1 }}
+        badgeContent={
+          <Box
+            sx={{
+              position: "absolute",
+              right: 24,
+              px: 2,
+              backgroundColor: green[100],
+              color: green[900],
+              borderRadius: 3,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <ArrowDownward sx={{ fontSize: fontSizes[0], fontWeight: 600 }} />
+            <Typography sx={{ fontSize: fontSizes[0], fontWeight: 600 }}>
+              IN
+            </Typography>
+          </Box>
+        }
+      >
         <CCreatePlayer
-          extra="(in)"
           blacklist={[
             {
               type: "player",
@@ -125,8 +174,8 @@ const CCreateTransfer: FC<CCreateTransferProps> = ({
             }
           }}
         />
-      </Stack>
-    </Stack>
+      </Badge>
+    </Box>
   );
 };
 

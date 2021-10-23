@@ -27,7 +27,7 @@ export function shortRole(role: PlayerRole) {
 
 const CPlayer: FC<CPlayerProps> = ({ player }) => {
   return (
-    <Paper variant="outlined" sx={{ p: 2 }}>
+    <Paper variant="outlined" sx={{ p: 2, width: "100%" }}>
       <Stack
         spacing={2}
         direction="row"

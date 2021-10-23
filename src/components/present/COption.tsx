@@ -14,7 +14,7 @@ const COption: FC<COptionProps> = ({ option }) => {
         {option.actions.length === 0 && (
           <Typography>No actions. Good to go 💯</Typography>
         )}
-        <Stack spacing={1}>
+        <Stack spacing={3} sx={{ alignItems: "flex-start" }}>
           {option.actions.map((action) => (
             <CActionSwitch key={action.id} action={action} />
           ))}

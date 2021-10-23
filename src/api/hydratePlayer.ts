@@ -28,6 +28,7 @@ export function hydratePlayer(player: any) {
   return new Player(
     player.name,
     hydrateRole(player.role),
-    hydrateTeam(player.team || { name: "null", shortName: "null" })
+    hydrateTeam(player.team || { name: "null", shortName: "null" }),
+    player.valid
   );
 }

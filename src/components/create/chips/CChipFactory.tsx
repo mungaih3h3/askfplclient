@@ -52,7 +52,7 @@ export const CChipFactoryDialog: FC<CChipFactoryDialogProps> = ({
   );
 };
 
-function chipFactory(type: ChipType): Chip {
+export function chipFactory(type: ChipType): Chip {
   switch (type) {
     case ChipType.wildcard:
       return new WildCard();

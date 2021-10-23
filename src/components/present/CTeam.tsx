@@ -20,7 +20,7 @@ import spurs from "../../jerseys/spurs.webp";
 import watford from "../../jerseys/watford.webp";
 import westham from "../../jerseys/west ham.webp";
 import wolves from "../../jerseys/wolves.webp";
-import empty from "../../jerseys/empty.webp";
+import empty from "../../jerseys/null.webp";
 
 interface CTeamProps {
   team: Team;
@@ -80,6 +80,7 @@ const CTeam: FC<CTeamProps> = ({ team }) => {
       style={{
         height: 32,
       }}
+      // type="image/webp"
     />
   );
 };

@@ -3,13 +3,17 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  Divider,
   Stack,
+  Typography,
 } from "@mui/material";
 import { FC } from "react";
 import Action from "../../logic/Action";
 import Transfer from "../../logic/Actions/Transfer";
 import BenchAndPlay from "../../logic/Actions/BenchAndPlay";
 import { Box } from "@mui/system";
+import { chipFactory } from "./chips/CChipFactory";
+import { ChipType } from "../../logic/Actions/Chip";
 interface CActionFactoryProps {
   onCreate: (action: Action) => any;
 }
@@ -18,14 +22,31 @@ const CActionFactory: FC<CActionFactoryProps> = ({ onCreate }) => {
   return (
     <Stack spacing={2}>
       {["transfer", "bench and play"].map((actionType) => (
-        <Box key={actionType}>
-          <Button
-            size="small"
-            key={actionType}
-            onClick={() => onCreate(actionFactory(actionType))}
-          >
+        <Box
+          key={actionType}
+          onClick={() => onCreate(actionFactory(actionType))}
+        >
+          <Typography sx={{ textTransform: "capitalize" }}>
             {actionType}
-          </Button>
+          </Typography>
+        </Box>
+      ))}
+      <Divider />
+      {[
+        ChipType.wildcard,
+        ChipType.freehit,
+        ChipType.triplecaptain,
+        ChipType.benchboost,
+      ].map((chipType) => (
+        <Box
+          key={chipType}
+          onClick={() => {
+            onCreate(chipFactory(chipType));
+          }}
+        >
+          <Typography sx={{ textTransform: "capitalize" }}>
+            {chipType}
+          </Typography>
         </Box>
       ))}
     </Stack>

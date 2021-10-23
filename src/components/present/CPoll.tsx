@@ -57,7 +57,6 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
               {poll.title}
             </Typography>
           </Stack>
-
           {poll.options.map((option) => (
             <Paper
               key={option.id}
