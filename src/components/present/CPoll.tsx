@@ -28,8 +28,6 @@ interface CPollProps {
 const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
   const { userVotes, vote, voteCount } = useContext(VotesContext);
   const { isAuthenticated } = useContext(AuthContext);
-  const history = useHistory();
-  const location = useLocation();
   return (
     <Card variant="outlined">
       <CardContent>
@@ -96,7 +94,7 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
               startIcon={<Share />}
               onClick={() => {
                 navigator.clipboard.writeText(
-                  window.location.href + "poll/" + poll.id
+                  window.location.origin + "/poll/" + poll.id
                 );
                 toast.success("Link copied to clipboard");
               }}

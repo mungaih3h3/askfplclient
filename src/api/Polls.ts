@@ -1,6 +1,5 @@
 import { AxiosInstance } from "axios";
 import Poll from "../logic/Poll";
-import { apiInstance } from "./ApiInstance";
 import hydratePoll from "./hydratePoll";
 import { hydrateVoteCount } from "./hydrateVoteCount";
 export type pollServer = {
@@ -11,13 +10,25 @@ export type pollServer = {
   topLevelCommentIds: string[];
 };
 
-export async function fetchPoll(apiInstance: AxiosInstance, pollId: string) {
+export async function fetchPoll(
+  apiInstance: AxiosInstance,
+  pollId: string
+): Promise<{
+  poll: Poll;
+  voteCount: Map<string, Map<string, number>>;
+  userVotes: Map<string, string>;
+}> {
   try {
     const {
-      data: { poll, message, success },
+      data: { poll, message, success, userVotes },
     } = await apiInstance.get<any, any>("/poll/" + pollId);
     if (!success) throw new Error(message);
-    return hydratePoll(poll);
+
+    return {
+      poll: hydratePoll(poll),
+      voteCount: hydrateVoteCount(poll.id, poll.voteCount || {}),
+      userVotes: new Map(userVotes.map((v: any) => [v.pollId, v.optionId])),
+    };
   } catch (error) {
     console.log(error);
     throw error;
@@ -25,16 +36,18 @@ export async function fetchPoll(apiInstance: AxiosInstance, pollId: string) {
 }
 
 export async function fetchPolls(
+  apiInstance: AxiosInstance,
   startDate: Date = new Date(),
   limit: number = 20
 ): Promise<{
   polls: Poll[];
   hasMore: boolean;
   voteCounts: Map<string, Map<string, number>>[];
+  userVotes: Map<string, string>;
 }> {
   try {
     const {
-      data: { polls, success, message, hasMore },
+      data: { polls, success, message, hasMore, userVotes },
     } = await apiInstance.get<any, any, any>(`/polls/${startDate}/${limit}`);
 
     if (!success) throw new Error(message);
@@ -45,6 +58,7 @@ export async function fetchPolls(
       voteCounts: polls.map((poll: any) =>
         hydrateVoteCount(poll.id, poll.voteCount || {})
       ),
+      userVotes: new Map(userVotes.map((v: any) => [v.pollId, v.optionId])),
     };
   } catch (error: any) {
     console.log(error);
@@ -60,10 +74,11 @@ export async function fetchUserPolls(
   polls: Poll[];
   hasMore: boolean;
   voteCounts: Map<string, Map<string, number>>[];
+  userVotes: Map<string, string>;
 }> {
   try {
     const {
-      data: { polls, success, message, hasMore },
+      data: { polls, success, message, hasMore, userVotes },
     } = (await apiInstance.get(`/user/polls/${startDate}/${limit}`)) as any;
     if (!success) {
       throw new Error(message);
@@ -77,6 +92,7 @@ export async function fetchUserPolls(
         voteCounts: polls.map((poll: any) =>
           hydrateVoteCount(poll.id, poll.voteCount || {})
         ),
+        userVotes: new Map(userVotes.map((v: any) => [v.pollId, v.optionId])),
       };
     }
   } catch (error) {

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { CircularProgress, Container, CssBaseline } from "@mui/material";
+import { CircularProgress, Container, CssBaseline, Stack } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthProvider";
@@ -10,6 +10,9 @@ import { Toaster } from "react-hot-toast";
 import theme from "./theme/theme";
 import { ApiProvider } from "./contexts/ApiProvider";
 import { Box } from "@mui/system";
+import CNav from "./components/present/CNav";
+import { FeedbackProvider } from "./contexts/FeedbackProvider";
+import { HideOnScroll } from "./components/utils/HideOnScroll";
 
 function App() {
   return (
@@ -35,18 +38,22 @@ function App() {
               <Toaster />
               <AuthProvider>
                 <ApiProvider>
-                  <VotesProvider>
-                    <PlayersProvider>
-                      {routes.map(({ path, Component }) => (
-                        <Route
-                          exact
-                          key={path}
-                          path={path}
-                          component={Component}
-                        />
-                      ))}
-                    </PlayersProvider>
-                  </VotesProvider>
+                  <FeedbackProvider>
+                    <VotesProvider>
+                      <PlayersProvider>
+                        {routes.map(({ path, Component, navTitle }) => (
+                          <Route exact key={path} path={path}>
+                            <Stack spacing={2}>
+                              <HideOnScroll>
+                                <CNav title={navTitle} />
+                              </HideOnScroll>
+                              <Component />
+                            </Stack>
+                          </Route>
+                        ))}
+                      </PlayersProvider>
+                    </VotesProvider>
+                  </FeedbackProvider>
                 </ApiProvider>
               </AuthProvider>
             </Container>

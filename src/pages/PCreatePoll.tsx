@@ -29,36 +29,6 @@ const PCreatePoll: FC<PCreatePollProps> = () => {
   };
   return (
     <Stack spacing={1}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          py: 2,
-        }}
-      >
-        <Typography
-          sx={{
-            fontSize: fontSizes[4],
-            px: 2,
-            fontWeight: 600,
-            color: grey[500],
-          }}
-        >
-          Create Poll
-        </Typography>
-        <IconButton
-          onClick={() => {
-            history.push("/");
-          }}
-        >
-          <Explore
-            sx={{
-              color: grey[500],
-            }}
-          />
-        </IconButton>
-      </Box>
       <CCreatePoll
         onCreate={async (poll) => {
           try {
