@@ -1,4 +1,4 @@
-import Action from "../Action";
+import Action, { ActionType } from "../Action";
 export enum ChipType {
   wildcard = "wildcard",
   freehit = "freehit",
@@ -8,7 +8,7 @@ export enum ChipType {
 
 export default abstract class Chip extends Action {
   constructor(chipType: ChipType) {
-    super("chip");
+    super(ActionType.chip);
     this.chipType = chipType;
   }
   chipType: ChipType;

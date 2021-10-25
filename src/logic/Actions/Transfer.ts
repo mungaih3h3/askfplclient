@@ -1,4 +1,4 @@
-import Action from "../Action";
+import Action, { ActionType } from "../Action";
 import Player from "../Player";
 
 export default class Transfer extends Action {
@@ -6,7 +6,7 @@ export default class Transfer extends Action {
     playerIn: Player = Player.getNull(),
     playerOut: Player = Player.getNull()
   ) {
-    super("transfer");
+    super(ActionType.transfer);
     this.playerIn = playerIn;
     this.playerOut = playerOut;
   }

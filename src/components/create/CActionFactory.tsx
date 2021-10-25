@@ -1,5 +1,4 @@
 import {
-  Button,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -8,12 +7,13 @@ import {
   Typography,
 } from "@mui/material";
 import { FC } from "react";
-import Action from "../../logic/Action";
+import Action, { ActionType } from "../../logic/Action";
 import Transfer from "../../logic/Actions/Transfer";
 import BenchAndPlay from "../../logic/Actions/BenchAndPlay";
 import { Box } from "@mui/system";
 import { chipFactory } from "./chips/CChipFactory";
 import { ChipType } from "../../logic/Actions/Chip";
+import Captain from "../../logic/Actions/Captain";
 interface CActionFactoryProps {
   onCreate: (action: Action) => any;
 }
@@ -21,16 +21,18 @@ interface CActionFactoryProps {
 const CActionFactory: FC<CActionFactoryProps> = ({ onCreate }) => {
   return (
     <Stack spacing={2}>
-      {["transfer", "bench and play"].map((actionType) => (
-        <Box
-          key={actionType}
-          onClick={() => onCreate(actionFactory(actionType))}
-        >
-          <Typography sx={{ textTransform: "capitalize" }}>
-            {actionType}
-          </Typography>
-        </Box>
-      ))}
+      {[ActionType.transfer, ActionType.benchandplay, ActionType.captain].map(
+        (actionType) => (
+          <Box
+            key={actionType}
+            onClick={() => onCreate(actionFactory(actionType))}
+          >
+            <Typography sx={{ textTransform: "capitalize" }}>
+              {actionType}
+            </Typography>
+          </Box>
+        )
+      )}
       <Divider />
       {[
         ChipType.wildcard,
@@ -73,12 +75,14 @@ export const CActionFactoryDialog: FC<CActionFactoryDialogProps> = ({
   );
 };
 
-function actionFactory(type: string): Action {
+function actionFactory(type: ActionType): Action {
   switch (type) {
-    case "transfer":
+    case ActionType.transfer:
       return new Transfer();
-    case "bench and play":
+    case ActionType.benchandplay:
       return new BenchAndPlay();
+    case ActionType.captain:
+      return new Captain();
     default:
       throw new Error("Type factory cannot make type: " + type);
   }

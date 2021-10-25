@@ -3,6 +3,7 @@ import Transfer from "../logic/Actions/Transfer";
 import { hydratePlayer } from "./hydratePlayer";
 import BenchAndPlay from "../logic/Actions/BenchAndPlay";
 import { hydrateChip } from "./hydrateChip";
+import { hydrateCaptain } from "./hydrateCaptain";
 export default function hydrateAction(action: any) {
   switch (action.type) {
     case "transfer": {
@@ -18,6 +19,8 @@ export default function hydrateAction(action: any) {
       );
     case "chip":
       return hydrateChip(action);
+    case "captain":
+      return hydrateCaptain(action);
     default:
       throw new Error("Cannot hydrate action: " + action);
   }

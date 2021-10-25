@@ -1,5 +1,5 @@
 import { immerable } from "immer";
-import Action from "../Action";
+import Action, { ActionType } from "../Action";
 import Player from "../Player";
 
 export default class BenchAndPlay extends Action {
@@ -7,7 +7,7 @@ export default class BenchAndPlay extends Action {
     playerIn: Player = Player.getNull(),
     playerOut: Player = Player.getNull()
   ) {
-    super("benchandplay");
+    super(ActionType.benchandplay);
     this.playerIn = playerIn;
     this.playerOut = playerOut;
   }

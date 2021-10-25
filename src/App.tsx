@@ -13,6 +13,7 @@ import { Box } from "@mui/system";
 import CNav from "./components/present/CNav";
 import { FeedbackProvider } from "./contexts/FeedbackProvider";
 import { HideOnScroll } from "./components/utils/HideOnScroll";
+import { DiscussionProvider } from "./contexts/DiscussionProvider";
 
 function App() {
   return (
@@ -41,16 +42,18 @@ function App() {
                   <FeedbackProvider>
                     <VotesProvider>
                       <PlayersProvider>
-                        {routes.map(({ path, Component, navTitle }) => (
-                          <Route exact key={path} path={path}>
-                            <Stack spacing={2}>
-                              <HideOnScroll>
-                                <CNav title={navTitle} />
-                              </HideOnScroll>
-                              <Component />
-                            </Stack>
-                          </Route>
-                        ))}
+                        <DiscussionProvider>
+                          {routes.map(({ path, Component, navTitle }) => (
+                            <Route exact key={path} path={path}>
+                              <Stack spacing={2}>
+                                <HideOnScroll>
+                                  <CNav title={navTitle} />
+                                </HideOnScroll>
+                                <Component />
+                              </Stack>
+                            </Route>
+                          ))}
+                        </DiscussionProvider>
                       </PlayersProvider>
                     </VotesProvider>
                   </FeedbackProvider>
