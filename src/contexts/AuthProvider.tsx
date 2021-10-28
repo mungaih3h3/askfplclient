@@ -15,6 +15,7 @@ type TAuthContext = {
   getToken: () => string;
   signUp: (name: string, email: string, password: string) => Promise<any>;
   openAuthDialog: () => any;
+  token: string;
 };
 
 export const AuthContext = createContext<TAuthContext>({
@@ -31,6 +32,7 @@ export const AuthContext = createContext<TAuthContext>({
   logOut: async () => {},
   signUp: async () => {},
   openAuthDialog: () => {},
+  token: "",
 });
 
 export const AuthProvider: FC = ({ children }) => {
@@ -48,9 +50,9 @@ export const AuthProvider: FC = ({ children }) => {
     return token !== "";
   };
   const signIn = async (name: string, password: string) => {
-    const token = await authenticate(name, password);
-    setToken(token);
-    const { username } = decode(token) as any;
+    const tokenServer = await authenticate(name, password);
+    setToken(tokenServer);
+    const { username } = decode(tokenServer) as any;
     Publisher.publish(Events.login, new User(username));
   };
   const signUp = async (name: string, email: string, password: string) => {
@@ -79,6 +81,7 @@ export const AuthProvider: FC = ({ children }) => {
         logOut,
         signUp,
         openAuthDialog: () => setAuthDialog(true),
+        token,
       }}
     >
       {children}

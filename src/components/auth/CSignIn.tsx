@@ -64,6 +64,7 @@ const CSignIn: FC<CSignInProps> = ({ onAuth = () => {} }) => {
           } catch (error: any) {
             setLoading(false);
             toast.error(error.message);
+            console.log(error);
           }
         }}
       >

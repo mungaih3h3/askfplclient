@@ -6,9 +6,10 @@ import Poll from "../logic/Poll";
 import { CNoPolls } from "../components/present/CNoPolls";
 import { PLoadingPolls } from "../components/loading/PLoadingPolls";
 import { VotesContext } from "./VotesProvider";
-import Publisher, { Events } from "../logic/Publisher";
 import { ApiMap } from "../api/ApiMap";
 import User from "../logic/User";
+import { AuthContext } from "./AuthProvider";
+import { ActiveBotContext } from "./ActiveBotProvider";
 type TPollsContext = {
   polls: Poll[];
   hasMore: boolean;
@@ -37,47 +38,47 @@ export const PollsProvider: FC<PollsProviderProps> = ({
   const { getInstance } = useContext(ApiContext);
   const { addUserVotes, addVoteCounts, setUserVotes } =
     useContext(VotesContext);
+  const { token, isAuthenticated, getAuthenticatedUser } =
+    useContext(AuthContext);
+  const { activeBot } = useContext(ActiveBotContext);
 
   useEffect(() => {
     getPaginatedPolls(new Date(), pollsPerPage);
   }, []);
   useEffect(() => {
-    const subId = Publisher.subscribeToMany(
-      [Events.changeUser, Events.login],
-      async (user: User) => {
-        try {
-          if (onlyUser) {
-            const {
-              polls: newPolls,
-              hasMore,
-              userVotes,
-              voteCounts,
-            } = await fetchUserPolls(
-              getInstance(user.username),
-              new Date(),
-              pollsPerPage
-            );
-            setPolls(newPolls);
-            setHasMore(hasMore);
-            setUserVotes(userVotes);
-            addVoteCounts(voteCounts);
-          } else {
-            const newUserVotes = await ApiMap.userPollVotes(
-              getInstance(user.username),
-              polls.map((poll) => poll.id)
-            );
-            setUserVotes(newUserVotes);
-          }
-        } catch (error: any) {
-          console.log(error);
-          setError(true);
+    const fetchVotes = async (user: User) => {
+      try {
+        if (onlyUser) {
+          const {
+            polls: newPolls,
+            hasMore,
+            userVotes,
+            voteCounts,
+          } = await fetchUserPolls(
+            getInstance(user.username),
+            new Date(),
+            pollsPerPage
+          );
+          setPolls(newPolls);
+          setHasMore(hasMore);
+          setUserVotes(userVotes);
+          addVoteCounts(voteCounts);
+        } else {
+          const newUserVotes = await ApiMap.userPollVotes(
+            getInstance(user.username),
+            polls.map((poll) => poll.id)
+          );
+          setUserVotes(newUserVotes);
         }
+      } catch (error: any) {
+        console.log(error);
+        setError(true);
       }
-    );
-    return () => {
-      Publisher.unsubscribeToMany([Events.changeUser, Events.login], subId);
     };
-  }, [polls]);
+    if (isAuthenticated()) {
+      fetchVotes(activeBot || getAuthenticatedUser());
+    }
+  }, [polls, token, activeBot]);
 
   const getPaginatedPolls = async (startDate: Date, limit: number) => {
     try {

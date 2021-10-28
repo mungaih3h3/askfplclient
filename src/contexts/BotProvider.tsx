@@ -3,7 +3,6 @@ import toast from "react-hot-toast";
 import { hydrateUser } from "../api/hydrateUser";
 import { CCreateBotDialog } from "../components/create/CCreateBot";
 import { CUserPoolDialog } from "../components/present/CBotPool";
-import Publisher, { Events } from "../logic/Publisher";
 import User from "../logic/User";
 import { ApiContext } from "./ApiProvider";
 import { AuthContext } from "./AuthProvider";
@@ -34,7 +33,8 @@ export const BotProvider: FC = ({ children }) => {
   const [isBotDialogOpen, setBotDialog] = useState(false);
   const [addBotDialog, setAddBotDialog] = useState(false);
   const { getInstance } = useContext(ApiContext);
-  const { isAuthenticated, getAuthenticatedUser } = useContext(AuthContext);
+  const { isAuthenticated, getAuthenticatedUser, token } =
+    useContext(AuthContext);
   const [loadingSaveBot, setLoadingSaveBot] = useState(false);
 
   const saveBot = async (user: User) => {
@@ -79,13 +79,7 @@ export const BotProvider: FC = ({ children }) => {
       }
     };
     fetchBots();
-    const fnId = Publisher.subscribeTo(Events.login, async (user: User) => {
-      await fetchBots();
-    });
-    return () => {
-      Publisher.unsubscribeTo(Events.login, fnId);
-    };
-  }, []);
+  }, [token]);
 
   return (
     <BotContext.Provider
