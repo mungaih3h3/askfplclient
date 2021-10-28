@@ -5,14 +5,14 @@ import PCreatePoll from "./PCreatePoll";
 
 const routes = [
   {
-    path: "/",
-    Component: PPolls,
-    navTitle: "Polls",
-  },
-  {
     path: "/create",
     Component: PCreatePoll,
     navTitle: "Create Poll",
+  },
+  {
+    path: "/",
+    Component: PPolls,
+    navTitle: "Polls",
   },
   {
     path: "/userpolls",

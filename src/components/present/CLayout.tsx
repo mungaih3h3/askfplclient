@@ -1,10 +1,9 @@
-import { Divider, Grid, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { Grid, useMediaQuery, useTheme } from "@mui/material";
 import { FC } from "react";
 import routes from "../../pages/routes";
 import CNav from "./CNav";
 import { CSideNav } from "./CSideNav";
 import { Route } from "react-router-dom";
-import { grey } from "@mui/material/colors";
 import { Box } from "@mui/system";
 
 export const CLayout: FC = () => {
@@ -26,8 +25,8 @@ export const CLayout: FC = () => {
       )}
 
       {routes.map(({ path, Component, navTitle }) => (
-        <Grid item md={7} xs={12} sm={12} key={path}>
-          <Route exact key={path} path={path}>
+        <Route exact key={path} path={path}>
+          <Grid item md={7} xs={12} sm={12} key={path}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <CNav title={navTitle} />
@@ -36,8 +35,8 @@ export const CLayout: FC = () => {
                 <Component />
               </Grid>
             </Grid>
-          </Route>
-        </Grid>
+          </Grid>
+        </Route>
       ))}
     </Grid>
   );
