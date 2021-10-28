@@ -10,11 +10,12 @@ import produce from "immer";
 import { FC, useState } from "react";
 import User from "../../logic/User";
 
-interface CCreateUserProps {
+interface CCreateBotProps {
   onCreate: (user: User) => any;
+  loading: boolean;
 }
 
-const CCreateUser: FC<CCreateUserProps> = ({ onCreate }) => {
+const CCreateBot: FC<CCreateBotProps> = ({ onCreate, loading }) => {
   const [user, setUser] = useState({ username: "" });
   return (
     <Stack spacing={2}>
@@ -30,35 +31,36 @@ const CCreateUser: FC<CCreateUserProps> = ({ onCreate }) => {
         }}
       />
       <Button
+        disabled={loading}
         variant="contained"
         onClick={() => {
           onCreate(new User(user.username, []));
         }}
       >
-        Create
+        {loading ? "Loading..." : "Create"}
       </Button>
     </Stack>
   );
 };
 
-interface CCreateUserDialogProps extends CCreateUserProps {
+interface CCreateBotDialogProps extends CCreateBotProps {
   open: boolean;
   onClose: () => any;
 }
 
-export const CCreateUserDialog: FC<CCreateUserDialogProps> = ({
+export const CCreateBotDialog: FC<CCreateBotDialogProps> = ({
   open,
   onClose,
   ...rest
 }) => {
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Add User</DialogTitle>
+      <DialogTitle>Add Bot</DialogTitle>
       <DialogContent>
-        <CCreateUser {...rest} />
+        <CCreateBot {...rest} />
       </DialogContent>
     </Dialog>
   );
 };
 
-export default CCreateUser;
+export default CCreateBot;

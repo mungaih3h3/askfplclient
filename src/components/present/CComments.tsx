@@ -21,7 +21,8 @@ import { ApiContext } from "../../contexts/ApiProvider";
 import { ApiMap } from "../../api/ApiMap";
 import { grey } from "@mui/material/colors";
 import { fontSizes } from "../../theme/fontSizes";
-import { UsersContext } from "../../contexts/UsersProvider";
+import { BotContext } from "../../contexts/BotProvider";
+import { ActiveBotContext } from "../../contexts/ActiveBotProvider";
 
 type TCCommentsContext = {
   addComment: (comment: Comment) => Promise<any>;
@@ -42,7 +43,7 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
   const [showAddReply, setShowAddReply] = useState(false);
   const { getAuthenticatedUser, isAuthenticated, openAuthDialog } =
     useContext(AuthContext);
-  const { activeUser } = useContext(UsersContext);
+  const { activeBot } = useContext(ActiveBotContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const { getInstance } = useContext(ApiContext);
@@ -131,8 +132,8 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
             initialComment={
               new Comment(
                 "",
-                activeUser !== undefined
-                  ? activeUser.username
+                activeBot !== undefined
+                  ? activeBot.username
                   : getAuthenticatedUser().username,
                 [pollId]
               )

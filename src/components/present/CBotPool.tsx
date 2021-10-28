@@ -3,50 +3,66 @@ import {
   Button,
   Dialog,
   DialogContent,
-  DialogTitle,
+  Paper,
   Stack,
+  Typography,
 } from "@mui/material";
 import { indigo } from "@mui/material/colors";
 import { Box } from "@mui/system";
 import { FC, useContext, useState } from "react";
+import { ActiveBotContext } from "../../contexts/ActiveBotProvider";
 import { AuthContext } from "../../contexts/AuthProvider";
-import { UsersContext } from "../../contexts/UsersProvider";
-import User from "../../logic/User";
-import { CCreateUserDialog } from "../create/CCreateUser";
-import CUser from "./CUser";
+import { BotContext } from "../../contexts/BotProvider";
+import { fontSizes } from "../../theme/fontSizes";
+import CBot from "./CBot";
 interface CUserPoolProps {}
 
 const CUserPool: FC<CUserPoolProps> = () => {
-  const { users, setActive, activeUser, openCreateUserDialog } =
-    useContext(UsersContext);
+  const { bots, openCreateBotDialog } = useContext(BotContext);
+  const { activeBot, setActiveBot } = useContext(ActiveBotContext);
   const { getAuthenticatedUser } = useContext(AuthContext);
-  const [addUser, setAddUser] = useState(false);
   return (
     <>
       <Stack spacing={2}>
-        <Button startIcon={<Add />} onClick={() => openCreateUserDialog()}>
-          user
-        </Button>
-        {users.map((user) => (
-          <Box
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography sx={{ fontSize: fontSizes[3] }}>Bots</Typography>
+
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<Add />}
+            onClick={() => openCreateBotDialog()}
+          >
+            bot
+          </Button>
+        </Box>
+        {bots.map((user) => (
+          <Paper
             key={user.username}
             sx={{
               p: 2,
               backgroundColor:
-                activeUser?.username === user.username
+                activeBot?.username === user.username
                   ? indigo[700]
                   : "rgba(0,0,0,0)",
+              cursor: "pointer",
             }}
             onClick={() => {
-              if (activeUser?.username === user.username) {
-                setActive(getAuthenticatedUser());
+              if (activeBot?.username === user.username) {
+                setActiveBot(undefined);
               } else {
-                setActive(user);
+                setActiveBot(user);
               }
             }}
           >
-            <CUser user={user} />
-          </Box>
+            <CBot user={user} />
+          </Paper>
         ))}
       </Stack>
     </>
@@ -65,7 +81,6 @@ export const CUserPoolDialog: FC<CUserPoolDialogProps> = ({
 }) => {
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Users</DialogTitle>
       <DialogContent>
         <CUserPool {...rest} />
       </DialogContent>

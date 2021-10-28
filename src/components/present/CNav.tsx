@@ -27,12 +27,12 @@ import {
   ViewStream,
 } from "@mui/icons-material";
 import { useHistory } from "react-router-dom";
+import { CNavItems } from "./CNavItems";
 interface CNavProps {
   title: string;
 }
 const CNav: FC<CNavProps> = forwardRef(({ title, ...props }, ref) => {
   const { isAuthenticated, openAuthDialog, logOut } = useContext(AuthContext);
-  const { openFeedbackDialog } = useContext(FeedbackContext);
   const [topMenu, setTopMenu] = useState(false);
   const topMenuAnchor = useRef(null);
   const history = useHistory();
@@ -47,6 +47,7 @@ const CNav: FC<CNavProps> = forwardRef(({ title, ...props }, ref) => {
         justifyContent: "space-between",
         alignItems: "center",
         py: 2,
+        px: 2,
         position: onMobile ? "sticky" : "relative",
         top: 0,
         backgroundColor: (theme) => theme.palette.background.default,
@@ -96,34 +97,7 @@ const CNav: FC<CNavProps> = forwardRef(({ title, ...props }, ref) => {
               anchorEl={topMenuAnchor.current}
               onClose={() => setTopMenu(false)}
             >
-              <MenuItem onClick={() => history.push("/")}>
-                <ListItemIcon>
-                  <Explore fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Explore</ListItemText>
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  openFeedbackDialog();
-                }}
-              >
-                <ListItemIcon>
-                  <Reply fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Feedback</ListItemText>
-              </MenuItem>
-              <MenuItem onClick={() => history.push("/create")}>
-                <ListItemIcon>
-                  <Add fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Add Poll</ListItemText>
-              </MenuItem>
-              <MenuItem onClick={() => history.push("/userpolls")}>
-                <ListItemIcon>
-                  <ViewStream fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>My Polls</ListItemText>
-              </MenuItem>
+              <CNavItems />
               <Divider />
               <MenuItem
                 onClick={() => {

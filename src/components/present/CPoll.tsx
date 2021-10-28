@@ -1,5 +1,4 @@
 import {
-  Badge,
   Button,
   Card,
   CardContent,
@@ -11,7 +10,6 @@ import { grey, indigo } from "@mui/material/colors";
 import { Box } from "@mui/system";
 import { formatDistanceToNow } from "date-fns";
 import { FC, useContext } from "react";
-import { useHistory, useLocation } from "react-router-dom";
 import { VotesContext } from "../../contexts/VotesProvider";
 import Poll from "../../logic/Poll";
 import { fontSizes } from "../../theme/fontSizes";
@@ -27,7 +25,7 @@ interface CPollProps {
 
 const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
   const { userVotes, vote, voteCount } = useContext(VotesContext);
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, openAuthDialog } = useContext(AuthContext);
   return (
     <Card variant="outlined">
       <CardContent>
@@ -71,7 +69,7 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
               }}
               onClick={async () => {
                 if (!isAuthenticated()) {
-                  toast.error("Please log in to vote");
+                  openAuthDialog();
                 } else {
                   vote(poll.id, option.id);
                 }

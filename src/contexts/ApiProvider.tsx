@@ -2,8 +2,8 @@ import axios, { AxiosInstance } from "axios";
 import { FC, useContext } from "react";
 import { createContext } from "react";
 import { url } from "../api/ApiInstance";
+import { ActiveBotContext } from "./ActiveBotProvider";
 import { AuthContext } from "./AuthProvider";
-import { UsersContext } from "./UsersProvider";
 
 type TApiContext = {
   getInstance: (as?: string) => AxiosInstance;
@@ -11,24 +11,18 @@ type TApiContext = {
 
 export const ApiContext = createContext<TApiContext>({
   getInstance: () => {
-    const headers = {
-      authorization: JSON.parse(localStorage.getItem("token") || ""),
-    };
-    return axios.create({
-      baseURL: url,
-      headers,
-    });
+    throw new Error("No api context");
   },
 });
 
 export const ApiProvider: FC = ({ children }) => {
   const { getToken, isAuthenticated } = useContext(AuthContext);
   const { getAuthenticatedUser } = useContext(AuthContext);
-  const { activeUser } = useContext(UsersContext);
+  const { activeBot } = useContext(ActiveBotContext);
   const getInstance = (
     as: string = isAuthenticated()
-      ? activeUser !== undefined
-        ? activeUser.username
+      ? activeBot !== undefined
+        ? activeBot.username
         : getAuthenticatedUser().username
       : ""
   ) => {

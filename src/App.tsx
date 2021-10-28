@@ -12,7 +12,8 @@ import { Box } from "@mui/system";
 import { FeedbackProvider } from "./contexts/FeedbackProvider";
 import { DiscussionProvider } from "./contexts/DiscussionProvider";
 import { CLayout } from "./components/present/CLayout";
-import { UsersProvider } from "./contexts/UsersProvider";
+import { BotProvider } from "./contexts/BotProvider";
+import { ActiveBotProvider } from "./contexts/ActiveBotProvider";
 
 function App() {
   return (
@@ -37,19 +38,21 @@ function App() {
             <Box>
               <Toaster />
               <AuthProvider>
-                <UsersProvider>
+                <ActiveBotProvider>
                   <ApiProvider>
-                    <FeedbackProvider>
-                      <VotesProvider>
-                        <PlayersProvider>
-                          <DiscussionProvider>
-                            <CLayout />
-                          </DiscussionProvider>
-                        </PlayersProvider>
-                      </VotesProvider>
-                    </FeedbackProvider>
+                    <BotProvider>
+                      <FeedbackProvider>
+                        <VotesProvider>
+                          <PlayersProvider>
+                            <DiscussionProvider>
+                              <CLayout />
+                            </DiscussionProvider>
+                          </PlayersProvider>
+                        </VotesProvider>
+                      </FeedbackProvider>
+                    </BotProvider>
                   </ApiProvider>
-                </UsersProvider>
+                </ActiveBotProvider>
               </AuthProvider>
             </Box>
           </Switch>
