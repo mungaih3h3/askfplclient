@@ -9,6 +9,8 @@ import {
   Paper,
   Stack,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { grey, lime } from "@mui/material/colors";
 import { Box } from "@mui/system";
@@ -34,6 +36,8 @@ const CNav: FC<CNavProps> = forwardRef(({ title, ...props }, ref) => {
   const [topMenu, setTopMenu] = useState(false);
   const topMenuAnchor = useRef(null);
   const history = useHistory();
+  const theme = useTheme();
+  const onMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Box
       {...props}
@@ -43,7 +47,7 @@ const CNav: FC<CNavProps> = forwardRef(({ title, ...props }, ref) => {
         justifyContent: "space-between",
         alignItems: "center",
         py: 2,
-        position: "sticky",
+        position: onMobile ? "sticky" : "relative",
         top: 0,
         backgroundColor: (theme) => theme.palette.background.default,
         zIndex: 3,
@@ -77,71 +81,72 @@ const CNav: FC<CNavProps> = forwardRef(({ title, ...props }, ref) => {
         </Paper>
       </Stack>
 
-      {isAuthenticated() ? (
-        <div>
-          <IconButton ref={topMenuAnchor} onClick={() => setTopMenu(true)}>
-            <MenuIcon
-              sx={{
-                color: grey[500],
-              }}
-            />
-          </IconButton>
-          <Menu
-            open={topMenu}
-            anchorEl={topMenuAnchor.current}
-            onClose={() => setTopMenu(false)}
+      {onMobile &&
+        (isAuthenticated() ? (
+          <div>
+            <IconButton ref={topMenuAnchor} onClick={() => setTopMenu(true)}>
+              <MenuIcon
+                sx={{
+                  color: grey[500],
+                }}
+              />
+            </IconButton>
+            <Menu
+              open={topMenu}
+              anchorEl={topMenuAnchor.current}
+              onClose={() => setTopMenu(false)}
+            >
+              <MenuItem onClick={() => history.push("/")}>
+                <ListItemIcon>
+                  <Explore fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Explore</ListItemText>
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  openFeedbackDialog();
+                }}
+              >
+                <ListItemIcon>
+                  <Reply fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Feedback</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={() => history.push("/create")}>
+                <ListItemIcon>
+                  <Add fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Add Poll</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={() => history.push("/userpolls")}>
+                <ListItemIcon>
+                  <ViewStream fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>My Polls</ListItemText>
+              </MenuItem>
+              <Divider />
+              <MenuItem
+                onClick={() => {
+                  setTopMenu(false);
+                  logOut();
+                }}
+              >
+                <ListItemIcon>
+                  <Logout fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Log Out</ListItemText>
+              </MenuItem>
+            </Menu>
+          </div>
+        ) : (
+          <Button
+            size="small"
+            variant="contained"
+            onClick={() => openAuthDialog()}
           >
-            <MenuItem onClick={() => history.push("/")}>
-              <ListItemIcon>
-                <Explore fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Explore</ListItemText>
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                openFeedbackDialog();
-              }}
-            >
-              <ListItemIcon>
-                <Reply fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Feedback</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={() => history.push("/create")}>
-              <ListItemIcon>
-                <Add fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Add Poll</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={() => history.push("/userpolls")}>
-              <ListItemIcon>
-                <ViewStream fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>My Polls</ListItemText>
-            </MenuItem>
-            <Divider />
-            <MenuItem
-              onClick={() => {
-                setTopMenu(false);
-                logOut();
-              }}
-            >
-              <ListItemIcon>
-                <Logout fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Log Out</ListItemText>
-            </MenuItem>
-          </Menu>
-        </div>
-      ) : (
-        <Button
-          size="small"
-          variant="contained"
-          onClick={() => openAuthDialog()}
-        >
-          Login
-        </Button>
-      )}
+            Login
+          </Button>
+        ))}
     </Box>
   );
 });

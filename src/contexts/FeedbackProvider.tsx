@@ -7,12 +7,14 @@ import { AuthContext } from "./AuthProvider";
 
 type TFeedbackContext = {
   openFeedbackDialog: () => any;
+  isOpen: boolean;
 };
 
 export const FeedbackContext = createContext<TFeedbackContext>({
   openFeedbackDialog: () => {
     throw new Error("No feedback context");
   },
+  isOpen: false,
 });
 
 export const FeedbackProvider: FC = ({ children }) => {
@@ -22,6 +24,7 @@ export const FeedbackProvider: FC = ({ children }) => {
   return (
     <FeedbackContext.Provider
       value={{
+        isOpen: open,
         openFeedbackDialog: () => {
           if (isAuthenticated()) {
             setOpen(true);

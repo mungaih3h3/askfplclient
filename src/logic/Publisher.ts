@@ -1,10 +1,14 @@
 import { v4 } from "uuid";
-
+export enum Events {
+  changeUser = "changeUser",
+  login = "login",
+  logout = "logout",
+}
 export default class Publisher {
   private constructor() {}
-  static subscribers: Map<string, { id: string; fn: (context: any) => any }[]> =
+  static subscribers: Map<Events, { id: string; fn: (context: any) => any }[]> =
     new Map();
-  static subscribeTo(event: string, callback: (context: any) => any): string {
+  static subscribeTo(event: Events, callback: (context: any) => any): string {
     const id = v4();
     Publisher.subscribers.set(
       event,
@@ -12,13 +16,34 @@ export default class Publisher {
     );
     return id;
   }
-  static unsubscribeTo(event: string, fnId: string) {
+  static subscribeToMany(
+    events: Events[],
+    callback: (context: any) => any
+  ): string {
+    const id = v4();
+    for (const event of events) {
+      Publisher.subscribers.set(
+        event,
+        (Publisher.subscribers.get(event) || []).concat({ id, fn: callback })
+      );
+    }
+    return id;
+  }
+  static unsubscribeToMany(events: Events[], fnId: string) {
+    for (const event of events) {
+      Publisher.subscribers.set(
+        event,
+        (Publisher.subscribers.get(event) || []).filter((s) => s.id !== fnId)
+      );
+    }
+  }
+  static unsubscribeTo(event: Events, fnId: string) {
     Publisher.subscribers.set(
       event,
       (Publisher.subscribers.get(event) || []).filter((s) => s.id !== fnId)
     );
   }
-  static publish(event: string, context: any) {
+  static publish(event: Events, context: any) {
     const subs = Publisher.subscribers.get(event) || [];
     for (const { fn: sub } of subs) {
       sub(context);

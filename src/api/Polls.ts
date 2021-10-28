@@ -83,7 +83,6 @@ export async function fetchUserPolls(
     if (!success) {
       throw new Error(message);
     } else {
-      console.log(polls);
       return {
         polls: polls.map((poll: pollServer & { owner: string }) =>
           hydratePoll(poll)

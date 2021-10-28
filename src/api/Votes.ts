@@ -1,5 +1,4 @@
 import { AxiosInstance } from "axios";
-import { apiInstance } from "./ApiInstance";
 
 type VoteFS = {
   pollId: string;
@@ -7,27 +6,20 @@ type VoteFS = {
 };
 
 export async function getUserPollVotes(
-  token: string,
+  apiInstance: AxiosInstance,
   pollIds: string[]
 ): Promise<Map<string, string>> {
   try {
     const {
-      data: { success, message, votes },
+      data: { success, message, userVotes },
     } = await apiInstance.post<{
-      votes: VoteFS[];
+      userVotes: VoteFS[];
       success: boolean;
       message: string;
-    }>(
-      "/votes",
-      { pollIds },
-      {
-        headers: {
-          authorization: token,
-        },
-      }
-    );
+    }>("/uservotes", { pollIds });
+
     if (!success) throw new Error(message);
-    return new Map(votes.map((v: any) => [v.pollId, v.optionId]));
+    return new Map(userVotes.map((v: any) => [v.pollId, v.optionId]));
   } catch (error: any) {
     console.log(error);
     throw error;

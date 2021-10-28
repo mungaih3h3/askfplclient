@@ -2,7 +2,7 @@ import produce from "immer";
 import { createContext, FC, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { ApiMap } from "../api/ApiMap";
-import Publisher from "../logic/Publisher";
+import Publisher, { Events } from "../logic/Publisher";
 import { ApiContext } from "./ApiProvider";
 type TVotesContext = {
   userVotes: Map<string, string>;
@@ -13,6 +13,7 @@ type TVotesContext = {
   vote: (pollId: string, optionId: string) => any;
   addVoteCounts: (voteCount: Map<string, Map<string, number>>[]) => any;
   addUserVotes: (v: Map<string, string>) => any;
+  setUserVotes: (votes: Map<string, string>) => any;
 };
 
 export const VotesContext = createContext<TVotesContext>({
@@ -24,6 +25,7 @@ export const VotesContext = createContext<TVotesContext>({
   vote: () => {},
   addVoteCounts: () => {},
   addUserVotes: () => {},
+  setUserVotes: () => {},
 });
 
 export const VotesProvider: FC = ({ children }) => {
@@ -38,11 +40,11 @@ export const VotesProvider: FC = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const { getInstance } = useContext(ApiContext);
   useEffect(() => {
-    const subId = Publisher.subscribeTo("logout", () => {
+    const subId = Publisher.subscribeTo(Events.logout, () => {
       setUserVotes(new Map());
     });
     return () => {
-      Publisher.unsubscribeTo("logout", subId);
+      Publisher.unsubscribeTo(Events.logout, subId);
     };
   }, []);
   const vote = (pollId: string, optionId: string) => {
@@ -93,6 +95,7 @@ export const VotesProvider: FC = ({ children }) => {
         errorMessage: error.errorMessage,
         addVoteCounts,
         addUserVotes,
+        setUserVotes,
       }}
     >
       {children}

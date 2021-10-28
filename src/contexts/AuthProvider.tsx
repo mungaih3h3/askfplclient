@@ -3,7 +3,8 @@ import { createContext, FC, useEffect, useLayoutEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { authenticate, register } from "../api/Auth";
 import { CAuthDialog } from "../components/auth/CAuth";
-import Publisher from "../logic/Publisher";
+import { useLocalStorage } from "../components/hooks/useLocalStorage";
+import Publisher, { Events } from "../logic/Publisher";
 import User from "../logic/User";
 
 type TAuthContext = {
@@ -20,7 +21,9 @@ export const AuthContext = createContext<TAuthContext>({
   getAuthenticatedUser: () => {
     throw new Error("No context");
   },
-  isAuthenticated: () => false,
+  isAuthenticated: () => {
+    return localStorage.getItem("token") !== null;
+  },
   signIn: async () => {},
   getToken: () => {
     throw new Error("Unautheticated");
@@ -31,64 +34,40 @@ export const AuthContext = createContext<TAuthContext>({
 });
 
 export const AuthProvider: FC = ({ children }) => {
-  const [user, setUser] = useState(undefined as User | undefined);
-  const [token, setToken] = useState("");
+  const [token, setToken] = useLocalStorage<string>("token", "");
   const getAuthenticatedUser = () => {
-    if (user) return user;
-    else {
+    if (token === "") {
       throw new Error("Unauthenticated");
+    } else {
+      const { username, roles } = decode(token as string) as any;
+      return new User(username, roles);
     }
   };
   const [authDialog, setAuthDialog] = useState(false);
-  const isAuthenticated = () => Boolean(user);
+  const isAuthenticated = () => {
+    return token !== "";
+  };
   const signIn = async (name: string, password: string) => {
     const token = await authenticate(name, password);
-    await localStorage.setItem("token", token);
-    const { username } = decode(token) as any;
-    Publisher.publish("login", undefined);
-    setUser(new User(username));
     setToken(token);
+    const { username } = decode(token) as any;
+    Publisher.publish(Events.login, new User(username));
   };
   const signUp = async (name: string, email: string, password: string) => {
     const token = await register(name, password, email);
-    await localStorage.setItem("token", token);
-    const { username } = decode(token) as any;
-    setUser(new User(username));
     setToken(token);
   };
   const getToken = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setUser(undefined);
-      setToken("");
-      throw new Error("Unauthenticated");
-    } else {
-      const { username } = decode(token) as any;
-      setUser(new User(username));
-      setToken(token);
-      return token;
-    }
+    return token;
   };
   const logOut = async () => {
     try {
-      await localStorage.removeItem("token");
-      Publisher.publish("logout", undefined);
-    } catch (error) {}
-
-    setUser(undefined);
-    setToken("");
-  };
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setUser(undefined);
       setToken("");
-    } else {
-      const { username } = decode(token) as any;
-      setUser(new User(username));
-      setToken(token);
+      Publisher.publish(Events.logout, undefined);
+    } catch (error) {
+      console.log(error);
     }
-  }, []);
+  };
 
   return (
     <AuthContext.Provider
