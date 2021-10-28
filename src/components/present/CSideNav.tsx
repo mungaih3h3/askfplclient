@@ -8,6 +8,7 @@ import {
   ViewStream,
 } from "@mui/icons-material";
 import {
+  Divider,
   ListItemIcon,
   ListItemText,
   MenuItem,
@@ -38,18 +39,18 @@ export const CSideNav = () => {
         py: 4,
         display: "flex",
         flexDirection: "column",
-        // justifyContent: "space-between",
-        height: "100%",
+        m: 3,
+        borderRadius: 3,
+        backgroundColor: grey[900],
       }}
     >
       <Typography
-        sx={{ py: 3, px: 4, fontSize: fontSizes[4], fontWeight: 600 }}
+        sx={{ px: 4, pb: 3, fontSize: fontSizes[3], fontWeight: 600 }}
       >
-        AskFpl
+        AskFPL
       </Typography>
-      <Box sx={{ flex: 1 }}>
-        <CNavItems />
-      </Box>
+      <CNavItems />
+      <Divider />
       {isAuthenticated() ? (
         <MenuItem onClick={() => logOut()}>
           <ListItemIcon>

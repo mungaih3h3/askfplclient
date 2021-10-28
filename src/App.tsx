@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { CircularProgress, CssBaseline } from "@mui/material";
+import { CircularProgress, Container, CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter, Switch } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthProvider";
@@ -35,7 +35,7 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Switch>
-            <Box>
+            <Container maxWidth="md">
               <Toaster />
               <AuthProvider>
                 <ActiveBotProvider>
@@ -54,7 +54,7 @@ function App() {
                   </ApiProvider>
                 </ActiveBotProvider>
               </AuthProvider>
-            </Box>
+            </Container>
           </Switch>
         </ThemeProvider>
       </Suspense>
