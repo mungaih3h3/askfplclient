@@ -2,6 +2,7 @@ import { immerable } from "immer";
 import { v4 } from "uuid";
 import Option from "./Option";
 import Comment from "../logic/Comment";
+
 export default class Poll {
   constructor(title: string, options: Option[] = [], username: string) {
     this.title = title;
@@ -14,5 +15,4 @@ export default class Poll {
   id: string = v4();
   title: string;
   options: Option[];
-  comments: Comment[] = [];
 }

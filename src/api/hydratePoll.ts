@@ -15,7 +15,6 @@ export default function hydratePoll({
     draft.id = id;
     draft.options = options.map((option) => hydrateOption(option));
     draft.createdAt = createdAt;
-    draft.comments = [];
     draft.username = owner;
   });
 }

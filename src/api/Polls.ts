@@ -103,16 +103,14 @@ export async function fetchUserPolls(
 export async function savePoll(apiInstance: AxiosInstance, poll: Poll) {
   try {
     const { id, options, title, createdAt } = poll;
-    const topLevelCommentIds = poll.comments.map((c) => c.id);
     const {
       data: { success, message },
-    } = await apiInstance.post<any, any, { poll: pollServer }>("/save/poll", {
+    } = await apiInstance.post<any, any, { poll: any }>("/save/poll", {
       poll: {
         id,
         options,
         title,
         createdAt,
-        topLevelCommentIds,
       },
     });
     if (!success) throw new Error(message);
