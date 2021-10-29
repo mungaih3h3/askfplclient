@@ -1,7 +1,6 @@
 import { immerable } from "immer";
 import { v4 } from "uuid";
 import Option from "./Option";
-import Comment from "../logic/Comment";
 
 export default class Poll {
   constructor(title: string, options: Option[] = [], username: string) {
@@ -15,4 +14,12 @@ export default class Poll {
   id: string = v4();
   title: string;
   options: Option[];
+  addOption(option: Option) {
+    if (this.options.length >= 5) {
+      throw new Error(
+        "Cannot add more than five options. Consider making more than one poll"
+      );
+    }
+    this.options.push(option);
+  }
 }

@@ -12,7 +12,7 @@ export const CLayout: FC = () => {
   return (
     <Grid container spacing={2}>
       {!onMobile && (
-        <Grid item md={3}>
+        <Grid item md={3} sm={3}>
           <Box
             sx={{
               position: "sticky",
@@ -26,7 +26,7 @@ export const CLayout: FC = () => {
 
       {routes.map(({ path, Component, navTitle }) => (
         <Route exact key={path} path={path}>
-          <Grid item md={7} xs={12} sm={12} key={path}>
+          <Grid item md={7} xs={12} sm={8} key={path}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <CNav title={navTitle} />

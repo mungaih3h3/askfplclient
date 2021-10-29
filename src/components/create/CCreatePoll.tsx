@@ -32,6 +32,8 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
   const [actionDialog, setActionDialog] = useState({
     open: false,
     index: -1,
+    chips: false,
+    captain: false,
   });
   return (
     <>
@@ -61,42 +63,7 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
                     width: "100%",
                   }}
                 >
-                  <CardContent>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Button
-                        startIcon={<Add />}
-                        size="small"
-                        variant="contained"
-                        onClick={() => {
-                          setActionDialog({ open: true, index });
-                        }}
-                      >
-                        Action
-                      </Button>
-                      <IconButton
-                        onClick={() => {
-                          setPoll(
-                            produce((draft) => {
-                              draft.options.splice(index, 1);
-                            })
-                          );
-                        }}
-                      >
-                        <Clear
-                          sx={{
-                            fontSize: fontSizes[4],
-                            color: grey[300],
-                          }}
-                        />
-                      </IconButton>
-                    </Box>
-                    <Divider sx={{ my: 2 }} />
+                  <CardContent sx={{ py: 2 }}>
                     <CCreateOption
                       key={option.id}
                       initialOption={option}
@@ -106,6 +73,16 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
                             draft.options[index] = newOption;
                           })
                         );
+                      }}
+                      onDelete={() => {
+                        setPoll(
+                          produce((draft) => {
+                            draft.options.splice(index, 1);
+                          })
+                        );
+                      }}
+                      onOpenFactory={(filter) => {
+                        setActionDialog({ open: true, index, ...filter });
                       }}
                     />
                   </CardContent>
@@ -122,11 +99,14 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
                   borderStyle: "dashed",
                 }}
                 onClick={() => {
-                  setPoll(
-                    produce((draft) => {
-                      draft.options.push(new Option());
-                    })
-                  );
+                  try {
+                    const newPoll = produce(poll, (draft) => {
+                      draft.addOption(new Option());
+                    });
+                    setPoll(newPoll);
+                  } catch (error: any) {
+                    toast.error(error.message);
+                  }
                 }}
               >
                 <Stack
@@ -184,13 +164,16 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
       </Card>
       <CActionFactoryDialog
         open={actionDialog.open}
-        onClose={() => setActionDialog({ open: false, index: -1 })}
+        filter={{ chips: actionDialog.chips, captain: actionDialog.captain }}
+        onClose={() =>
+          setActionDialog({ ...actionDialog, open: false, index: -1 })
+        }
         onCreate={(newAction) => {
           const newPoll = produce(poll, (draft) => {
             draft.options[actionDialog.index].actions.push(newAction);
           });
           setPoll(newPoll);
-          setActionDialog({ open: false, index: -1 });
+          setActionDialog({ ...actionDialog, open: false, index: -1 });
         }}
       />
     </>

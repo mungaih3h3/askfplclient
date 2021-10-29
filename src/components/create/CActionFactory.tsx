@@ -14,25 +14,52 @@ import { Box } from "@mui/system";
 import { chipFactory } from "./chips/CChipFactory";
 import { ChipType } from "../../logic/Actions/Chip";
 import Captain from "../../logic/Actions/Captain";
-interface CActionFactoryProps {
-  onCreate: (action: Action) => any;
+import toast from "react-hot-toast";
+export interface ActionFilter {
+  chips: boolean;
+  captain: boolean;
 }
 
-const CActionFactory: FC<CActionFactoryProps> = ({ onCreate }) => {
+interface CActionFactoryProps {
+  onCreate: (action: Action) => any;
+  filter: ActionFilter;
+}
+
+const CActionFactory: FC<CActionFactoryProps> = ({ onCreate, filter }) => {
   return (
     <Stack spacing={2}>
-      {[ActionType.transfer, ActionType.benchandplay, ActionType.captain].map(
-        (actionType) => (
-          <Box
-            key={actionType}
-            onClick={() => onCreate(actionFactory(actionType))}
-          >
-            <Typography sx={{ textTransform: "capitalize" }}>
-              {actionType}
-            </Typography>
-          </Box>
-        )
-      )}
+      {[ActionType.transfer, ActionType.benchandplay].map((actionType) => (
+        <Box
+          key={actionType}
+          onClick={() => onCreate(actionFactory(actionType))}
+        >
+          <Typography sx={{ textTransform: "capitalize" }}>
+            {actionType}
+          </Typography>
+        </Box>
+      ))}
+      <Box
+        key={ActionType.captain}
+        onClick={() => {
+          try {
+            if (!filter.captain) {
+              throw new Error("Cannot have more than one captain");
+            }
+            onCreate(actionFactory(ActionType.captain));
+          } catch (error: any) {
+            toast.error(error.message);
+          }
+        }}
+      >
+        <Typography
+          sx={{
+            textTransform: "capitalize",
+            textDecoration: filter.captain ? "none" : "line-through",
+          }}
+        >
+          {ActionType.captain}
+        </Typography>
+      </Box>
       <Divider />
       {[
         ChipType.wildcard,
@@ -43,10 +70,22 @@ const CActionFactory: FC<CActionFactoryProps> = ({ onCreate }) => {
         <Box
           key={chipType}
           onClick={() => {
-            onCreate(chipFactory(chipType));
+            try {
+              if (!filter.chips) {
+                throw new Error("Cannot add more than one chip");
+              }
+              onCreate(chipFactory(chipType));
+            } catch (error: any) {
+              toast.error(error.message);
+            }
           }}
         >
-          <Typography sx={{ textTransform: "capitalize" }}>
+          <Typography
+            sx={{
+              textTransform: "capitalize",
+              textDecoration: filter.chips ? "none" : "line-through",
+            }}
+          >
             {chipType}
           </Typography>
         </Box>
