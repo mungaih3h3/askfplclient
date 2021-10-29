@@ -1,12 +1,9 @@
 import {
-  Button,
   Card,
   CardContent,
   Paper,
   Stack,
   Typography,
-  IconButton,
-  Divider,
   InputBase,
 } from "@mui/material";
 import produce from "immer";
@@ -18,9 +15,9 @@ import CCreateOption from "./CCreateOption";
 import toast from "react-hot-toast";
 import { Box } from "@mui/system";
 import { grey, indigo } from "@mui/material/colors";
-import { Add, AddCircleOutline, Clear } from "@mui/icons-material";
+import { AddCircleOutline } from "@mui/icons-material";
 import { fontSizes } from "../../theme/fontSizes";
-import { CActionFactoryDialog } from "./CActionFactory";
+import { ActionFactoryContext } from "../../contexts/ActionFactoryProvider";
 interface CCreatePollProps {
   onCreate: (poll: Poll) => any;
 }
@@ -29,12 +26,7 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
   const { getAuthenticatedUser } = useContext(AuthContext);
   const initialPoll = new Poll("", [], getAuthenticatedUser().username);
   const [poll, setPoll] = useState(initialPoll);
-  const [actionDialog, setActionDialog] = useState({
-    open: false,
-    index: -1,
-    chips: false,
-    captain: false,
-  });
+  const { openActionFactoryDialog } = useContext(ActionFactoryContext);
   return (
     <>
       <Card variant="outlined" sx={{ borderRadius: 2 }}>
@@ -82,7 +74,12 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
                         );
                       }}
                       onOpenFactory={(filter) => {
-                        setActionDialog({ open: true, index, ...filter });
+                        openActionFactoryDialog(filter, (newAction) => {
+                          const newPoll = produce(poll, (draft) => {
+                            draft.options[index].actions.push(newAction);
+                          });
+                          setPoll(newPoll);
+                        });
                       }}
                     />
                   </CardContent>
@@ -162,20 +159,6 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
           Create
         </Box>
       </Card>
-      <CActionFactoryDialog
-        open={actionDialog.open}
-        filter={{ chips: actionDialog.chips, captain: actionDialog.captain }}
-        onClose={() =>
-          setActionDialog({ ...actionDialog, open: false, index: -1 })
-        }
-        onCreate={(newAction) => {
-          const newPoll = produce(poll, (draft) => {
-            draft.options[actionDialog.index].actions.push(newAction);
-          });
-          setPoll(newPoll);
-          setActionDialog({ ...actionDialog, open: false, index: -1 });
-        }}
-      />
     </>
   );
 };

@@ -20,14 +20,14 @@ interface CCreateOptionProps {
   onChange: (option: Option) => any;
   initialOption: Option;
   onDelete: (option: Option) => any;
-  onOpenFactory: (filter: ActionFilter) => any;
+  onOpenFactory?: (filter: ActionFilter) => any;
 }
 
 const CCreateOption: FC<CCreateOptionProps> = ({
   onChange,
   initialOption,
   onDelete,
-  onOpenFactory,
+  onOpenFactory = () => {},
 }) => {
   return (
     <>

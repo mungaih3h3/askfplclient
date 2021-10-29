@@ -23,15 +23,20 @@ import { grey } from "@mui/material/colors";
 import { fontSizes } from "../../theme/fontSizes";
 import { BotContext } from "../../contexts/BotProvider";
 import { ActiveBotContext } from "../../contexts/ActiveBotProvider";
+import produce from "immer";
 
 type TCCommentsContext = {
   addComment: (comment: Comment) => Promise<any>;
   getImmediateSubtree: (commentId: string) => Comment[];
+  voteComment: (commentId: string, upOrDown: "up" | "down") => any;
+  getUserCommentVote: (commentId: string) => "up" | "none" | "down";
 };
 
 export const CommentsContext = createContext<TCCommentsContext>({
   addComment: async () => {},
   getImmediateSubtree: () => [],
+  voteComment: () => {},
+  getUserCommentVote: () => "none",
 });
 
 interface CCommentsProps {
@@ -40,25 +45,31 @@ interface CCommentsProps {
 
 const CComments: FC<CCommentsProps> = ({ pollId }) => {
   const [comments, setComments] = useState([] as Comment[]);
+  const [userCommentVotes, setUserCommentVotes] = useState(
+    new Map<string, "up" | "down">()
+  );
   const [showAddReply, setShowAddReply] = useState(false);
-  const { getAuthenticatedUser, isAuthenticated, openAuthDialog } =
+  const { getAuthenticatedUser, isAuthenticated, openAuthDialog, token } =
     useContext(AuthContext);
   const { activeBot } = useContext(ActiveBotContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const { getInstance } = useContext(ApiContext);
+
   useEffect(() => {
     (async () => {
       try {
         if (pollId === "") throw new Error("Invalid poll id from url params");
-        const comments = await ApiMap.comments(getInstance(), pollId);
+        const { comments, userCommentVotes: serverUserCommentVotes } =
+          await ApiMap.comments(getInstance(), pollId);
         setComments(comments);
+        setUserCommentVotes(serverUserCommentVotes);
       } catch (error: any) {
         setError(true);
       }
       setLoading(false);
     })();
-  }, [pollId]);
+  }, [pollId, token, activeBot]);
   const addComment = async (newComment: Comment) => {
     try {
       setComments(comments.concat(newComment));
@@ -68,17 +79,52 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
     }
   };
 
+  const voteComment = async (commentId: string, upOrDown: "up" | "down") => {
+    if (!isAuthenticated()) {
+      openAuthDialog();
+      return;
+    }
+    if (userCommentVotes.get(commentId) === upOrDown) return;
+    setComments(
+      produce((draft) => {
+        const index = comments.findIndex((c) => c.id === commentId);
+        if (
+          userCommentVotes.get(commentId) !== upOrDown &&
+          userCommentVotes.get(commentId) !== undefined
+        ) {
+          draft[index].votes[upOrDown === "up" ? "down" : "up"] -= 1;
+        }
+        draft[index].votes[upOrDown] += 1;
+      })
+    );
+    setUserCommentVotes(
+      produce((draft) => {
+        draft.set(commentId, upOrDown);
+      })
+    );
+    ApiMap.voteComment(getInstance(), commentId, upOrDown).catch((error: any) =>
+      toast.error(error.message)
+    );
+  };
+
+  const getUserCommentVote = (commentId: string): "up" | "none" | "down" => {
+    const vote = userCommentVotes.get(commentId) || "none";
+    return vote;
+  };
+
   return (
     <CommentsContext.Provider
       value={{
         addComment,
         getImmediateSubtree: (commentId) =>
           Comment.getImmediateSubtree(commentId, comments),
+        voteComment,
+        getUserCommentVote,
       }}
     >
       <Stack spacing={2} sx={{ my: 1 }}>
         {error && (
-          <Stack spacing={0.5} sx={{ textAlign: "center" }}>
+          <Stack spacing={1} sx={{ textAlign: "center" }}>
             <h4>Sorry, and unexpected error occurred</h4>
             <small>We are working on solving the problem. Be back soon</small>
           </Stack>
@@ -99,7 +145,7 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
             </Button>
           </Box>
         )}
-        {!loading && comments.length === 0 && !showAddReply && (
+        {!error && !loading && comments.length === 0 && !showAddReply && (
           <Stack
             spacing={1}
             sx={{

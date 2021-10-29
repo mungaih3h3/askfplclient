@@ -14,6 +14,7 @@ import { DiscussionProvider } from "./contexts/DiscussionProvider";
 import { CLayout } from "./components/present/CLayout";
 import { BotProvider } from "./contexts/BotProvider";
 import { ActiveBotProvider } from "./contexts/ActiveBotProvider";
+import { ActionFactoryProvider } from "./contexts/ActionFactoryProvider";
 
 function App() {
   return (
@@ -44,9 +45,11 @@ function App() {
                       <FeedbackProvider>
                         <VotesProvider>
                           <PlayersProvider>
-                            <DiscussionProvider>
-                              <CLayout />
-                            </DiscussionProvider>
+                            <ActionFactoryProvider>
+                              <DiscussionProvider>
+                                <CLayout />
+                              </DiscussionProvider>
+                            </ActionFactoryProvider>
                           </PlayersProvider>
                         </VotesProvider>
                       </FeedbackProvider>

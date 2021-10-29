@@ -1,13 +1,27 @@
-import { Button, Card, CardContent, Stack } from "@mui/material";
-import { grey } from "@mui/material/colors";
+import {
+  Button,
+  Card,
+  CardContent,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { grey, indigo } from "@mui/material/colors";
 import { formatDistanceToNow } from "date-fns";
 import { FC, useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthProvider";
 import Comment from "../../logic/Comment";
 import CCreateComment from "../create/CCreateComment";
-import { Reply, Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  ArrowDownward,
+  ArrowUpward,
+  Reply,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 import { Box } from "@mui/system";
 import { CommentsContext } from "./CComments";
+import COption from "./COption";
 interface CCommentProps {
   comment: Comment;
 }
@@ -17,57 +31,125 @@ const CComment: FC<CCommentProps> = ({ comment }) => {
   const [showAddReply, setShowAddReply] = useState(false);
   const { getAuthenticatedUser, isAuthenticated, openAuthDialog } =
     useContext(AuthContext);
-  const { getImmediateSubtree, addComment } = useContext(CommentsContext);
+  const { getImmediateSubtree, addComment, voteComment, getUserCommentVote } =
+    useContext(CommentsContext);
+
+  const addToVotes = (): number => {
+    switch (getUserCommentVote(comment.id)) {
+      case "up":
+        return 1;
+      case "down":
+        return -1;
+      case "none":
+        return 0;
+      default:
+        throw new Error("Invalid comment vote state");
+    }
+  };
   return (
     <Card variant="outlined">
       <CardContent>
         <Stack spacing={1}>
-          <div
-            style={{
+          <Box
+            sx={{
               display: "flex",
-              gap: 10,
-              color: grey[500],
-              alignItems: "center",
+              flexDirection: "row",
+              alignItems: "flex-start",
+              width: "100%",
             }}
           >
-            <span>{comment.username}</span>
-            <span>-</span>
-            <span>
-              {formatDistanceToNow(new Date(comment.createdAt), {
-                addSuffix: true,
-              })}
-            </span>
-          </div>
-          <p>{comment.comment}</p>
-          <div
-            style={{
-              display: "flex",
-              gap: 10,
-            }}
-          >
-            {getImmediateSubtree(comment.id).length > 0 && (
-              <Button
-                size="small"
-                startIcon={showReplies ? <VisibilityOff /> : <Visibility />}
-                onClick={() => setShowReplies(!showReplies)}
+            <Stack spacing={1} sx={{ flex: 1 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
               >
-                {showReplies ? "hide" : "show"} replies
-              </Button>
-            )}
-            <Button
-              size="small"
-              startIcon={<Reply />}
-              onClick={() => {
-                if (isAuthenticated()) {
-                  setShowAddReply(!showAddReply);
-                } else {
-                  openAuthDialog();
-                }
-              }}
-            >
-              reply
-            </Button>
-          </div>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    color: grey[500],
+                    alignItems: "center",
+                  }}
+                >
+                  <span>{comment.username}</span>
+                  <span>-</span>
+                  <span>
+                    {formatDistanceToNow(new Date(comment.createdAt), {
+                      addSuffix: true,
+                    })}
+                  </span>
+                </div>
+                <Stack
+                  spacing={1}
+                  sx={{ alignItems: "center" }}
+                  direction="row"
+                >
+                  <IconButton
+                    onClick={() => {
+                      voteComment(comment.id, "up");
+                    }}
+                  >
+                    <ArrowUpward
+                      sx={{
+                        color: addToVotes() === 1 ? indigo[700] : grey[100],
+                      }}
+                    />
+                  </IconButton>
+                  <Typography>
+                    {comment.votes.up - comment.votes.down}
+                  </Typography>
+                  <IconButton
+                    onClick={() => {
+                      voteComment(comment.id, "down");
+                    }}
+                  >
+                    <ArrowDownward
+                      sx={{
+                        color: addToVotes() === -1 ? indigo[700] : grey[100],
+                      }}
+                    />
+                  </IconButton>
+                </Stack>
+              </Box>
+              {comment.suggestion !== undefined && (
+                <COption option={comment.suggestion} />
+              )}
+              <p>{comment.comment}</p>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 10,
+                }}
+              >
+                {getImmediateSubtree(comment.id).length > 0 && (
+                  <Button
+                    size="small"
+                    startIcon={showReplies ? <VisibilityOff /> : <Visibility />}
+                    onClick={() => setShowReplies(!showReplies)}
+                  >
+                    {showReplies ? "hide" : "show"} replies
+                  </Button>
+                )}
+                <Button
+                  size="small"
+                  startIcon={<Reply />}
+                  onClick={() => {
+                    if (isAuthenticated()) {
+                      setShowAddReply(!showAddReply);
+                    } else {
+                      openAuthDialog();
+                    }
+                  }}
+                >
+                  reply
+                </Button>
+              </div>
+            </Stack>
+          </Box>
+
           {showAddReply && (
             <CCreateComment
               initialComment={

@@ -1,6 +1,6 @@
 import { immerable } from "immer";
 import { v4 } from "uuid";
-
+import Option from "./Option";
 export default class Comment {
   constructor(
     comment: string,
@@ -19,6 +19,11 @@ export default class Comment {
   username: string;
   createdAt: Date = new Date();
   ancestors: string[];
+  suggestion: Option | undefined = undefined;
+  votes: {
+    up: number;
+    down: number;
+  } = { up: 0, down: 0 };
   static getImmediateSubtree(ancestor: string, comments: Comment[]) {
     const ans = [] as Comment[];
     for (const c of comments) {
