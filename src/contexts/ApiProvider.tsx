@@ -35,7 +35,7 @@ export const ApiProvider: FC = ({ children }) => {
     }
     const headers = {
       authorization: token,
-      as,
+      as: encodeURIComponent(as),
     };
     return axios.create({
       baseURL: url,

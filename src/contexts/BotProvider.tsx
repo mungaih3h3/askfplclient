@@ -41,7 +41,10 @@ export const BotProvider: FC = ({ children }) => {
     try {
       const {
         data: { success, message },
-      } = await getInstance().post<any, any>("/add/userbot", user);
+      } = await getInstance(getAuthenticatedUser().username).post<any, any>(
+        "/add/userbot",
+        user
+      );
       if (!success) throw new Error(message);
     } catch (error: any) {
       console.log(error);
@@ -62,7 +65,7 @@ export const BotProvider: FC = ({ children }) => {
 
   useEffect(() => {
     const fetchBots = async () => {
-      if (isAuthenticated()) {
+      if (isAuthenticated() && getAuthenticatedUser().hasRole("admin")) {
         try {
           const {
             data: { success, message, bots },
