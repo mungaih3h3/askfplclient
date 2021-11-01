@@ -85,7 +85,7 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
                 padding: 2,
                 backgroundColor:
                   (userVotes.get(poll.id) || "") === option.id
-                    ? indigo[700]
+                    ? theme.palette.primary.main
                     : theme.palette.background.default,
                 display: "flex",
                 flexDirection: "column",

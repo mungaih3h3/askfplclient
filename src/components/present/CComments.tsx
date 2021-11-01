@@ -141,6 +141,8 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
                   openAuthDialog();
                 }
               }}
+              variant="contained"
+              color="primary"
             >
               reply to poll
             </Button>

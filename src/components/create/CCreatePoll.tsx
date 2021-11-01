@@ -128,8 +128,8 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
         <Box
           sx={{
             textAlign: "center",
-            backgroundColor: indigo[600],
-            color: indigo[50],
+            backgroundColor: (theme) => theme.palette.primary.main,
+            color: grey[100],
             py: 2,
             m: "0",
             width: "100%",

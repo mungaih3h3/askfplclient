@@ -1,4 +1,4 @@
-import { indigo } from "@mui/material/colors";
+import { blue, indigo, pink } from "@mui/material/colors";
 import { createTheme } from "@mui/material/styles";
 
 const theme = {
@@ -10,7 +10,7 @@ const theme = {
   palette: {
     mode: "dark",
     primary: {
-      main: indigo[700],
+      main: blue[700],
     },
   },
 } as const;
