@@ -2,6 +2,8 @@ import PPoll from "./PPoll";
 import PUserPolls from "./PUserPolls";
 import PPolls from "./PPolls";
 import PCreatePoll from "./PCreatePoll";
+import PEmailVerified from "./PEmailVerified";
+import PResetPassword from "./PResetPassword";
 
 const routes = [
   {
@@ -23,6 +25,16 @@ const routes = [
     path: "/poll/:pollId",
     Component: PPoll,
     navTitle: "Poll",
+  },
+  {
+    path: "/email/verification/:code",
+    Component: PEmailVerified,
+    navTitle: "Email verification",
+  },
+  {
+    path: "/reset/password/:email/:resetCode",
+    Component: PResetPassword,
+    navTitle: "Reset Password",
   },
 ];
 

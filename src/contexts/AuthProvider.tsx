@@ -4,6 +4,9 @@ import toast from "react-hot-toast";
 import { authenticate, register } from "../api/Auth";
 import { CAuthDialog } from "../components/auth/CAuth";
 import { useLocalStorage } from "../components/hooks/useLocalStorage";
+import { CVerifyEmailDialog } from "../components/present/CVerifyEmail";
+import { CSendPasswordResetDialog } from "../components/auth/CSendPasswordReset";
+
 import Publisher, { Events } from "../logic/Publisher";
 import User from "../logic/User";
 
@@ -15,11 +18,20 @@ type TAuthContext = {
   getToken: () => string;
   signUp: (name: string, email: string, password: string) => Promise<any>;
   openAuthDialog: () => any;
+  openVerifyEmailDialog: () => any;
+  openSendPasswordResetDialog: () => any;
   token: string;
+  setToken: (token: string) => any;
 };
 
 export const AuthContext = createContext<TAuthContext>({
   getAuthenticatedUser: () => {
+    throw new Error("No context");
+  },
+  openVerifyEmailDialog: () => {
+    throw new Error("No context");
+  },
+  openSendPasswordResetDialog: () => {
     throw new Error("No context");
   },
   isAuthenticated: () => {
@@ -29,6 +41,7 @@ export const AuthContext = createContext<TAuthContext>({
   getToken: () => {
     throw new Error("Unautheticated");
   },
+  setToken: () => {},
   logOut: async () => {},
   signUp: async () => {},
   openAuthDialog: () => {},
@@ -46,6 +59,8 @@ export const AuthProvider: FC = ({ children }) => {
     }
   };
   const [authDialog, setAuthDialog] = useState(false);
+  const [verifyEmailDialog, setVerifyEmailDialog] = useState(false);
+  const [sendPasswordResetDialog, setSendPasswordResetDialog] = useState(false);
   const isAuthenticated = () => {
     return token !== "";
   };
@@ -56,8 +71,8 @@ export const AuthProvider: FC = ({ children }) => {
     Publisher.publish(Events.login, new User(username));
   };
   const signUp = async (name: string, email: string, password: string) => {
-    const token = await register(name, password, email);
-    setToken(token);
+    await register(name, password, email);
+    setVerifyEmailDialog(true);
   };
   const getToken = () => {
     return token;
@@ -81,7 +96,10 @@ export const AuthProvider: FC = ({ children }) => {
         logOut,
         signUp,
         openAuthDialog: () => setAuthDialog(true),
+        openVerifyEmailDialog: () => setVerifyEmailDialog(true),
+        openSendPasswordResetDialog: () => setSendPasswordResetDialog(true),
         token,
+        setToken,
       }}
     >
       {children}
@@ -89,6 +107,14 @@ export const AuthProvider: FC = ({ children }) => {
         open={authDialog}
         onClose={() => setAuthDialog(false)}
         onAuth={() => setAuthDialog(false)}
+      />
+      <CVerifyEmailDialog
+        open={verifyEmailDialog}
+        onClose={() => setVerifyEmailDialog(false)}
+      />
+      <CSendPasswordResetDialog
+        open={sendPasswordResetDialog}
+        onClose={() => setSendPasswordResetDialog(false)}
       />
     </AuthContext.Provider>
   );

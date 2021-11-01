@@ -1,5 +1,17 @@
 import { apiInstance } from "./ApiInstance";
 
+export async function sendPasswordResetLink(email: string) {
+  try {
+    const {
+      data: { success, message },
+    } = await apiInstance.get<any, any>(`/send/password/reset/${email}`);
+    if (!success) throw new Error(message);
+  } catch (error: any) {
+    console.log(error);
+    throw error;
+  }
+}
+
 export async function authenticate(
   username: string,
   password: string

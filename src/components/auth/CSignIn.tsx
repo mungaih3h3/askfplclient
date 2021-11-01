@@ -4,7 +4,9 @@ import { FC, useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../contexts/AuthProvider";
 import { fontSizes } from "../../theme/fontSizes";
-import { useParams, useLocation, useHistory } from "react-router-dom";
+import { useParams, useLocation, useHistory, Link } from "react-router-dom";
+import { Box } from "@mui/system";
+import { grey } from "@mui/material/colors";
 
 interface CSignInProps {
   onAuth?: () => any;
@@ -15,7 +17,7 @@ const CSignIn: FC<CSignInProps> = ({ onAuth = () => {} }) => {
     username: "",
     password: "",
   });
-  const { signIn, isAuthenticated } = useContext(AuthContext);
+  const { signIn, openSendPasswordResetDialog } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   return (
     <Stack spacing={1}>
@@ -70,6 +72,16 @@ const CSignIn: FC<CSignInProps> = ({ onAuth = () => {} }) => {
       >
         Sign In
       </Button>
+      <Box sx={{ textAlign: "center" }}>
+        <Typography
+          sx={{ color: grey[500], pt: 1, fontSize: fontSizes[1] }}
+          onClick={() => {
+            openSendPasswordResetDialog();
+          }}
+        >
+          Forgot password
+        </Typography>
+      </Box>
     </Stack>
   );
 };
