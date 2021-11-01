@@ -12,6 +12,7 @@ type TVotesContext = {
   errorMessage: string;
   vote: (pollId: string, optionId: string) => any;
   addVoteCounts: (voteCount: Map<string, Map<string, number>>[]) => any;
+  getTotalPollVotes: (pollId: string) => number;
   addUserVotes: (v: Map<string, string>) => any;
   setUserVotes: (votes: Map<string, string>) => any;
 };
@@ -26,6 +27,7 @@ export const VotesContext = createContext<TVotesContext>({
   addVoteCounts: () => {},
   addUserVotes: () => {},
   setUserVotes: () => {},
+  getTotalPollVotes: () => 0,
 });
 
 export const VotesProvider: FC = ({ children }) => {
@@ -80,6 +82,18 @@ export const VotesProvider: FC = ({ children }) => {
     const newMap = new Map(g.concat([...voteCount]));
     setVoteCount(newMap);
   };
+  const getTotalPollVotes = (pollId: string) => {
+    const p = voteCount.get(pollId);
+    if (!p) throw new Error("invalid poll");
+    else {
+      let ans = 0;
+      for (const [key, value] of p) {
+        console.log(value);
+        ans += value;
+      }
+      return ans;
+    }
+  };
   const addUserVotes = (v: Map<string, string>) => {
     const newMap = new Map([...v].concat([...userVotes]));
     setUserVotes(newMap);
@@ -96,6 +110,7 @@ export const VotesProvider: FC = ({ children }) => {
         addVoteCounts,
         addUserVotes,
         setUserVotes,
+        getTotalPollVotes,
       }}
     >
       {children}

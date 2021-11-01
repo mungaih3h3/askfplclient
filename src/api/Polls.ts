@@ -104,7 +104,7 @@ export async function savePoll(apiInstance: AxiosInstance, poll: Poll) {
   try {
     const { id, options, title, createdAt } = poll;
     const {
-      data: { success, message },
+      data: { success, message, poll: savedPoll },
     } = await apiInstance.post<any, any, { poll: any }>("/save/poll", {
       poll: {
         id,
@@ -114,6 +114,7 @@ export async function savePoll(apiInstance: AxiosInstance, poll: Poll) {
       },
     });
     if (!success) throw new Error(message);
+    return savedPoll;
   } catch (error: any) {
     console.log(error);
     throw error;

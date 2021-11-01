@@ -5,6 +5,7 @@ import {
   Paper,
   Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { grey, indigo } from "@mui/material/colors";
 import { Box } from "@mui/system";
@@ -24,10 +25,12 @@ interface CPollProps {
 }
 
 const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
-  const { userVotes, vote, voteCount } = useContext(VotesContext);
+  const { userVotes, vote, voteCount, getTotalPollVotes } =
+    useContext(VotesContext);
   const { isAuthenticated, openAuthDialog } = useContext(AuthContext);
+  const theme = useTheme();
   return (
-    <Card variant="outlined">
+    <Card>
       <CardContent>
         <Stack spacing={3}>
           <Stack spacing={1}>
@@ -49,9 +52,22 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
                 })}
               </span>
             </Stack>
-            <Typography sx={{ fontSize: fontSizes[4] }}>
-              {poll.title}
-            </Typography>
+            <Stack spacing={2} direction="row">
+              <Paper
+                sx={{
+                  py: 1,
+                  px: 2,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+                variant="outlined"
+              >
+                <Typography sx={{ color: grey[500] }}>GW {poll.gw}</Typography>
+              </Paper>
+              <Typography sx={{ fontSize: fontSizes[4] }}>
+                {poll.title}
+              </Typography>
+            </Stack>
           </Stack>
           {poll.options.map((option) => (
             <Paper
@@ -62,7 +78,7 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
                 backgroundColor:
                   (userVotes.get(poll.id) || "") === option.id
                     ? indigo[700]
-                    : "rgba(0,0,0,0)",
+                    : theme.palette.background.default,
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",

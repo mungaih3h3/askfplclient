@@ -24,7 +24,8 @@ const CResetPassword: FC<CResetPasswordProps> = ({
       <TextField
         value={password}
         onChange={({ target: { value } }) => setPassword(value)}
-        placeholder="Enter your new password..."
+        label="New Password"
+        variant="outlined"
       />
       <Button
         disabled={loading}

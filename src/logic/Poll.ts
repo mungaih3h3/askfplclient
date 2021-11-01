@@ -22,4 +22,5 @@ export default class Poll {
     }
     this.options.push(option);
   }
+  gw: number = 0;
 }

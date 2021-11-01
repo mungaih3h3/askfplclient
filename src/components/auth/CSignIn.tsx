@@ -1,4 +1,4 @@
-import { Button, Stack, TextField, Typography } from "@mui/material";
+import { Button, Stack, TextField, Typography, useTheme } from "@mui/material";
 import produce from "immer";
 import { FC, useContext, useState } from "react";
 import toast from "react-hot-toast";
@@ -19,8 +19,9 @@ const CSignIn: FC<CSignInProps> = ({ onAuth = () => {} }) => {
   });
   const { signIn, openSendPasswordResetDialog } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const theme = useTheme();
   return (
-    <Stack spacing={1}>
+    <Stack spacing={2}>
       <Typography
         sx={{
           fontSize: fontSizes[6],
@@ -31,7 +32,8 @@ const CSignIn: FC<CSignInProps> = ({ onAuth = () => {} }) => {
       </Typography>
       <TextField
         value={user.username}
-        placeholder="Enter username..."
+        label="Username"
+        variant="outlined"
         onChange={({ target: { value } }) => {
           setUser(
             produce((draft) => {
@@ -39,17 +41,26 @@ const CSignIn: FC<CSignInProps> = ({ onAuth = () => {} }) => {
             })
           );
         }}
+        inputProps={{
+          style: { WebkitBoxShadow: "0 0 0 1000px #383838 inset" },
+        }}
       />
       <TextField
         value={user.password}
         type="password"
-        placeholder="Enter password..."
+        label="Password"
+        variant="outlined"
         onChange={({ target: { value } }) => {
           setUser(
             produce((draft) => {
               draft.password = value;
             })
           );
+        }}
+        inputProps={{
+          style: {
+            WebkitBoxShadow: `0 0 0 1000px #383838 inset`,
+          },
         }}
       />
       <Button

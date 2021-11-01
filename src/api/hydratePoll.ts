@@ -3,18 +3,13 @@ import Poll from "../logic/Poll";
 import hydrateOption from "./hydrateOption";
 import { pollServer } from "./Polls";
 
-export default function hydratePoll({
-  title,
-  id,
-  options,
-  createdAt,
-  owner,
-}: pollServer & { owner: string }): Poll {
+export default function hydratePoll(poll: any): Poll {
   return produce(new Poll("", [], ""), (draft) => {
-    draft.title = title;
-    draft.id = id;
-    draft.options = options.map((option) => hydrateOption(option));
-    draft.createdAt = createdAt;
-    draft.username = owner;
+    draft.title = poll.title;
+    draft.id = poll.id;
+    draft.options = poll.options.map((option: any) => hydrateOption(option));
+    draft.createdAt = poll.createdAt;
+    draft.username = poll.owner;
+    draft.gw = poll.gw || 0;
   });
 }

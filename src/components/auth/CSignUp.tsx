@@ -22,7 +22,7 @@ const CSignUp: FC<CSignUpProps> = ({ onAuth = () => {} }) => {
   const { signUp, isAuthenticated } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   return (
-    <Stack spacing={1}>
+    <Stack spacing={2}>
       <Typography
         sx={{
           fontSize: fontSizes[6],
@@ -32,8 +32,10 @@ const CSignUp: FC<CSignUpProps> = ({ onAuth = () => {} }) => {
         Sign Up
       </Typography>
       <TextField
+        autoComplete="off"
         value={user.username}
-        placeholder="Enter username..."
+        label="Username"
+        variant="outlined"
         onChange={({ target: { value } }) => {
           setUser(
             produce((draft) => {
@@ -41,10 +43,15 @@ const CSignUp: FC<CSignUpProps> = ({ onAuth = () => {} }) => {
             })
           );
         }}
+        inputProps={{
+          style: { WebkitBoxShadow: "0 0 0 1000px #383838 inset" },
+        }}
       />
       <TextField
+        autoComplete="off"
         value={user.email}
-        placeholder="Enter email..."
+        label="Email"
+        variant="outlined"
         onChange={({ target: { value } }) => {
           setUser(
             produce((draft) => {
@@ -52,17 +59,25 @@ const CSignUp: FC<CSignUpProps> = ({ onAuth = () => {} }) => {
             })
           );
         }}
+        inputProps={{
+          style: { WebkitBoxShadow: "0 0 0 1000px #383838 inset" },
+        }}
       />
       <TextField
+        autoComplete="off"
         value={user.password}
         type="password"
-        placeholder="Enter password..."
+        label="Password"
+        variant="outlined"
         onChange={({ target: { value } }) => {
           setUser(
             produce((draft) => {
               draft.password = value;
             })
           );
+        }}
+        inputProps={{
+          style: { WebkitBoxShadow: "0 0 0 1000px #383838 inset" },
         }}
       />
       <Button
