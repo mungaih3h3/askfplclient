@@ -12,6 +12,7 @@ const PUserPolls: FC = () => {
     polls: userPolls,
     hasMore,
     fetchMorePolls,
+    currentGW,
   } = useContext(PollsContext);
   return (
     <InfiniteScroll
@@ -25,6 +26,7 @@ const PUserPolls: FC = () => {
       <Stack spacing={5}>
         {userPolls.map((poll) => (
           <CPoll
+            currentGW={currentGW}
             key={poll.id}
             poll={poll}
             onWantDiscussion={() => {

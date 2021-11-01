@@ -8,7 +8,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { grey, indigo } from "@mui/material/colors";
+import { amber, grey, indigo } from "@mui/material/colors";
 import { Box } from "@mui/system";
 import { formatDistanceToNow } from "date-fns";
 import { FC, useContext } from "react";
@@ -16,16 +16,18 @@ import { VotesContext } from "../../contexts/VotesProvider";
 import Poll from "../../logic/Poll";
 import { fontSizes } from "../../theme/fontSizes";
 import COption from "./COption";
-import { Comment, Share } from "@mui/icons-material";
+import { Comment, Lock, Share } from "@mui/icons-material";
 import { AuthContext } from "../../contexts/AuthProvider";
 import toast from "react-hot-toast";
+import { PollsContext } from "../../contexts/PollsProvider";
 
 interface CPollProps {
   poll: Poll;
   onWantDiscussion: (pollId: string) => any;
+  currentGW: number;
 }
 
-const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
+const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion, currentGW }) => {
   const { userVotes, vote, voteCount, getTotalPollVotes } =
     useContext(VotesContext);
   const { isAuthenticated, openAuthDialog } = useContext(AuthContext);
@@ -60,17 +62,20 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
                   })}
                 </span>
               </Stack>
-              <Paper
-                sx={{
-                  py: 1,
-                  px: 2,
-                  display: "flex",
-                  alignItems: "center",
-                }}
-                variant="outlined"
-              >
-                <Typography sx={{ color: grey[500] }}>GW{poll.gw}</Typography>
-              </Paper>
+              <Stack spacing={1} direction="row" sx={{ alignItems: "center" }}>
+                {currentGW > poll.gw && <Lock sx={{ color: amber[500] }} />}
+                <Paper
+                  sx={{
+                    py: 1,
+                    px: 2,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                  variant="outlined"
+                >
+                  <Typography sx={{ color: grey[500] }}>GW{poll.gw}</Typography>
+                </Paper>
+              </Stack>
             </Box>
 
             <Typography sx={{ fontSize: fontSizes[4] }}>
@@ -95,6 +100,12 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
                 if (!isAuthenticated()) {
                   openAuthDialog();
                 } else {
+                  if (currentGW > poll.gw) {
+                    toast.error(
+                      "You cannot vote for this poll. You are past the deadline"
+                    );
+                    return;
+                  }
                   vote(poll.id, option.id);
                 }
               }}

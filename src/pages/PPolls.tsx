@@ -6,7 +6,8 @@ import { DiscussionContext } from "../contexts/DiscussionProvider";
 import { PollsContext, PollsProvider } from "../contexts/PollsProvider";
 
 const PPolls: FC = () => {
-  const { hasMore, fetchMorePolls, polls } = useContext(PollsContext);
+  const { hasMore, fetchMorePolls, polls, currentGW } =
+    useContext(PollsContext);
   const { openDiscussion } = useContext(DiscussionContext);
   return (
     <InfiniteScroll
@@ -32,6 +33,7 @@ const PPolls: FC = () => {
             onWantDiscussion={(pollId) => {
               openDiscussion(poll.id);
             }}
+            currentGW={currentGW}
           />
         ))}
       </Stack>

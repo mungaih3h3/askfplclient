@@ -17,10 +17,11 @@ export async function fetchPoll(
   poll: Poll;
   voteCount: Map<string, Map<string, number>>;
   userVotes: Map<string, string>;
+  currentGW: number;
 }> {
   try {
     const {
-      data: { poll, message, success, userVotes },
+      data: { poll, message, success, userVotes, currentGW },
     } = await apiInstance.get<any, any>("/poll/" + pollId);
     if (!success) throw new Error(message);
 
@@ -28,6 +29,7 @@ export async function fetchPoll(
       poll: hydratePoll(poll),
       voteCount: hydrateVoteCount(poll.id, poll.voteCount || {}),
       userVotes: new Map(userVotes.map((v: any) => [v.pollId, v.optionId])),
+      currentGW,
     };
   } catch (error) {
     console.log(error);
@@ -44,10 +46,11 @@ export async function fetchPolls(
   hasMore: boolean;
   voteCounts: Map<string, Map<string, number>>[];
   userVotes: Map<string, string>;
+  currentGW: number;
 }> {
   try {
     const {
-      data: { polls, success, message, hasMore, userVotes },
+      data: { polls, success, message, hasMore, userVotes, currentGW },
     } = await apiInstance.get<any, any, any>(`/polls/${startDate}/${limit}`);
 
     if (!success) throw new Error(message);
@@ -59,6 +62,7 @@ export async function fetchPolls(
         hydrateVoteCount(poll.id, poll.voteCount || {})
       ),
       userVotes: new Map(userVotes.map((v: any) => [v.pollId, v.optionId])),
+      currentGW,
     };
   } catch (error: any) {
     console.log(error);
@@ -75,10 +79,11 @@ export async function fetchUserPolls(
   hasMore: boolean;
   voteCounts: Map<string, Map<string, number>>[];
   userVotes: Map<string, string>;
+  currentGW: number;
 }> {
   try {
     const {
-      data: { polls, success, message, hasMore, userVotes },
+      data: { polls, success, message, hasMore, userVotes, currentGW },
     } = (await apiInstance.get(`/user/polls/${startDate}/${limit}`)) as any;
     if (!success) {
       throw new Error(message);
@@ -92,6 +97,7 @@ export async function fetchUserPolls(
           hydrateVoteCount(poll.id, poll.voteCount || {})
         ),
         userVotes: new Map(userVotes.map((v: any) => [v.pollId, v.optionId])),
+        currentGW,
       };
     }
   } catch (error) {

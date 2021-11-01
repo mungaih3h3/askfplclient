@@ -26,10 +26,11 @@ export async function fetchComments(
 ): Promise<{
   comments: Comment[];
   userCommentVotes: Map<string, "up" | "down">;
+  pastDeadline: boolean;
 }> {
   try {
     const {
-      data: { comments, success, message, userCommentVotes },
+      data: { comments, success, message, userCommentVotes, pastDeadline },
     } = await apiInstance.get<any, any>("/comments/" + pollId);
     console.log(comments);
     if (!success) throw new Error(message);
@@ -38,6 +39,7 @@ export async function fetchComments(
       userCommentVotes: new Map(
         userCommentVotes.map((u: any) => [u.commentId, u.upOrDown])
       ),
+      pastDeadline,
     };
   } catch (error: any) {
     console.log(error);

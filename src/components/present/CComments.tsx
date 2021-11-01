@@ -31,6 +31,7 @@ type TCCommentsContext = {
   getImmediateSubtree: (commentId: string) => Comment[];
   voteComment: (commentId: string, upOrDown: "up" | "down") => any;
   getUserCommentVote: (commentId: string) => "up" | "none" | "down";
+  pastDeadline: boolean;
 };
 
 export const CommentsContext = createContext<TCCommentsContext>({
@@ -38,6 +39,7 @@ export const CommentsContext = createContext<TCCommentsContext>({
   getImmediateSubtree: () => [],
   voteComment: () => {},
   getUserCommentVote: () => "none",
+  pastDeadline: false,
 });
 
 interface CCommentsProps {
@@ -50,6 +52,7 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
     new Map<string, "up" | "down">()
   );
   const [showAddReply, setShowAddReply] = useState(false);
+  const [pastDeadline, setPastDeadline] = useState(false);
   const { getAuthenticatedUser, isAuthenticated, openAuthDialog, token } =
     useContext(AuthContext);
   const { activeBot } = useContext(ActiveBotContext);
@@ -61,8 +64,12 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
     (async () => {
       try {
         if (pollId === "") throw new Error("Invalid poll id from url params");
-        const { comments, userCommentVotes: serverUserCommentVotes } =
-          await ApiMap.comments(getInstance(), pollId);
+        const {
+          comments,
+          userCommentVotes: serverUserCommentVotes,
+          pastDeadline,
+        } = await ApiMap.comments(getInstance(), pollId);
+        setPastDeadline(pastDeadline);
         setComments(comments);
         setUserCommentVotes(serverUserCommentVotes);
       } catch (error: any) {
@@ -121,6 +128,7 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
           Comment.getImmediateSubtree(commentId, comments),
         voteComment,
         getUserCommentVote,
+        pastDeadline,
       }}
     >
       <Stack spacing={2} sx={{ my: 1 }}>
@@ -136,6 +144,12 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
               startIcon={<Reply />}
               onClick={() => {
                 if (isAuthenticated()) {
+                  if (pastDeadline) {
+                    toast.error(
+                      "You cannot comment. You are past the deadline"
+                    );
+                    return;
+                  }
                   setShowAddReply(!showAddReply);
                 } else {
                   openAuthDialog();
@@ -166,6 +180,10 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
               variant="contained"
               color="primary"
               onClick={() => {
+                if (pastDeadline) {
+                  toast.error("You cannot comment. You are past the deadline");
+                  return;
+                }
                 if (isAuthenticated()) {
                   setShowAddReply(!showAddReply);
                 } else {

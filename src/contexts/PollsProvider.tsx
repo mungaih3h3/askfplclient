@@ -14,12 +14,14 @@ type TPollsContext = {
   polls: Poll[];
   hasMore: boolean;
   fetchMorePolls: () => Promise<any>;
+  currentGW: number;
 };
 
 export const PollsContext = createContext<TPollsContext>({
   polls: [],
   hasMore: false,
   fetchMorePolls: async () => {},
+  currentGW: 0,
 });
 
 interface PollsProviderProps {
@@ -35,6 +37,7 @@ export const PollsProvider: FC<PollsProviderProps> = ({
   const [error, setError] = useState(false);
   const [polls, setPolls] = useState([] as Poll[]);
   const [hasMore, setHasMore] = useState(false);
+  const [currentGW, setCurrentGW] = useState(0);
   const { getInstance } = useContext(ApiContext);
   const { addUserVotes, addVoteCounts, setUserVotes } =
     useContext(VotesContext);
@@ -54,6 +57,7 @@ export const PollsProvider: FC<PollsProviderProps> = ({
             hasMore,
             userVotes,
             voteCounts,
+            currentGW: gw,
           } = await fetchUserPolls(
             getInstance(user.username),
             new Date(),
@@ -63,6 +67,7 @@ export const PollsProvider: FC<PollsProviderProps> = ({
           setHasMore(hasMore);
           setUserVotes(userVotes);
           addVoteCounts(voteCounts);
+          setCurrentGW(gw);
         } else {
           const newUserVotes = await ApiMap.userPollVotes(
             getInstance(user.username),
@@ -87,6 +92,7 @@ export const PollsProvider: FC<PollsProviderProps> = ({
         hasMore,
         userVotes,
         voteCounts,
+        currentGW: gw,
       } = onlyUser
         ? await fetchUserPolls(getInstance(), startDate, limit)
         : await fetchPolls(getInstance(), startDate, limit);
@@ -95,6 +101,7 @@ export const PollsProvider: FC<PollsProviderProps> = ({
       setLoading(false);
       setPolls(polls.concat(newPolls));
       setHasMore(hasMore);
+      setCurrentGW(gw);
     } catch (error: any) {
       console.log(error);
       setLoading(false);
@@ -122,7 +129,9 @@ export const PollsProvider: FC<PollsProviderProps> = ({
         return <CNoPolls />;
       }
       return (
-        <PollsContext.Provider value={{ polls, hasMore, fetchMorePolls }}>
+        <PollsContext.Provider
+          value={{ polls, hasMore, fetchMorePolls, currentGW }}
+        >
           {children}
         </PollsContext.Provider>
       );

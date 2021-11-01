@@ -8,10 +8,12 @@ import { CLoadingPoll } from "../components/loading/CLoadingPoll";
 import { Link } from "react-router-dom";
 type TPollContext = {
   poll: Poll;
+  currentGW: number;
 };
 
 export const PollContext = createContext<TPollContext>({
   poll: new Poll("", [], ""),
+  currentGW: 0,
 });
 
 interface PollProviderProps {
@@ -22,14 +24,18 @@ export const PollProvider: FC<PollProviderProps> = ({ children, pollId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [poll, setPoll] = useState(new Poll("", [], ""));
+  const [currentGW, setCurrentGW] = useState(0);
   const { getInstance } = useContext(ApiContext);
   const { addUserVotes, addVoteCounts } = useContext(VotesContext);
   const getPoll = async () => {
     try {
-      const { poll, userVotes, voteCount } = await fetchPoll(
-        getInstance(),
-        pollId
-      );
+      const {
+        poll,
+        userVotes,
+        voteCount,
+        currentGW: gw,
+      } = await fetchPoll(getInstance(), pollId);
+      setCurrentGW(gw);
       addUserVotes(userVotes);
       addVoteCounts([voteCount]);
       setLoading(false);
@@ -53,7 +59,9 @@ export const PollProvider: FC<PollProviderProps> = ({ children, pollId }) => {
   } else {
     if (loading) return <CLoadingPoll />;
     return (
-      <PollContext.Provider value={{ poll }}>{children}</PollContext.Provider>
+      <PollContext.Provider value={{ poll, currentGW }}>
+        {children}
+      </PollContext.Provider>
     );
   }
 };

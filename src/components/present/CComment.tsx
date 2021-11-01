@@ -22,6 +22,7 @@ import {
 import { Box } from "@mui/system";
 import { CommentsContext } from "./CComments";
 import COption from "./COption";
+import toast from "react-hot-toast";
 interface CCommentProps {
   comment: Comment;
 }
@@ -31,8 +32,13 @@ const CComment: FC<CCommentProps> = ({ comment }) => {
   const [showAddReply, setShowAddReply] = useState(false);
   const { getAuthenticatedUser, isAuthenticated, openAuthDialog } =
     useContext(AuthContext);
-  const { getImmediateSubtree, addComment, voteComment, getUserCommentVote } =
-    useContext(CommentsContext);
+  const {
+    getImmediateSubtree,
+    addComment,
+    voteComment,
+    getUserCommentVote,
+    pastDeadline,
+  } = useContext(CommentsContext);
 
   const addToVotes = (): number => {
     switch (getUserCommentVote(comment.id)) {
@@ -89,6 +95,12 @@ const CComment: FC<CCommentProps> = ({ comment }) => {
                 >
                   <IconButton
                     onClick={() => {
+                      if (pastDeadline) {
+                        toast.error(
+                          "You cannot upvote or downvote this comment. You are past the deadline"
+                        );
+                        return;
+                      }
                       voteComment(comment.id, "up");
                     }}
                   >
@@ -103,6 +115,12 @@ const CComment: FC<CCommentProps> = ({ comment }) => {
                   </Typography>
                   <IconButton
                     onClick={() => {
+                      if (pastDeadline) {
+                        toast.error(
+                          "You cannot upvote or downvote this comment. You are past the deadline"
+                        );
+                        return;
+                      }
                       voteComment(comment.id, "down");
                     }}
                   >
@@ -138,6 +156,12 @@ const CComment: FC<CCommentProps> = ({ comment }) => {
                   startIcon={<Reply />}
                   onClick={() => {
                     if (isAuthenticated()) {
+                      if (pastDeadline) {
+                        toast.error(
+                          "You cannot comment. You are past the deadline"
+                        );
+                        return;
+                      }
                       setShowAddReply(!showAddReply);
                     } else {
                       openAuthDialog();

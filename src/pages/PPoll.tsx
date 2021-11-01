@@ -17,10 +17,14 @@ const PPoll: FC = () => {
     history.push("/");
   }
   const Child = () => {
-    const { poll } = useContext(PollContext);
+    const { poll, currentGW } = useContext(PollContext);
     return (
       <Stack spacing={2}>
-        <CPoll poll={poll} onWantDiscussion={openDiscussion} />
+        <CPoll
+          poll={poll}
+          onWantDiscussion={openDiscussion}
+          currentGW={currentGW}
+        />
         <Box sx={{ textAlign: "center" }}>
           <Link
             to="/"
