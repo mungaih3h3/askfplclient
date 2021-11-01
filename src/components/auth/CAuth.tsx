@@ -11,7 +11,11 @@ const CAuth: FC<CAuthProps> = ({ onAuth }) => {
   const [value, setValue] = useState("Sign In" as "Sign In" | "Sign Up");
   return (
     <Stack spacing={2}>
-      <Tabs value={value} onChange={(e, newValue) => setValue(newValue)}>
+      <Tabs
+        textColor={"inherit"}
+        value={value}
+        onChange={(e, newValue) => setValue(newValue)}
+      >
         <Tab label="Sign In" value="Sign In" />
         <Tab label="Sign Up" value="Sign Up" />
       </Tabs>

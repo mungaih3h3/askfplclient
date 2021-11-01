@@ -29,7 +29,7 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
   const { openActionFactoryDialog } = useContext(ActionFactoryContext);
   return (
     <>
-      <Card variant="outlined" sx={{ borderRadius: 2 }}>
+      <Card sx={{ borderRadius: 2 }}>
         <CardContent>
           <Stack spacing={3}>
             <InputBase
@@ -51,6 +51,7 @@ const CCreatePoll: FC<CCreatePollProps> = ({ onCreate }) => {
               {poll.options.map((option, index) => (
                 <Card
                   key={option.id}
+                  variant="outlined"
                   sx={{
                     width: "100%",
                   }}

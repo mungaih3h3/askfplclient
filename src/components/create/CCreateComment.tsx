@@ -48,7 +48,7 @@ const CCreateComment: FC<CCreateCommentProps> = ({
         />
       ) : (
         <Button
-          variant="outlined"
+          color="inherit"
           startIcon={<Add />}
           onClick={() => {
             setComment(
@@ -62,7 +62,7 @@ const CCreateComment: FC<CCreateCommentProps> = ({
         </Button>
       )}
       <TextField
-        placeholder="Enter comment..."
+        placeholder="Say something. Be nice"
         value={comment.comment}
         onChange={({ target: { value } }) => {
           setComment(

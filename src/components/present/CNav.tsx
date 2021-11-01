@@ -106,9 +106,9 @@ const CNav: FC<CNavProps> = forwardRef(({ title, ...props }, ref) => {
                 }}
               >
                 <ListItemIcon>
-                  <Logout fontSize="small" />
+                  <Logout sx={{ color: grey[500] }} fontSize="small" />
                 </ListItemIcon>
-                <ListItemText>Log Out</ListItemText>
+                <ListItemText sx={{ color: grey[500] }}>Log Out</ListItemText>
               </MenuItem>
             </Menu>
           </div>

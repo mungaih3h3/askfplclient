@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   CardContent,
+  IconButton,
   Paper,
   Stack,
   Typography,
@@ -34,25 +35,31 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
       <CardContent>
         <Stack spacing={3}>
           <Stack spacing={1}>
-            <Stack
-              spacing={1}
+            <Box
               sx={{
                 display: "flex",
+                justifyContent: "space-between",
                 alignItems: "center",
-                color: grey[700],
-                fontSize: fontSizes[2],
               }}
-              direction="row"
             >
-              <span>{poll.username}</span>
-              <span>-</span>
-              <span>
-                {formatDistanceToNow(new Date(poll.createdAt), {
-                  addSuffix: true,
-                })}
-              </span>
-            </Stack>
-            <Stack spacing={2} direction="row">
+              <Stack
+                spacing={1}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: grey[700],
+                  fontSize: fontSizes[2],
+                }}
+                direction="row"
+              >
+                <span>{poll.username}</span>
+                <span>-</span>
+                <span>
+                  {formatDistanceToNow(new Date(poll.createdAt), {
+                    addSuffix: true,
+                  })}
+                </span>
+              </Stack>
               <Paper
                 sx={{
                   py: 1,
@@ -62,12 +69,13 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
                 }}
                 variant="outlined"
               >
-                <Typography sx={{ color: grey[500] }}>GW {poll.gw}</Typography>
+                <Typography sx={{ color: grey[500] }}>GW{poll.gw}</Typography>
               </Paper>
-              <Typography sx={{ fontSize: fontSizes[4] }}>
-                {poll.title}
-              </Typography>
-            </Stack>
+            </Box>
+
+            <Typography sx={{ fontSize: fontSizes[4] }}>
+              {poll.title}
+            </Typography>
           </Stack>
           {poll.options.map((option) => (
             <Paper
@@ -104,8 +112,7 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
             </Paper>
           ))}
           <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-            <Button
-              startIcon={<Share />}
+            <IconButton
               onClick={() => {
                 navigator.clipboard.writeText(
                   window.location.origin + "/poll/" + poll.id
@@ -113,10 +120,11 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion }) => {
                 toast.success("Link copied to clipboard");
               }}
             >
-              Share
-            </Button>
+              <Share />
+            </IconButton>
             <Button
-              variant="outlined"
+              variant="contained"
+              color="primary"
               startIcon={<Comment />}
               onClick={() => onWantDiscussion(poll.id)}
             >

@@ -25,71 +25,71 @@ const CCreateSquadResources: FC<CCreateSquadResourcesProps> = ({
   resources,
 }) => {
   return (
-    <Paper sx={{ py: 2, px: 2 }} variant="outlined">
-      <Stack spacing={8} direction="row">
-        <Stack spacing={1} direction="row" sx={{ alignItems: "center" }}>
-          <InputBase
-            sx={{ width: 50, fontSize: fontSizes[3], fontWeight: 600 }}
-            size="small"
-            placeholder="0"
-            defaultValue={0}
-            onBlur={({ target: { value } }) => {
-              onChange(
-                produce(resources, (draft) => {
-                  try {
-                    const val = parseFloat(value);
-                    if (isNaN(val))
-                      throw new Error("Invalid remaining bank amount");
-                    else draft.bank = parseFloat(val.toFixed(1));
-                  } catch (error: any) {
-                    toast.error(error.message);
-                    draft.bank = 0;
-                  }
-                })
-              );
-            }}
-          />
-          <Typography sx={{ color: grey[500] }}>£ Remaining</Typography>
-        </Stack>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Paper
-            variant="outlined"
-            sx={{
-              px: 2,
-              py: 1,
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 2,
-            }}
-          >
-            <Typography sx={{ fontWeight: 600, fontSize: fontSizes[3] }}>
-              {resources.hits}
-            </Typography>
-            <Stack spacing={1} direction="row">
-              <Add
-                onClick={() => {
-                  onChange(
-                    produce(resources, (draft) => {
-                      draft.hits -= 4;
-                    })
-                  );
-                }}
-              />
-              <Remove
-                onClick={() => {
-                  onChange(
-                    produce(resources, (draft) => {
-                      draft.hits = 0;
-                    })
-                  );
-                }}
-              />
-            </Stack>
-          </Paper>
-          <Typography sx={{ color: grey[500] }}>hit</Typography>
-        </Box>
+    <Stack spacing={3} direction="row" sx={{ py: 2 }}>
+      <Stack spacing={1} direction="row" sx={{ alignItems: "center" }}>
+        <InputBase
+          sx={{ width: 50, fontSize: fontSizes[3], fontWeight: 600 }}
+          size="small"
+          placeholder="0"
+          defaultValue={0}
+          onBlur={({ target: { value } }) => {
+            onChange(
+              produce(resources, (draft) => {
+                try {
+                  const val = parseFloat(value);
+                  if (isNaN(val))
+                    throw new Error("Invalid remaining bank amount");
+                  else draft.bank = parseFloat(val.toFixed(1));
+                } catch (error: any) {
+                  toast.error(error.message);
+                  draft.bank = 0;
+                }
+              })
+            );
+          }}
+        />
+        <Typography noWrap sx={{ color: grey[500] }}>
+          £ bank
+        </Typography>
       </Stack>
-    </Paper>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <Paper
+          variant="outlined"
+          sx={{
+            px: 2,
+            py: 1,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 2,
+          }}
+        >
+          <Typography sx={{ fontWeight: 600, fontSize: fontSizes[3] }}>
+            {resources.hits}
+          </Typography>
+          <Stack spacing={1} direction="row">
+            <Add
+              onClick={() => {
+                onChange(
+                  produce(resources, (draft) => {
+                    draft.hits -= 4;
+                  })
+                );
+              }}
+            />
+            <Remove
+              onClick={() => {
+                onChange(
+                  produce(resources, (draft) => {
+                    draft.hits = 0;
+                  })
+                );
+              }}
+            />
+          </Stack>
+        </Paper>
+        <Typography sx={{ color: grey[500] }}>hit</Typography>
+      </Box>
+    </Stack>
   );
 };
 

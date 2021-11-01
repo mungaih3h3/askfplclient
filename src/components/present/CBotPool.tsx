@@ -35,7 +35,8 @@ const CUserPool: FC<CUserPoolProps> = () => {
 
           <Button
             size="small"
-            variant="outlined"
+            variant="contained"
+            color="primary"
             startIcon={<Add />}
             onClick={() => openCreateBotDialog()}
           >

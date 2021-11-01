@@ -89,6 +89,7 @@ const CSignUp: FC<CSignUpProps> = ({ onAuth = () => {} }) => {
               throw new Error("Please enter a valid email address");
             if (user.username.length < 4)
               throw new Error("Username must be atleast 5 characters long");
+            if (user.username.length > 10) throw new Error("Username too long");
             if (user.password.length < 4)
               throw new Error("Password must be atleast 5 characters long");
             setLoading(true);

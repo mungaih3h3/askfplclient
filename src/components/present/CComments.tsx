@@ -13,7 +13,7 @@ import CCreateComment from "../create/CCreateComment";
 import CComment from "./CComment";
 import { AuthContext } from "../../contexts/AuthProvider";
 import Comment from "../../logic/Comment";
-import { Reply, ArrowBackIos } from "@mui/icons-material";
+import { Reply, ArrowBackIos, Add } from "@mui/icons-material";
 import { Box } from "@mui/system";
 import toast from "react-hot-toast";
 import { CLoadingComment } from "../loading/CLoadingComment";
@@ -24,6 +24,7 @@ import { fontSizes } from "../../theme/fontSizes";
 import { BotContext } from "../../contexts/BotProvider";
 import { ActiveBotContext } from "../../contexts/ActiveBotProvider";
 import produce from "immer";
+import { ReactComponent as AddNote } from "../../illustrations/addnote.svg";
 
 type TCCommentsContext = {
   addComment: (comment: Comment) => Promise<any>;
@@ -154,9 +155,14 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
               alignItems: "center",
             }}
           >
-            <Typography>Be the first one to comment on this poll</Typography>
+            <Box sx={{ py: 2 }}>
+              <AddNote height={200} />
+            </Box>
+            <Typography>Be the first to join the discussion</Typography>
             <Button
-              variant="outlined"
+              startIcon={<Add />}
+              variant="contained"
+              color="primary"
               onClick={() => {
                 if (isAuthenticated()) {
                   setShowAddReply(!showAddReply);
@@ -165,7 +171,7 @@ const CComments: FC<CCommentsProps> = ({ pollId }) => {
                 }
               }}
             >
-              Add comment
+              comment
             </Button>
           </Stack>
         )}
