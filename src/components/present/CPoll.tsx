@@ -20,6 +20,7 @@ import { Comment, Lock, Share } from "@mui/icons-material";
 import { AuthContext } from "../../contexts/AuthProvider";
 import toast from "react-hot-toast";
 import { PollsContext } from "../../contexts/PollsProvider";
+import COptionWrapper from "./COptionWrapper";
 
 interface CPollProps {
   poll: Poll;
@@ -83,44 +84,20 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion, currentGW }) => {
             </Typography>
           </Stack>
           {poll.options.map((option) => (
-            <Paper
+            <COptionWrapper
               key={option.id}
-              variant="outlined"
-              sx={{
-                padding: 2,
-                backgroundColor:
-                  (userVotes.get(poll.id) || "") === option.id
-                    ? theme.palette.primary.main
-                    : theme.palette.background.default,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
+              {...{
+                option,
+                votePercent: () => {
+                  const optionVotes =
+                    voteCount.get(poll.id)?.get(option.id) || 0;
+                  return (optionVotes / getTotalPollVotes(poll.id)) * 100;
+                },
+                pastDeadline: currentGW > poll.gw,
+                vote: (optionId: string) => vote(poll.id, optionId),
+                userSelection: userVotes.get(poll.id),
               }}
-              onClick={async () => {
-                if (!isAuthenticated()) {
-                  openAuthDialog();
-                } else {
-                  if (currentGW > poll.gw) {
-                    toast.error(
-                      "You cannot vote for this poll. You are past the deadline"
-                    );
-                    return;
-                  }
-                  vote(poll.id, option.id);
-                }
-              }}
-            >
-              <Box sx={{ flexGrow: 1 }}>
-                <COption option={option} />
-              </Box>
-              {userVotes.get(poll.id) !== undefined && (
-                <Typography
-                  sx={{ fontSize: fontSizes[5], p: 3, fontWeight: 700 }}
-                >
-                  {voteCount.get(poll.id)?.get(option.id) || 0} votes
-                </Typography>
-              )}
-            </Paper>
+            />
           ))}
           <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
             <IconButton

@@ -87,8 +87,7 @@ export const VotesProvider: FC = ({ children }) => {
     if (!p) throw new Error("invalid poll");
     else {
       let ans = 0;
-      for (const [key, value] of p) {
-        console.log(value);
+      for (const [_, value] of p) {
         ans += value;
       }
       return ans;
