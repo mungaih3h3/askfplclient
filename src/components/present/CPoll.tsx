@@ -93,6 +93,7 @@ const CPoll: FC<CPollProps> = ({ poll, onWantDiscussion, currentGW }) => {
                     voteCount.get(poll.id)?.get(option.id) || 0;
                   return (optionVotes / getTotalPollVotes(poll.id)) * 100;
                 },
+                voteCount: voteCount.get(poll.id)?.get(option.id),
                 pastDeadline: currentGW > poll.gw,
                 vote: (optionId: string) => vote(poll.id, optionId),
                 userSelection: userVotes.get(poll.id),

@@ -14,6 +14,7 @@ interface COptionWrapperProps {
   votePercent: () => number;
   vote: (optionId: string) => any;
   userSelection: string | undefined;
+  voteCount: number | undefined;
 }
 
 const COptionWrapper: FC<COptionWrapperProps> = ({
@@ -22,6 +23,7 @@ const COptionWrapper: FC<COptionWrapperProps> = ({
   vote,
   votePercent,
   userSelection,
+  voteCount,
 }) => {
   const { isAuthenticated, openAuthDialog } = useContext(AuthContext);
 
@@ -58,7 +60,7 @@ const COptionWrapper: FC<COptionWrapperProps> = ({
       </Box>
       {userSelection && (
         <Typography sx={{ fontSize: fontSizes[5], p: 3, fontWeight: 700 }}>
-          {votePercent()}%
+          {voteCount || 0} votes
         </Typography>
       )}
     </Paper>
