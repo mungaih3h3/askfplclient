@@ -1,7 +1,7 @@
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { CircularProgress, Container, CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
-import { BrowserRouter, Switch } from "react-router-dom";
+import { BrowserRouter, Switch, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthProvider";
 import { PlayersProvider } from "./contexts/PlayersProvider";
 import { VotesProvider } from "./contexts/VotesProvider";

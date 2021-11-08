@@ -1,14 +1,20 @@
 import { Grid, useMediaQuery, useTheme } from "@mui/material";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import routes from "../../pages/routes";
 import CNav from "./CNav";
 import { CSideNav } from "./CSideNav";
-import { Route } from "react-router-dom";
+import { Route, useLocation } from "react-router-dom";
 import { Box } from "@mui/system";
 import { HideOnScroll } from "../utils/HideOnScroll";
+import ga4 from "react-ga4";
 export const CLayout: FC = () => {
   const theme = useTheme();
   const onMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const location = useLocation();
+
+  useEffect(() => {
+    ga4.send({ hitType: "pageview", page: location.pathname });
+  }, [location]);
   return (
     <Grid container spacing={2}>
       {!onMobile && (

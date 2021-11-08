@@ -9,6 +9,7 @@ import { CSendPasswordResetDialog } from "../components/auth/CSendPasswordReset"
 
 import Publisher, { Events } from "../logic/Publisher";
 import User from "../logic/User";
+import ga4 from "react-ga4";
 
 type TAuthContext = {
   getAuthenticatedUser: () => User;
@@ -65,14 +66,30 @@ export const AuthProvider: FC = ({ children }) => {
     return token !== "";
   };
   const signIn = async (name: string, password: string) => {
-    const tokenServer = await authenticate(name, password);
-    setToken(tokenServer);
-    const { username } = decode(tokenServer) as any;
-    Publisher.publish(Events.login, new User(username));
+    try {
+      const tokenServer = await authenticate(name, password);
+      setToken(tokenServer);
+      const { username } = decode(tokenServer) as any;
+      ga4.event({
+        category: "auth",
+        action: "log in",
+      });
+      Publisher.publish(Events.login, new User(username));
+    } catch (error: any) {
+      console.log(error);
+    }
   };
   const signUp = async (name: string, email: string, password: string) => {
-    await register(name, password, email);
-    setVerifyEmailDialog(true);
+    try {
+      await register(name, password, email);
+      ga4.event({
+        category: "auth",
+        action: "sign up",
+      });
+      setVerifyEmailDialog(true);
+    } catch (error: any) {
+      console.log(error);
+    }
   };
   const getToken = () => {
     return token;
@@ -81,10 +98,29 @@ export const AuthProvider: FC = ({ children }) => {
     try {
       setToken("");
       Publisher.publish(Events.logout, undefined);
+      ga4.event({
+        category: "auth",
+        action: "log out",
+      });
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (authDialog)
+      ga4.event({
+        category: "modal",
+        action: "open authentication modal",
+      });
+  }, [authDialog]);
+  useEffect(() => {
+    if (sendPasswordResetDialog)
+      ga4.event({
+        category: "modal",
+        action: "password reset modal",
+      });
+  }, [sendPasswordResetDialog]);
 
   return (
     <AuthContext.Provider

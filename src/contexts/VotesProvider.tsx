@@ -1,5 +1,6 @@
 import produce from "immer";
 import { createContext, FC, useContext, useEffect, useState } from "react";
+import ga4 from "react-ga4";
 import toast from "react-hot-toast";
 import { ApiMap } from "../api/ApiMap";
 import Publisher, { Events } from "../logic/Publisher";
@@ -72,6 +73,10 @@ export const VotesProvider: FC = ({ children }) => {
     (async () => {
       try {
         await ApiMap.castVote(getInstance(), pollId, optionId);
+        ga4.event({
+          category: "vote",
+          action: "vote",
+        });
       } catch (error: any) {
         toast.error(error.message);
       }
